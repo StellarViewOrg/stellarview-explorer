@@ -938,8 +938,8 @@
       "overview": "개요",
       "transactions": "트랜잭션",
       "network": "네트워크",
-      "history": "History",
-      "topN": "Top N"
+      "history": "기록",
+      "topN": "상위 N"
     },
     "enableBanner": {
       "title": "고급 기능을 위해 분석 모드를 활성화하세요",
@@ -950,12 +950,12 @@
       "ledgerTxCount": "원장 TX 수",
       "ledgerOperations": "원장 오퍼레이션",
       "protocolVersion": "프로토콜 버전",
-      "txVolume": "Transaction Volume",
-      "classicFees": "Classic Fees",
-      "sorobanFees": "Soroban Resource Fees",
-      "activeAccounts": "Active Accounts",
-      "newAccounts": "New Accounts",
-      "assetSupply": "Asset Supply"
+      "txVolume": "거래량",
+      "classicFees": "클래식 수수료",
+      "sorobanFees": "Soroban 리소스 수수료",
+      "activeAccounts": "활성 계정",
+      "newAccounts": "신규 계정",
+      "assetSupply": "자산 공급량"
     },
     "statistics": {
       "operationsPerTx": "트랜잭션당 오퍼레이션",
@@ -988,34 +988,34 @@
       "protocolVersion": "프로토콜 버전"
     },
     "resolution": {
-      "hourly": "Hourly",
-      "daily": "Daily",
-      "weekly": "Weekly"
+      "hourly": "시간별",
+      "daily": "일별",
+      "weekly": "주별"
     },
     "range": {
-      "24h": "24H",
-      "7d": "7D",
-      "30d": "30D",
-      "90d": "90D",
-      "1y": "1Y",
-      "all": "All"
+      "24h": "24시간",
+      "7d": "7일",
+      "30d": "30일",
+      "90d": "90일",
+      "1y": "1년",
+      "all": "전체"
     },
     "topN": {
-      "contracts": "Most Active Contracts",
-      "assets": "Most Transferred Assets",
-      "highestFees": "Highest Fee Transactions",
-      "rank": "Rank",
-      "entity": "Entity",
-      "value": "Value"
+      "contracts": "가장 활성화된 계약",
+      "assets": "가장 많이 전송된 자산",
+      "highestFees": "가장 높은 수수료의 거래",
+      "rank": "순위",
+      "entity": "엔터티",
+      "value": "값"
     },
     "notAvailable": {
-      "title": "Not Available Yet",
-      "description": "This metric will be available once the indexer processes historical data."
+      "title": "아직 사용할 수 없음",
+      "description": "인덱서가 과거 데이터를 처리하면 이 지표를 사용할 수 있습니다."
     },
     "export": {
-      "csv": "Export CSV",
-      "json": "Export JSON",
-      "disabled": "Export unavailable for this metric"
+      "csv": "CSV 내보내기",
+      "json": "JSON 내보내기",
+      "disabled": "이 지표는 내보내기를 지원하지 않습니다"
     }
   },
   "crossNetwork": {

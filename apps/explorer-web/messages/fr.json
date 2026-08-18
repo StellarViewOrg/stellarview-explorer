@@ -938,7 +938,7 @@
       "overview": "Aperçu",
       "transactions": "Transactions",
       "network": "Réseau",
-      "history": "History",
+      "history": "Historique",
       "topN": "Top N"
     },
     "enableBanner": {
@@ -950,12 +950,12 @@
       "ledgerTxCount": "TX du Ledger",
       "ledgerOperations": "Opérations du Ledger",
       "protocolVersion": "Version du Protocole",
-      "txVolume": "Transaction Volume",
-      "classicFees": "Classic Fees",
-      "sorobanFees": "Soroban Resource Fees",
-      "activeAccounts": "Active Accounts",
-      "newAccounts": "New Accounts",
-      "assetSupply": "Asset Supply"
+      "txVolume": "Volume de Transactions",
+      "classicFees": "Frais Classiques",
+      "sorobanFees": "Frais de Ressources Soroban",
+      "activeAccounts": "Comptes Actifs",
+      "newAccounts": "Nouveaux Comptes",
+      "assetSupply": "Offre d'Actifs"
     },
     "statistics": {
       "operationsPerTx": "Opérations par Transaction",
@@ -988,34 +988,34 @@
       "protocolVersion": "Version du Protocole"
     },
     "resolution": {
-      "hourly": "Hourly",
-      "daily": "Daily",
-      "weekly": "Weekly"
+      "hourly": "Horaire",
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire"
     },
     "range": {
       "24h": "24H",
-      "7d": "7D",
-      "30d": "30D",
-      "90d": "90D",
-      "1y": "1Y",
-      "all": "All"
+      "7d": "7J",
+      "30d": "30J",
+      "90d": "90J",
+      "1y": "1A",
+      "all": "Tout"
     },
     "topN": {
-      "contracts": "Most Active Contracts",
-      "assets": "Most Transferred Assets",
-      "highestFees": "Highest Fee Transactions",
-      "rank": "Rank",
-      "entity": "Entity",
-      "value": "Value"
+      "contracts": "Contrats les Plus Actifs",
+      "assets": "Actifs les Plus Transférés",
+      "highestFees": "Transactions aux Frais les Plus Élevés",
+      "rank": "Rang",
+      "entity": "Entité",
+      "value": "Valeur"
     },
     "notAvailable": {
-      "title": "Not Available Yet",
-      "description": "This metric will be available once the indexer processes historical data."
+      "title": "Pas encore disponible",
+      "description": "Cette métrique sera disponible une fois que l'indexeur aura traité les données historiques."
     },
     "export": {
-      "csv": "Export CSV",
-      "json": "Export JSON",
-      "disabled": "Export unavailable for this metric"
+      "csv": "Exporter CSV",
+      "json": "Exporter JSON",
+      "disabled": "Exportation non disponible pour cette métrique"
     }
   },
   "crossNetwork": {

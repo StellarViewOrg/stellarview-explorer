@@ -938,8 +938,8 @@
       "overview": "概览",
       "transactions": "交易",
       "network": "网络",
-      "history": "History",
-      "topN": "Top N"
+      "history": "历史记录",
+      "topN": "前 N 名"
     },
     "enableBanner": {
       "title": "启用分析模式以获取高级功能",
@@ -950,12 +950,12 @@
       "ledgerTxCount": "账本交易数",
       "ledgerOperations": "账本操作数",
       "protocolVersion": "协议版本",
-      "txVolume": "Transaction Volume",
-      "classicFees": "Classic Fees",
-      "sorobanFees": "Soroban Resource Fees",
-      "activeAccounts": "Active Accounts",
-      "newAccounts": "New Accounts",
-      "assetSupply": "Asset Supply"
+      "txVolume": "交易量",
+      "classicFees": "经典手续费",
+      "sorobanFees": "Soroban 资源手续费",
+      "activeAccounts": "活跃账户",
+      "newAccounts": "新账户",
+      "assetSupply": "资产供应量"
     },
     "statistics": {
       "operationsPerTx": "每笔交易的操作数",
@@ -988,34 +988,34 @@
       "protocolVersion": "协议版本"
     },
     "resolution": {
-      "hourly": "Hourly",
-      "daily": "Daily",
-      "weekly": "Weekly"
+      "hourly": "每小时",
+      "daily": "每天",
+      "weekly": "每周"
     },
     "range": {
-      "24h": "24H",
-      "7d": "7D",
-      "30d": "30D",
-      "90d": "90D",
-      "1y": "1Y",
-      "all": "All"
+      "24h": "24小时",
+      "7d": "7天",
+      "30d": "30天",
+      "90d": "90天",
+      "1y": "1年",
+      "all": "全部"
     },
     "topN": {
-      "contracts": "Most Active Contracts",
-      "assets": "Most Transferred Assets",
-      "highestFees": "Highest Fee Transactions",
-      "rank": "Rank",
-      "entity": "Entity",
-      "value": "Value"
+      "contracts": "最活跃的合约",
+      "assets": "转账最多的资产",
+      "highestFees": "最高手续费交易",
+      "rank": "排名",
+      "entity": "实体",
+      "value": "值"
     },
     "notAvailable": {
-      "title": "Not Available Yet",
-      "description": "This metric will be available once the indexer processes historical data."
+      "title": "尚不可用",
+      "description": "一旦索引器处理了历史数据，此指标将可用。"
     },
     "export": {
-      "csv": "Export CSV",
-      "json": "Export JSON",
-      "disabled": "Export unavailable for this metric"
+      "csv": "导出 CSV",
+      "json": "导出 JSON",
+      "disabled": "此指标不支持导出"
     }
   },
   "crossNetwork": {
