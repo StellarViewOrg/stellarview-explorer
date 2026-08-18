@@ -3,6 +3,16 @@ import type { Horizon, xdr } from "@stellar/stellar-sdk";
 import { getHorizonClient, getRpcClient, fetchStellarExpert } from "./client";
 import type { StellarExpertResult } from "./client";
 import { DEFAULT_PAGE_SIZE, STALE_TIME, POPULAR_ASSETS } from "@/lib/constants";
+import { fetchTimeSeries, fetchTopN } from "@/lib/indexer";
+import type {
+  TimeSeriesMetric,
+  TopNMetric,
+  Resolution,
+  TimeWindow,
+  IndexerResult,
+  TimeSeriesResponse,
+  TopNResponse,
+} from "@/lib/indexer";
 
 // Stellar Expert API response shapes
 export interface StellarExpertAssetAnalytics {
@@ -173,6 +183,17 @@ export const stellarKeys = {
     [...stellarKeys.network(network), "stellar_expert", "network_activity"] as const,
   networkStats: (network: NetworkKey) =>
     [...stellarKeys.network(network), "stellar_expert", "stats"] as const,
+
+  // Indexer analytics
+  indexerTimeSeries: (
+    network: NetworkKey,
+    metric: TimeSeriesMetric,
+    resolution: Resolution,
+    from: string,
+    to: string
+  ) => [...stellarKeys.network(network), "indexer", "timeseries", metric, resolution, from, to] as const,
+  indexerTopN: (network: NetworkKey, metric: TopNMetric, window: TimeWindow, limit: number) =>
+    [...stellarKeys.network(network), "indexer", "top", metric, window, limit] as const,
 };
 
 // Query option factories for TanStack Query
@@ -980,5 +1001,34 @@ export const stellarQueries = {
       };
     },
     staleTime: STALE_TIME,
+  }),
+
+  // Indexer: time-series analytics
+  indexerTimeSeries: (
+    network: NetworkKey,
+    metric: TimeSeriesMetric,
+    resolution: Resolution,
+    from: string,
+    to: string
+  ) => ({
+    queryKey: stellarKeys.indexerTimeSeries(network, metric, resolution, from, to),
+    queryFn: (): Promise<IndexerResult<TimeSeriesResponse>> =>
+      fetchTimeSeries(metric, resolution, from, to),
+    staleTime: 5 * 60_000,
+    retry: 1,
+  }),
+
+  // Indexer: Top-N rankings
+  indexerTopN: (
+    network: NetworkKey,
+    metric: TopNMetric,
+    window: TimeWindow,
+    limit = 10
+  ) => ({
+    queryKey: stellarKeys.indexerTopN(network, metric, window, limit),
+    queryFn: (): Promise<IndexerResult<TopNResponse>> =>
+      fetchTopN(metric, window, limit),
+    staleTime: 5 * 60_000,
+    retry: 1,
   }),
 };

@@ -321,3 +321,32 @@ export function useNetworkStats() {
   const { network } = useNetwork();
   return useQuery(stellarQueries.networkStats(network));
 }
+
+// Hook for indexer time-series analytics
+export function useIndexerTimeSeries(
+  metric: import("@/lib/indexer").TimeSeriesMetric,
+  resolution: import("@/lib/indexer").Resolution,
+  from: string,
+  to: string,
+  enabled = true
+) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.indexerTimeSeries(network, metric, resolution, from, to),
+    enabled,
+  });
+}
+
+// Hook for indexer Top-N rankings
+export function useIndexerTopN(
+  metric: import("@/lib/indexer").TopNMetric,
+  window: import("@/lib/indexer").TimeWindow,
+  limit = 10,
+  enabled = true
+) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.indexerTopN(network, metric, window, limit),
+    enabled,
+  });
+}
