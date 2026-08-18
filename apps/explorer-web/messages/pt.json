@@ -931,25 +931,25 @@
     "expanded": "Expandido"
   },
   "analytics": {
-    "title": "Network Analytics",
-    "subtitle": "Advanced statistics and data analysis for the Stellar network",
-    "keyMetrics": "Key Metrics",
+    "title": "Análises de Rede",
+    "subtitle": "Estatísticas avançadas e análise de dados para a rede Stellar",
+    "keyMetrics": "Métricas Principais",
     "tabs": {
-      "overview": "Overview",
-      "transactions": "Transactions",
-      "network": "Network",
+      "overview": "Visão Geral",
+      "transactions": "Transações",
+      "network": "Rede",
       "history": "History",
       "topN": "Top N"
     },
     "enableBanner": {
-      "title": "Enable Analytics Mode for advanced features",
-      "description": "Get access to detailed statistics, trendlines, and data export capabilities."
+      "title": "Ative o Modo Analítico para recursos avançados",
+      "description": "Obtenha acesso a estatísticas detalhadas, linhas de tendência e recursos de exportação de dados."
     },
     "metrics": {
-      "latestLedger": "Latest Ledger",
-      "ledgerTxCount": "Ledger TX Count",
-      "ledgerOperations": "Ledger Operations",
-      "protocolVersion": "Protocol Version",
+      "latestLedger": "Último Ledger",
+      "ledgerTxCount": "TX do Ledger",
+      "ledgerOperations": "Operações do Ledger",
+      "protocolVersion": "Versão do Protocolo",
       "txVolume": "Transaction Volume",
       "classicFees": "Classic Fees",
       "sorobanFees": "Soroban Resource Fees",
@@ -958,34 +958,34 @@
       "assetSupply": "Asset Supply"
     },
     "statistics": {
-      "operationsPerTx": "Operations per Transaction",
-      "feesStroops": "Transaction Fees (stroops)",
-      "summary": "Summary Statistics"
+      "operationsPerTx": "Operações por Transação",
+      "feesStroops": "Taxas (stroops)",
+      "summary": "Resumo Estatístico"
     },
     "stats": {
-      "mean": "Mean",
-      "median": "Median",
-      "stdDev": "Std Deviation",
-      "min": "Minimum",
-      "max": "Maximum",
+      "mean": "Média",
+      "median": "Mediana",
+      "stdDev": "Desvio Padrão",
+      "min": "Mínimo",
+      "max": "Máximo",
       "total": "Total",
-      "range": "Range"
+      "range": "Intervalo"
     },
     "tx": {
-      "sampleSize": "Sample Size",
-      "recentTransactions": "recent transactions",
-      "successRate": "Success Rate",
-      "successful": "Successful",
-      "failed": "Failed",
-      "totalOperations": "Total Operations",
-      "avgOpsPerTx": "Avg Ops/TX"
+      "sampleSize": "Tamanho da Amostra",
+      "recentTransactions": "transações recentes",
+      "successRate": "Taxa de Sucesso",
+      "successful": "Bem-sucedidas",
+      "failed": "Falhadas",
+      "totalOperations": "Total de Operações",
+      "avgOpsPerTx": "Ops/TX Média"
     },
     "network": {
-      "latestLedger": "Latest Ledger Info",
-      "sequence": "Sequence",
-      "transactions": "Transactions",
-      "operations": "Operations",
-      "protocolVersion": "Protocol Version"
+      "latestLedger": "Informação do Último Ledger",
+      "sequence": "Sequência",
+      "transactions": "Transações",
+      "operations": "Operações",
+      "protocolVersion": "Versão do Protocolo"
     },
     "resolution": {
       "hourly": "Hourly",

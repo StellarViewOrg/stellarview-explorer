@@ -931,25 +931,25 @@
     "expanded": "拡張"
   },
   "analytics": {
-    "title": "Network Analytics",
-    "subtitle": "Advanced statistics and data analysis for the Stellar network",
-    "keyMetrics": "Key Metrics",
+    "title": "ネットワーク分析",
+    "subtitle": "Stellarネットワークの高度な統計とデータ分析",
+    "keyMetrics": "主要指標",
     "tabs": {
-      "overview": "Overview",
-      "transactions": "Transactions",
-      "network": "Network",
+      "overview": "概要",
+      "transactions": "トランザクション",
+      "network": "ネットワーク",
       "history": "History",
       "topN": "Top N"
     },
     "enableBanner": {
-      "title": "Enable Analytics Mode for advanced features",
-      "description": "Get access to detailed statistics, trendlines, and data export capabilities."
+      "title": "高度な機能のために分析モードを有効化",
+      "description": "詳細な統計、トレンドライン、データエクスポート機能にアクセスできます。"
     },
     "metrics": {
-      "latestLedger": "Latest Ledger",
-      "ledgerTxCount": "Ledger TX Count",
-      "ledgerOperations": "Ledger Operations",
-      "protocolVersion": "Protocol Version",
+      "latestLedger": "最新レジャー",
+      "ledgerTxCount": "レジャーTX数",
+      "ledgerOperations": "レジャー操作数",
+      "protocolVersion": "プロトコルバージョン",
       "txVolume": "Transaction Volume",
       "classicFees": "Classic Fees",
       "sorobanFees": "Soroban Resource Fees",
@@ -958,34 +958,34 @@
       "assetSupply": "Asset Supply"
     },
     "statistics": {
-      "operationsPerTx": "Operations per Transaction",
-      "feesStroops": "Transaction Fees (stroops)",
-      "summary": "Summary Statistics"
+      "operationsPerTx": "トランザクションあたりの操作数",
+      "feesStroops": "手数料 (stroops)",
+      "summary": "統計サマリー"
     },
     "stats": {
-      "mean": "Mean",
-      "median": "Median",
-      "stdDev": "Std Deviation",
-      "min": "Minimum",
-      "max": "Maximum",
-      "total": "Total",
-      "range": "Range"
+      "mean": "平均",
+      "median": "中央値",
+      "stdDev": "標準偏差",
+      "min": "最小",
+      "max": "最大",
+      "total": "合計",
+      "range": "範囲"
     },
     "tx": {
-      "sampleSize": "Sample Size",
-      "recentTransactions": "recent transactions",
-      "successRate": "Success Rate",
-      "successful": "Successful",
-      "failed": "Failed",
-      "totalOperations": "Total Operations",
-      "avgOpsPerTx": "Avg Ops/TX"
+      "sampleSize": "サンプルサイズ",
+      "recentTransactions": "最近のトランザクション",
+      "successRate": "成功率",
+      "successful": "成功",
+      "failed": "失敗",
+      "totalOperations": "総操作数",
+      "avgOpsPerTx": "平均操作/TX"
     },
     "network": {
-      "latestLedger": "Latest Ledger Info",
-      "sequence": "Sequence",
-      "transactions": "Transactions",
-      "operations": "Operations",
-      "protocolVersion": "Protocol Version"
+      "latestLedger": "最新レジャー情報",
+      "sequence": "シーケンス",
+      "transactions": "トランザクション",
+      "operations": "操作",
+      "protocolVersion": "プロトコルバージョン"
     },
     "resolution": {
       "hourly": "Hourly",

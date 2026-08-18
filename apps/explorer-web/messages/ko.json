@@ -931,25 +931,25 @@
     "expanded": "확장"
   },
   "analytics": {
-    "title": "Network Analytics",
-    "subtitle": "Advanced statistics and data analysis for the Stellar network",
-    "keyMetrics": "Key Metrics",
+    "title": "네트워크 분석",
+    "subtitle": "Stellar 네트워크를 위한 고급 통계 및 데이터 분석",
+    "keyMetrics": "주요 지표",
     "tabs": {
-      "overview": "Overview",
-      "transactions": "Transactions",
-      "network": "Network",
+      "overview": "개요",
+      "transactions": "트랜잭션",
+      "network": "네트워크",
       "history": "History",
       "topN": "Top N"
     },
     "enableBanner": {
-      "title": "Enable Analytics Mode for advanced features",
-      "description": "Get access to detailed statistics, trendlines, and data export capabilities."
+      "title": "고급 기능을 위해 분석 모드를 활성화하세요",
+      "description": "상세한 통계, 추세선 및 데이터 내보내기 기능에 액세스할 수 있습니다."
     },
     "metrics": {
-      "latestLedger": "Latest Ledger",
-      "ledgerTxCount": "Ledger TX Count",
-      "ledgerOperations": "Ledger Operations",
-      "protocolVersion": "Protocol Version",
+      "latestLedger": "최신 원장",
+      "ledgerTxCount": "원장 TX 수",
+      "ledgerOperations": "원장 오퍼레이션",
+      "protocolVersion": "프로토콜 버전",
       "txVolume": "Transaction Volume",
       "classicFees": "Classic Fees",
       "sorobanFees": "Soroban Resource Fees",
@@ -958,34 +958,34 @@
       "assetSupply": "Asset Supply"
     },
     "statistics": {
-      "operationsPerTx": "Operations per Transaction",
-      "feesStroops": "Transaction Fees (stroops)",
-      "summary": "Summary Statistics"
+      "operationsPerTx": "트랜잭션당 오퍼레이션",
+      "feesStroops": "수수료 (stroops)",
+      "summary": "통계 요약"
     },
     "stats": {
-      "mean": "Mean",
-      "median": "Median",
-      "stdDev": "Std Deviation",
-      "min": "Minimum",
-      "max": "Maximum",
-      "total": "Total",
-      "range": "Range"
+      "mean": "평균",
+      "median": "중앙값",
+      "stdDev": "표준편차",
+      "min": "최소",
+      "max": "최대",
+      "total": "총계",
+      "range": "범위"
     },
     "tx": {
-      "sampleSize": "Sample Size",
-      "recentTransactions": "recent transactions",
-      "successRate": "Success Rate",
-      "successful": "Successful",
-      "failed": "Failed",
-      "totalOperations": "Total Operations",
-      "avgOpsPerTx": "Avg Ops/TX"
+      "sampleSize": "샘플 크기",
+      "recentTransactions": "최근 트랜잭션",
+      "successRate": "성공률",
+      "successful": "성공",
+      "failed": "실패",
+      "totalOperations": "총 오퍼레이션",
+      "avgOpsPerTx": "평균 Ops/TX"
     },
     "network": {
-      "latestLedger": "Latest Ledger Info",
-      "sequence": "Sequence",
-      "transactions": "Transactions",
-      "operations": "Operations",
-      "protocolVersion": "Protocol Version"
+      "latestLedger": "최신 원장 정보",
+      "sequence": "시퀀스",
+      "transactions": "트랜잭션",
+      "operations": "오퍼레이션",
+      "protocolVersion": "프로토콜 버전"
     },
     "resolution": {
       "hourly": "Hourly",

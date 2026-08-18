@@ -931,25 +931,25 @@
     "expanded": "展开"
   },
   "analytics": {
-    "title": "Network Analytics",
-    "subtitle": "Advanced statistics and data analysis for the Stellar network",
-    "keyMetrics": "Key Metrics",
+    "title": "网络分析",
+    "subtitle": "Stellar 网络的高级统计和数据分析",
+    "keyMetrics": "关键指标",
     "tabs": {
-      "overview": "Overview",
-      "transactions": "Transactions",
-      "network": "Network",
+      "overview": "概览",
+      "transactions": "交易",
+      "network": "网络",
       "history": "History",
       "topN": "Top N"
     },
     "enableBanner": {
-      "title": "Enable Analytics Mode for advanced features",
-      "description": "Get access to detailed statistics, trendlines, and data export capabilities."
+      "title": "启用分析模式以获取高级功能",
+      "description": "获取详细统计、趋势线和数据导出功能。"
     },
     "metrics": {
-      "latestLedger": "Latest Ledger",
-      "ledgerTxCount": "Ledger TX Count",
-      "ledgerOperations": "Ledger Operations",
-      "protocolVersion": "Protocol Version",
+      "latestLedger": "最新账本",
+      "ledgerTxCount": "账本交易数",
+      "ledgerOperations": "账本操作数",
+      "protocolVersion": "协议版本",
       "txVolume": "Transaction Volume",
       "classicFees": "Classic Fees",
       "sorobanFees": "Soroban Resource Fees",
@@ -958,34 +958,34 @@
       "assetSupply": "Asset Supply"
     },
     "statistics": {
-      "operationsPerTx": "Operations per Transaction",
-      "feesStroops": "Transaction Fees (stroops)",
-      "summary": "Summary Statistics"
+      "operationsPerTx": "每笔交易的操作数",
+      "feesStroops": "交易费用 (stroops)",
+      "summary": "统计摘要"
     },
     "stats": {
-      "mean": "Mean",
-      "median": "Median",
-      "stdDev": "Std Deviation",
-      "min": "Minimum",
-      "max": "Maximum",
-      "total": "Total",
-      "range": "Range"
+      "mean": "平均值",
+      "median": "中位数",
+      "stdDev": "标准差",
+      "min": "最小值",
+      "max": "最大值",
+      "total": "总计",
+      "range": "范围"
     },
     "tx": {
-      "sampleSize": "Sample Size",
-      "recentTransactions": "recent transactions",
-      "successRate": "Success Rate",
-      "successful": "Successful",
-      "failed": "Failed",
-      "totalOperations": "Total Operations",
-      "avgOpsPerTx": "Avg Ops/TX"
+      "sampleSize": "样本大小",
+      "recentTransactions": "最近交易",
+      "successRate": "成功率",
+      "successful": "成功",
+      "failed": "失败",
+      "totalOperations": "总操作数",
+      "avgOpsPerTx": "平均操作/交易"
     },
     "network": {
-      "latestLedger": "Latest Ledger Info",
-      "sequence": "Sequence",
-      "transactions": "Transactions",
-      "operations": "Operations",
-      "protocolVersion": "Protocol Version"
+      "latestLedger": "最新账本信息",
+      "sequence": "序列",
+      "transactions": "交易",
+      "operations": "操作",
+      "protocolVersion": "协议版本"
     },
     "resolution": {
       "hourly": "Hourly",

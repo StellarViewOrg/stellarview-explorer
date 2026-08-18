@@ -931,25 +931,25 @@
     "expanded": "Erweitert"
   },
   "analytics": {
-    "title": "Network Analytics",
-    "subtitle": "Advanced statistics and data analysis for the Stellar network",
-    "keyMetrics": "Key Metrics",
+    "title": "Netzwerk-Analytik",
+    "subtitle": "Erweiterte Statistiken und Datenanalyse für das Stellar-Netzwerk",
+    "keyMetrics": "Hauptkennzahlen",
     "tabs": {
-      "overview": "Overview",
-      "transactions": "Transactions",
-      "network": "Network",
+      "overview": "Übersicht",
+      "transactions": "Transaktionen",
+      "network": "Netzwerk",
       "history": "History",
       "topN": "Top N"
     },
     "enableBanner": {
-      "title": "Enable Analytics Mode for advanced features",
-      "description": "Get access to detailed statistics, trendlines, and data export capabilities."
+      "title": "Aktivieren Sie den Analysemodus für erweiterte Funktionen",
+      "description": "Erhalten Sie Zugang zu detaillierten Statistiken, Trendlinien und Datenexportfunktionen."
     },
     "metrics": {
-      "latestLedger": "Latest Ledger",
-      "ledgerTxCount": "Ledger TX Count",
-      "ledgerOperations": "Ledger Operations",
-      "protocolVersion": "Protocol Version",
+      "latestLedger": "Neuester Ledger",
+      "ledgerTxCount": "Ledger-TX-Anzahl",
+      "ledgerOperations": "Ledger-Operationen",
+      "protocolVersion": "Protokollversion",
       "txVolume": "Transaction Volume",
       "classicFees": "Classic Fees",
       "sorobanFees": "Soroban Resource Fees",
@@ -958,34 +958,34 @@
       "assetSupply": "Asset Supply"
     },
     "statistics": {
-      "operationsPerTx": "Operations per Transaction",
-      "feesStroops": "Transaction Fees (stroops)",
-      "summary": "Summary Statistics"
+      "operationsPerTx": "Operationen pro Transaktion",
+      "feesStroops": "Gebühren (Stroops)",
+      "summary": "Statistische Zusammenfassung"
     },
     "stats": {
-      "mean": "Mean",
+      "mean": "Mittelwert",
       "median": "Median",
-      "stdDev": "Std Deviation",
+      "stdDev": "Standardabweichung",
       "min": "Minimum",
       "max": "Maximum",
-      "total": "Total",
-      "range": "Range"
+      "total": "Gesamt",
+      "range": "Bereich"
     },
     "tx": {
-      "sampleSize": "Sample Size",
-      "recentTransactions": "recent transactions",
-      "successRate": "Success Rate",
-      "successful": "Successful",
-      "failed": "Failed",
-      "totalOperations": "Total Operations",
-      "avgOpsPerTx": "Avg Ops/TX"
+      "sampleSize": "Stichprobengröße",
+      "recentTransactions": "aktuelle Transaktionen",
+      "successRate": "Erfolgsrate",
+      "successful": "Erfolgreich",
+      "failed": "Fehlgeschlagen",
+      "totalOperations": "Gesamt Operationen",
+      "avgOpsPerTx": "Durchschn. Ops/TX"
     },
     "network": {
-      "latestLedger": "Latest Ledger Info",
-      "sequence": "Sequence",
-      "transactions": "Transactions",
-      "operations": "Operations",
-      "protocolVersion": "Protocol Version"
+      "latestLedger": "Neueste Ledger-Info",
+      "sequence": "Sequenz",
+      "transactions": "Transaktionen",
+      "operations": "Operationen",
+      "protocolVersion": "Protokollversion"
     },
     "resolution": {
       "hourly": "Hourly",
