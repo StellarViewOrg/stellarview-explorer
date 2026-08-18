@@ -430,7 +430,7 @@ export default function AnalyticsPage() {
               metric="active_accounts"
               title={t("metrics.activeAccounts")}
               icon={Users}
-              color={chartColors.chart2}
+              color={chartColors.success}
               resolution={resolution}
               from={dateRange.from}
               to={dateRange.to}
@@ -439,7 +439,7 @@ export default function AnalyticsPage() {
               metric="fee_classic"
               title={t("metrics.classicFees")}
               icon={Wallet}
-              color={chartColors.chart3}
+              color={chartColors.warning}
               unit="XLM"
               resolution={resolution}
               from={dateRange.from}
@@ -449,7 +449,7 @@ export default function AnalyticsPage() {
               metric="fee_soroban"
               title={t("metrics.sorobanFees")}
               icon={Coins}
-              color={chartColors.chart4}
+              color={chartColors.purple}
               unit="XLM"
               resolution={resolution}
               from={dateRange.from}
@@ -459,7 +459,7 @@ export default function AnalyticsPage() {
               metric="new_accounts"
               title={t("metrics.newAccounts")}
               icon={UserPlus}
-              color={chartColors.chart5}
+              color={chartColors.red}
               resolution={resolution}
               from={dateRange.from}
               to={dateRange.to}
@@ -468,7 +468,7 @@ export default function AnalyticsPage() {
               metric="asset_supply"
               title={t("metrics.assetSupply")}
               icon={Package}
-              color={chartColors.chart1}
+              color={chartColors.primary}
               resolution={resolution}
               from={dateRange.from}
               to={dateRange.to}

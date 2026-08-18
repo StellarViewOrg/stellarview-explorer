@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import TimeSeriesChart from "./time-series-chart";
 import { Activity } from "lucide-react";
@@ -90,9 +91,7 @@ describe("TimeSeriesChart", () => {
       />
     );
 
-    // ResponsiveContainer will render its content (the Recharts wrapper)
-    // Recharts uses a div with class "recharts-wrapper"
-    const wrapper = document.querySelector(".recharts-wrapper");
-    expect(wrapper).toBeInTheDocument();
+    // The export button is only rendered when data is available
+    expect(screen.getByTitle("export.json")).toBeInTheDocument();
   });
 });

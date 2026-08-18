@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { exportTimeSeriesCSV, exportTimeSeriesJSON, exportTopNCSV, exportTopNJSON } from "./analytics-export";
 import type { TimeSeriesDataPoint, TopNEntry } from "@/lib/indexer";
 
