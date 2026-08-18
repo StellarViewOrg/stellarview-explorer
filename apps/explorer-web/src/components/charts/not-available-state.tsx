@@ -22,17 +22,17 @@ export function NotAvailableState({ height = 180, className }: NotAvailableState
     <div
       className={cn(
         "flex flex-col items-center justify-center gap-3 rounded-lg",
-        "border border-dashed border-muted-foreground/20 bg-muted/10",
+        "border-muted-foreground/20 bg-muted/10 border border-dashed",
         className
       )}
       style={{ height }}
     >
-      <div className="rounded-full bg-muted/30 p-3">
-        <AlertCircle className="size-5 text-muted-foreground" />
+      <div className="bg-muted/30 rounded-full p-3">
+        <AlertCircle className="text-muted-foreground size-5" />
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium text-muted-foreground">{t("notAvailable.title")}</p>
-        <p className="mt-1 max-w-[240px] text-xs text-muted-foreground/70">
+        <p className="text-muted-foreground text-sm font-medium">{t("notAvailable.title")}</p>
+        <p className="text-muted-foreground/70 mt-1 max-w-[240px] text-xs">
           {t("notAvailable.description")}
         </p>
       </div>

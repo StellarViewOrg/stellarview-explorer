@@ -47,11 +47,7 @@ export function exportTimeSeriesCSV(
 ): void {
   const header = "Timestamp,Value";
   const rows = data.map((d) => `${d.timestamp},${d.value}`);
-  triggerDownload(
-    [header, ...rows].join("\n"),
-    `stellar-${metric}-${network}.csv`,
-    "text/csv"
-  );
+  triggerDownload([header, ...rows].join("\n"), `stellar-${metric}-${network}.csv`, "text/csv");
 }
 
 /**
@@ -78,11 +74,7 @@ export function exportTopNJSON(data: TopNEntry[], metric: string, network: strin
 export function exportTopNCSV(data: TopNEntry[], metric: string, network: string): void {
   const header = "Rank,ID,Label,Value";
   const rows = data.map((d, i) => `${i + 1},${d.id},${escapeCsv(d.label)},${d.value}`);
-  triggerDownload(
-    [header, ...rows].join("\n"),
-    `stellar-top-${metric}-${network}.csv`,
-    "text/csv"
-  );
+  triggerDownload([header, ...rows].join("\n"), `stellar-top-${metric}-${network}.csv`, "text/csv");
 }
 
 /** Escape a value for safe CSV embedding. */

@@ -25,7 +25,7 @@ describe("TimeSeriesChart", () => {
       data: undefined,
       isLoading: true,
       error: null,
-    } as any);
+    } as ReturnType<typeof useIndexerTimeSeries>);
 
     render(
       <TimeSeriesChart
@@ -48,7 +48,7 @@ describe("TimeSeriesChart", () => {
       data: { available: false, reason: "empty" },
       isLoading: false,
       error: null,
-    } as any);
+    } as ReturnType<typeof useIndexerTimeSeries>);
 
     render(
       <TimeSeriesChart
@@ -78,7 +78,7 @@ describe("TimeSeriesChart", () => {
       },
       isLoading: false,
       error: null,
-    } as any);
+    } as ReturnType<typeof useIndexerTimeSeries>);
 
     render(
       <TimeSeriesChart

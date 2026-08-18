@@ -1,7 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChartWrapper } from "./chart-wrapper";
@@ -50,19 +58,23 @@ function ChartTooltip({ active, payload, resolution, unit }: ChartTooltipProps) 
 
   const ts = payload[0].payload.timestamp;
   const date = new Date(ts);
-  const dateStr = date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const dateStr = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
   const timeStr =
     resolution === "hourly"
       ? date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })
       : "";
 
   return (
-    <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-lg">
-      <p className="text-sm font-medium text-foreground">
+    <div className="border-border bg-popover rounded-lg border px-3 py-2 shadow-lg">
+      <p className="text-foreground text-sm font-medium">
         {formatCompactNumber(payload[0].value)}
-        {unit && <span className="ml-1 text-xs text-muted-foreground">{unit}</span>}
+        {unit && <span className="text-muted-foreground ml-1 text-xs">{unit}</span>}
       </p>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         {dateStr} {timeStr}
       </p>
     </div>
@@ -85,7 +97,10 @@ export default function TimeSeriesChart({
   const { data: result, isLoading } = useIndexerTimeSeries(metric, resolution, from, to);
 
   const isAvailable = result?.available === true;
-  const seriesData: TimeSeriesDataPoint[] = isAvailable ? result.data.data : [];
+  const seriesData: TimeSeriesDataPoint[] = useMemo(() => {
+    if (!result || !result.available) return [];
+    return result.data.data;
+  }, [result]);
 
   // Compute summary stat
   const summary = useMemo(() => {
@@ -117,7 +132,9 @@ export default function TimeSeriesChart({
             {summary && (
               <span className="text-sm font-bold tabular-nums" style={{ color }}>
                 {formatCompactNumber(summary.latest)}
-                {unit && <span className="ml-0.5 text-xs font-normal text-muted-foreground">{unit}</span>}
+                {unit && (
+                  <span className="text-muted-foreground ml-0.5 text-xs font-normal">{unit}</span>
+                )}
               </span>
             )}
             <div className="flex gap-0.5">

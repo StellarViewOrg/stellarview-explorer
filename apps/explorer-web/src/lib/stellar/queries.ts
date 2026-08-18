@@ -191,7 +191,16 @@ export const stellarKeys = {
     resolution: Resolution,
     from: string,
     to: string
-  ) => [...stellarKeys.network(network), "indexer", "timeseries", metric, resolution, from, to] as const,
+  ) =>
+    [
+      ...stellarKeys.network(network),
+      "indexer",
+      "timeseries",
+      metric,
+      resolution,
+      from,
+      to,
+    ] as const,
   indexerTopN: (network: NetworkKey, metric: TopNMetric, window: TimeWindow, limit: number) =>
     [...stellarKeys.network(network), "indexer", "top", metric, window, limit] as const,
 };
@@ -1019,15 +1028,9 @@ export const stellarQueries = {
   }),
 
   // Indexer: Top-N rankings
-  indexerTopN: (
-    network: NetworkKey,
-    metric: TopNMetric,
-    window: TimeWindow,
-    limit = 10
-  ) => ({
+  indexerTopN: (network: NetworkKey, metric: TopNMetric, window: TimeWindow, limit = 10) => ({
     queryKey: stellarKeys.indexerTopN(network, metric, window, limit),
-    queryFn: (): Promise<IndexerResult<TopNResponse>> =>
-      fetchTopN(metric, window, limit),
+    queryFn: (): Promise<IndexerResult<TopNResponse>> => fetchTopN(metric, window, limit),
     staleTime: 5 * 60_000,
     retry: 1,
   }),

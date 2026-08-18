@@ -1,22 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { exportTimeSeriesCSV, exportTimeSeriesJSON, exportTopNCSV, exportTopNJSON } from "./analytics-export";
+import {
+  exportTimeSeriesCSV,
+  exportTimeSeriesJSON,
+  exportTopNCSV,
+  exportTopNJSON,
+} from "./analytics-export";
 import type { TimeSeriesDataPoint, TopNEntry } from "@/lib/indexer";
 
 // Mock URL.createObjectURL and a.click
 beforeEach(() => {
   global.URL.createObjectURL = vi.fn(() => "blob:test");
   global.URL.revokeObjectURL = vi.fn();
-  
+
   const mockClick = vi.fn();
   const mockAppend = vi.fn();
   const mockRemove = vi.fn();
-  
+
   global.document.createElement = vi.fn().mockReturnValue({
     click: mockClick,
-  }) as any;
-  
-  global.document.body.appendChild = mockAppend as any;
-  global.document.body.removeChild = mockRemove as any;
+  }) as unknown as typeof document.createElement;
+
+  global.document.body.appendChild = mockAppend as unknown as typeof document.body.appendChild;
+  global.document.body.removeChild = mockRemove as unknown as typeof document.body.removeChild;
 });
 
 describe("analytics-export", () => {

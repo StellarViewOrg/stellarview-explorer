@@ -25,15 +25,10 @@ describe("TopNTable", () => {
       data: undefined,
       isLoading: true,
       error: null,
-    } as any);
+    } as ReturnType<typeof useIndexerTopN>);
 
     render(
-      <TopNTable
-        metric="contract_activity"
-        title="Top Contracts"
-        icon={Trophy}
-        window="7d"
-      />
+      <TopNTable metric="contract_activity" title="Top Contracts" icon={Trophy} window="7d" />
     );
 
     const skeleton = document.querySelector(".animate-pulse");
@@ -45,15 +40,10 @@ describe("TopNTable", () => {
       data: { available: false, reason: "empty" },
       isLoading: false,
       error: null,
-    } as any);
+    } as ReturnType<typeof useIndexerTopN>);
 
     render(
-      <TopNTable
-        metric="contract_activity"
-        title="Top Contracts"
-        icon={Trophy}
-        window="7d"
-      />
+      <TopNTable metric="contract_activity" title="Top Contracts" icon={Trophy} window="7d" />
     );
 
     expect(screen.getByText("notAvailable.title")).toBeInTheDocument();
@@ -74,15 +64,10 @@ describe("TopNTable", () => {
       },
       isLoading: false,
       error: null,
-    } as any);
+    } as ReturnType<typeof useIndexerTopN>);
 
     render(
-      <TopNTable
-        metric="contract_activity"
-        title="Top Contracts"
-        icon={Trophy}
-        window="7d"
-      />
+      <TopNTable metric="contract_activity" title="Top Contracts" icon={Trophy} window="7d" />
     );
 
     expect(screen.getByText("Soroswap")).toBeInTheDocument();

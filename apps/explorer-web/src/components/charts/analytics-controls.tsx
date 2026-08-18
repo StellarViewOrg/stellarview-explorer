@@ -18,7 +18,7 @@ export function ResolutionPicker({ value, onChange, className }: ResolutionPicke
   const t = useTranslations("analytics");
 
   return (
-    <div className={cn("flex gap-1 rounded-lg bg-muted/50 p-1", className)}>
+    <div className={cn("bg-muted/50 flex gap-1 rounded-lg p-1", className)}>
       {RESOLUTIONS.map((r) => (
         <button
           key={r}
@@ -71,7 +71,7 @@ export function DateRangePicker({ value, onChange, className }: DateRangePickerP
   const t = useTranslations("analytics");
 
   return (
-    <div className={cn("flex gap-1 rounded-lg bg-muted/50 p-1", className)}>
+    <div className={cn("bg-muted/50 flex gap-1 rounded-lg p-1", className)}>
       {RANGE_PRESETS.map((r) => (
         <button
           key={r}
@@ -105,7 +105,7 @@ export function WindowPicker({ value, onChange, className }: WindowPickerProps) 
   const t = useTranslations("analytics");
 
   return (
-    <div className={cn("flex gap-1 rounded-lg bg-muted/50 p-1", className)}>
+    <div className={cn("bg-muted/50 flex gap-1 rounded-lg p-1", className)}>
       {WINDOWS.map((w) => (
         <button
           key={w}

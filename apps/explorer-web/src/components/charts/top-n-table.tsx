@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Trophy, Hash } from "lucide-react";
+import { Download } from "lucide-react";
 import { NotAvailableState } from "./not-available-state";
 import { ChartSkeleton } from "./chart-wrapper";
 import { useIndexerTopN } from "@/lib/hooks";
@@ -65,8 +65,8 @@ export default function TopNTable({
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
-            <Icon className="size-3.5 text-primary" />
+          <div className="bg-primary/10 flex size-7 items-center justify-center rounded-lg">
+            <Icon className="text-primary size-3.5" />
           </div>
           {title}
         </CardTitle>
@@ -94,13 +94,13 @@ export default function TopNTable({
             {entries.map((entry, i) => (
               <div
                 key={entry.id}
-                className="flex items-center justify-between rounded-lg bg-muted/30 p-3 transition-colors hover:bg-muted/50"
+                className="bg-muted/30 hover:bg-muted/50 flex items-center justify-between rounded-lg p-3 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <RankBadge rank={i + 1} />
                   <div>
                     <p className="text-sm font-medium">{entry.label}</p>
-                    <p className="font-mono text-xs text-muted-foreground">
+                    <p className="text-muted-foreground font-mono text-xs">
                       {truncateHash(entry.id)}
                     </p>
                   </div>

@@ -17,7 +17,7 @@ describe("indexer/client", () => {
     it("returns error when fetch fails", async () => {
       vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
       global.fetch = vi.fn().mockRejectedValue(new Error("Network Error"));
-      
+
       const res = await fetchTimeSeries("tx_volume", "daily", "2024-01-01", "2024-01-02");
       expect(res).toEqual({ available: false, reason: "error" });
     });
@@ -28,7 +28,7 @@ describe("indexer/client", () => {
         ok: true,
         json: () => Promise.resolve({ metric: "tx_volume", data: [] }),
       });
-      
+
       const res = await fetchTimeSeries("tx_volume", "daily", "2024-01-01", "2024-01-02");
       expect(res).toEqual({ available: false, reason: "empty" });
     });
@@ -40,7 +40,7 @@ describe("indexer/client", () => {
         ok: true,
         json: () => Promise.resolve(mockData),
       });
-      
+
       const res = await fetchTimeSeries("tx_volume", "daily", "2024-01-01", "2024-01-02");
       expect(res).toEqual({ available: true, data: mockData });
     });
@@ -59,7 +59,7 @@ describe("indexer/client", () => {
         ok: true,
         json: () => Promise.resolve({ metric: "contract_activity", data: [] }),
       });
-      
+
       const res = await fetchTopN("contract_activity", "7d", 10);
       expect(res).toEqual({ available: false, reason: "empty" });
     });

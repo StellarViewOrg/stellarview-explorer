@@ -367,7 +367,7 @@ export default function AnalyticsPage() {
 
       {/* Tabs for different analytics views */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="flex flex-wrap h-auto">
+        <TabsList className="flex h-auto flex-wrap">
           <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
           <TabsTrigger value="history">{t("tabs.history")}</TabsTrigger>
           <TabsTrigger value="top-n">{t("tabs.topN")}</TabsTrigger>
@@ -415,7 +415,7 @@ export default function AnalyticsPage() {
               <DateRangePicker value={dateRangePreset} onChange={setDateRangePreset} />
             </div>
           </div>
-          
+
           <div className="grid gap-4 lg:grid-cols-2">
             <TimeSeriesChart
               metric="tx_volume"
