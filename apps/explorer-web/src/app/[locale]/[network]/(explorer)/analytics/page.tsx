@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,32 @@ import {
   ArrowLeftRight,
   Calculator,
   Shield,
+  LineChart,
+  Wallet,
+  Coins,
+  UserPlus,
+  Users,
+  Package,
+  Trophy,
+  ArrowRightLeft,
 } from "lucide-react";
 import { DashboardCharts } from "@/components/charts";
 import { NetworkStatsCard } from "@/components/stats";
 import { useLatestLedger, useRecentTransactions } from "@/lib/hooks";
 import { useAnalyticsMode, useNetwork } from "@/lib/providers";
 import { cn, formatCompactNumber } from "@/lib/utils";
+
+import {
+  ResolutionPicker,
+  DateRangePicker,
+  WindowPicker,
+  rangePresetToISO,
+} from "@/components/charts";
+import type { DateRangePreset } from "@/components/charts";
+import TimeSeriesChart from "@/components/charts/time-series-chart";
+import TopNTable from "@/components/charts/top-n-table";
+import { chartColors } from "@/components/charts/chart-config";
+import type { Resolution, TimeWindow } from "@/lib/indexer";
 
 // Statistical calculation functions
 function calculateMean(values: number[]): number {
@@ -147,6 +167,13 @@ export default function AnalyticsPage() {
   const t = useTranslations("analytics");
   const { isAnalyticsMode, settings } = useAnalyticsMode();
   const { network } = useNetwork();
+
+  // State for History and Top N tabs
+  const [resolution, setResolution] = useState<Resolution>("daily");
+  const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("30d");
+  const [topNWindow, setTopNWindow] = useState<TimeWindow>("7d");
+
+  const dateRange = useMemo(() => rangePresetToISO(dateRangePreset), [dateRangePreset]);
 
   // Fetch data
   const { data: latestLedger, isLoading: ledgerLoading } = useLatestLedger();
@@ -340,8 +367,10 @@ export default function AnalyticsPage() {
 
       {/* Tabs for different analytics views */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
+        <TabsList className="flex flex-wrap h-auto">
           <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
+          <TabsTrigger value="history">{t("tabs.history")}</TabsTrigger>
+          <TabsTrigger value="top-n">{t("tabs.topN")}</TabsTrigger>
           <TabsTrigger value="transactions">{t("tabs.transactions")}</TabsTrigger>
           <TabsTrigger value="network">{t("tabs.network")}</TabsTrigger>
         </TabsList>
@@ -375,6 +404,108 @@ export default function AnalyticsPage() {
               />
             </div>
           )}
+        </TabsContent>
+
+        {/* History Tab */}
+        <TabsContent value="history" className="space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-lg font-semibold">{t("tabs.history")}</h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <ResolutionPicker value={resolution} onChange={setResolution} />
+              <DateRangePicker value={dateRangePreset} onChange={setDateRangePreset} />
+            </div>
+          </div>
+          
+          <div className="grid gap-4 lg:grid-cols-2">
+            <TimeSeriesChart
+              metric="tx_volume"
+              title={t("metrics.txVolume")}
+              icon={LineChart}
+              color={chartColors.primary}
+              resolution={resolution}
+              from={dateRange.from}
+              to={dateRange.to}
+            />
+            <TimeSeriesChart
+              metric="active_accounts"
+              title={t("metrics.activeAccounts")}
+              icon={Users}
+              color={chartColors.chart2}
+              resolution={resolution}
+              from={dateRange.from}
+              to={dateRange.to}
+            />
+            <TimeSeriesChart
+              metric="fee_classic"
+              title={t("metrics.classicFees")}
+              icon={Wallet}
+              color={chartColors.chart3}
+              unit="XLM"
+              resolution={resolution}
+              from={dateRange.from}
+              to={dateRange.to}
+            />
+            <TimeSeriesChart
+              metric="fee_soroban"
+              title={t("metrics.sorobanFees")}
+              icon={Coins}
+              color={chartColors.chart4}
+              unit="XLM"
+              resolution={resolution}
+              from={dateRange.from}
+              to={dateRange.to}
+            />
+            <TimeSeriesChart
+              metric="new_accounts"
+              title={t("metrics.newAccounts")}
+              icon={UserPlus}
+              color={chartColors.chart5}
+              resolution={resolution}
+              from={dateRange.from}
+              to={dateRange.to}
+            />
+            <TimeSeriesChart
+              metric="asset_supply"
+              title={t("metrics.assetSupply")}
+              icon={Package}
+              color={chartColors.chart1}
+              resolution={resolution}
+              from={dateRange.from}
+              to={dateRange.to}
+            />
+          </div>
+        </TabsContent>
+
+        {/* Top N Tab */}
+        <TabsContent value="top-n" className="space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-lg font-semibold">{t("tabs.topN")}</h2>
+            <WindowPicker value={topNWindow} onChange={setTopNWindow} />
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            <TopNTable
+              metric="contract_activity"
+              title={t("topN.contracts")}
+              icon={Trophy}
+              window={topNWindow}
+              limit={10}
+            />
+            <TopNTable
+              metric="asset_transfers"
+              title={t("topN.assets")}
+              icon={ArrowRightLeft}
+              window={topNWindow}
+              limit={10}
+            />
+            <TopNTable
+              metric="highest_fees"
+              title={t("topN.highestFees")}
+              icon={Wallet}
+              window={topNWindow}
+              limit={10}
+            />
+          </div>
         </TabsContent>
 
         {/* Transactions Tab */}

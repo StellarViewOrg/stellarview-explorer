@@ -931,53 +931,91 @@
     "expanded": "Erweitert"
   },
   "analytics": {
-    "title": "Netzwerk-Analytik",
-    "subtitle": "Erweiterte Statistiken und Datenanalyse für das Stellar-Netzwerk",
-    "keyMetrics": "Hauptkennzahlen",
+    "title": "Network Analytics",
+    "subtitle": "Advanced statistics and data analysis for the Stellar network",
+    "keyMetrics": "Key Metrics",
     "tabs": {
-      "overview": "Übersicht",
-      "transactions": "Transaktionen",
-      "network": "Netzwerk"
+      "overview": "Overview",
+      "transactions": "Transactions",
+      "network": "Network",
+      "history": "History",
+      "topN": "Top N"
     },
     "enableBanner": {
-      "title": "Aktivieren Sie den Analysemodus für erweiterte Funktionen",
-      "description": "Erhalten Sie Zugang zu detaillierten Statistiken, Trendlinien und Datenexportfunktionen."
+      "title": "Enable Analytics Mode for advanced features",
+      "description": "Get access to detailed statistics, trendlines, and data export capabilities."
     },
     "metrics": {
-      "latestLedger": "Neuester Ledger",
-      "ledgerTxCount": "Ledger-TX-Anzahl",
-      "ledgerOperations": "Ledger-Operationen",
-      "protocolVersion": "Protokollversion"
+      "latestLedger": "Latest Ledger",
+      "ledgerTxCount": "Ledger TX Count",
+      "ledgerOperations": "Ledger Operations",
+      "protocolVersion": "Protocol Version",
+      "txVolume": "Transaction Volume",
+      "classicFees": "Classic Fees",
+      "sorobanFees": "Soroban Resource Fees",
+      "activeAccounts": "Active Accounts",
+      "newAccounts": "New Accounts",
+      "assetSupply": "Asset Supply"
     },
     "statistics": {
-      "operationsPerTx": "Operationen pro Transaktion",
-      "feesStroops": "Gebühren (Stroops)",
-      "summary": "Statistische Zusammenfassung"
+      "operationsPerTx": "Operations per Transaction",
+      "feesStroops": "Transaction Fees (stroops)",
+      "summary": "Summary Statistics"
     },
     "stats": {
-      "mean": "Mittelwert",
+      "mean": "Mean",
       "median": "Median",
-      "stdDev": "Standardabweichung",
+      "stdDev": "Std Deviation",
       "min": "Minimum",
       "max": "Maximum",
-      "total": "Gesamt",
-      "range": "Bereich"
+      "total": "Total",
+      "range": "Range"
     },
     "tx": {
-      "sampleSize": "Stichprobengröße",
-      "recentTransactions": "aktuelle Transaktionen",
-      "successRate": "Erfolgsrate",
-      "successful": "Erfolgreich",
-      "failed": "Fehlgeschlagen",
-      "totalOperations": "Gesamt Operationen",
-      "avgOpsPerTx": "Durchschn. Ops/TX"
+      "sampleSize": "Sample Size",
+      "recentTransactions": "recent transactions",
+      "successRate": "Success Rate",
+      "successful": "Successful",
+      "failed": "Failed",
+      "totalOperations": "Total Operations",
+      "avgOpsPerTx": "Avg Ops/TX"
     },
     "network": {
-      "latestLedger": "Neueste Ledger-Info",
-      "sequence": "Sequenz",
-      "transactions": "Transaktionen",
-      "operations": "Operationen",
-      "protocolVersion": "Protokollversion"
+      "latestLedger": "Latest Ledger Info",
+      "sequence": "Sequence",
+      "transactions": "Transactions",
+      "operations": "Operations",
+      "protocolVersion": "Protocol Version"
+    },
+    "resolution": {
+      "hourly": "Hourly",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
+    "range": {
+      "24h": "24H",
+      "7d": "7D",
+      "30d": "30D",
+      "90d": "90D",
+      "1y": "1Y",
+      "all": "All"
+    },
+    "topN": {
+      "contracts": "Most Active Contracts",
+      "assets": "Most Transferred Assets",
+      "highestFees": "Highest Fee Transactions",
+      "rank": "Rank",
+      "entity": "Entity",
+      "value": "Value"
+    },
+    "notAvailable": {
+      "title": "Not Available Yet",
+      "description": "This metric will be available once the indexer processes historical data."
+    },
+    "export": {
+      "csv": "Export CSV",
+      "json": "Export JSON",
+      "disabled": "Export unavailable for this metric"
     }
   },
   "crossNetwork": {
