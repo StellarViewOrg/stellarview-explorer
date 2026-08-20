@@ -8,6 +8,9 @@ interface NotAvailableStateProps {
   /** Height to match the chart area. */
   height?: number;
   className?: string;
+  /** Overrides the default "analytics.notAvailable.*" copy for this call site. */
+  title?: string;
+  description?: string;
 }
 
 /**
@@ -15,7 +18,12 @@ interface NotAvailableStateProps {
  * Used inside chart wrappers to maintain consistent layout while clearly
  * communicating that data will appear once the indexer ships real aggregates.
  */
-export function NotAvailableState({ height = 180, className }: NotAvailableStateProps) {
+export function NotAvailableState({
+  height = 180,
+  className,
+  title,
+  description,
+}: NotAvailableStateProps) {
   const t = useTranslations("analytics");
 
   return (
@@ -31,9 +39,11 @@ export function NotAvailableState({ height = 180, className }: NotAvailableState
         <AlertCircle className="text-muted-foreground size-5" />
       </div>
       <div className="text-center">
-        <p className="text-muted-foreground text-sm font-medium">{t("notAvailable.title")}</p>
+        <p className="text-muted-foreground text-sm font-medium">
+          {title ?? t("notAvailable.title")}
+        </p>
         <p className="text-muted-foreground/70 mt-1 max-w-[240px] text-xs">
-          {t("notAvailable.description")}
+          {description ?? t("notAvailable.description")}
         </p>
       </div>
     </div>

@@ -10,7 +10,7 @@ import { LoadingCard } from "@/components/common/loading-card";
 import { ErrorState } from "@/components/common/error-state";
 import { useAsset, useAssetMetadata } from "@/lib/hooks";
 import { parseAssetSlug } from "@/lib/utils";
-import { Lock, Unlock, Building2, BarChart3, BookOpen, Star, Users } from "lucide-react";
+import { Lock, Unlock, Building2, BarChart3, BookOpen, Star, Users, Droplets } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AssetRecordExtended } from "./sections/types";
 import { AssetSummary } from "./sections/asset-summary";
@@ -20,6 +20,7 @@ import { AssetHolders } from "./sections/asset-holders";
 import { AssetTrades } from "./sections/asset-trades";
 import { AssetOrderbook } from "./sections/asset-orderbook";
 import { AssetMarketData } from "./sections/asset-market-data";
+import { AssetPools } from "./sections/asset-pools";
 
 interface AssetContentProps {
   slug: string;
@@ -163,6 +164,10 @@ export function AssetContent({ slug }: AssetContentProps) {
             <BookOpen className="mr-1.5 size-3.5" />
             Orderbook
           </TabsTrigger>
+          <TabsTrigger value="pools">
+            <Droplets className="mr-1.5 size-3.5" />
+            {t("pools")}
+          </TabsTrigger>
           <TabsTrigger value="market">
             <Star className="mr-1.5 size-3.5" />
             Market
@@ -180,6 +185,9 @@ export function AssetContent({ slug }: AssetContentProps) {
         </TabsContent>
         <TabsContent value="orderbook" className="mt-4">
           <AssetOrderbook code={asset.asset_code} issuer={asset.asset_issuer} />
+        </TabsContent>
+        <TabsContent value="pools" className="mt-4">
+          <AssetPools code={asset.asset_code} issuer={asset.asset_issuer} />
         </TabsContent>
         <TabsContent value="market" className="mt-4">
           <AssetMarketData code={asset.asset_code} issuer={asset.asset_issuer} />

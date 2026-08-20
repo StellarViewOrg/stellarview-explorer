@@ -9,3 +9,5 @@ export {
   rangePresetToISO,
 } from "./analytics-controls";
 export type { DateRangePreset } from "./analytics-controls";
+export { CandleResolutionPicker } from "./candle-resolution-picker";
+export { PoolDepthChart } from "./pool-depth-chart";
