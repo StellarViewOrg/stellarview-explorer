@@ -1044,5 +1044,11 @@
     "failedToLoadTx": "트랜잭션 로드 실패",
     "noTransactions": "트랜잭션 없음",
     "noTransactionsDesc": "이 유동성 풀에 대한 트랜잭션을 찾을 수 없습니다."
+  },
+  "domains": {
+    "alsoKnownAs": "{name}(으)로도 알려짐",
+    "notAvailable": "도메인 준비 중",
+    "notAvailableHint": "도메인 데이터를 아직 사용할 수 없습니다. 인덱서가 레지스트리를 처리하면 표시됩니다.",
+    "more": "외 {count}개"
   }
 }

@@ -60,9 +60,69 @@ export interface TopNResponse {
 
 /**
  * Discriminated union returned by the indexer client.
- * `available: false` means the metric hasn't been aggregated yet (or the
- * indexer is unreachable), and the chart should show a "not available" state.
+ * `available: false` means the data hasn't been produced yet (or the indexer is
+ * unreachable), and the caller should show a "not available" state.
+ *
+ * `not_indexed` is the domains endpoints' equivalent of `empty`: the indexer
+ * answered normally but hasn't ingested any ledger yet. It is reported in the
+ * response body, not as an HTTP error, so it must not be treated as a failure.
  */
 export type IndexerResult<T> =
   | { available: true; data: T }
-  | { available: false; reason: "not_configured" | "empty" | "error" };
+  | { available: false; reason: "not_configured" | "empty" | "not_indexed" | "error" };
+
+// Soroban Domains read API (indexer#29). Contract frozen in the indexer repo at
+// docs/domains-api.md. Availability is signaled by the `indexed` field in the
+// body, never by an HTTP error status.
+
+/** Whether a name points at a classic account or a Soroban contract. */
+export type DomainTargetType = "account" | "contract";
+
+/** Lifecycle state, computed by the indexer at read time. */
+export type DomainStatus = "active" | "expired" | "revoked";
+
+/** Registry event kinds recorded against a name. */
+export type DomainEventType = "register" | "transfer" | "renew" | "claim" | "revoke";
+
+/** A single domain record. */
+export interface DomainRecord {
+  name: string;
+  owner: string;
+  /** The address the name currently resolves to. */
+  address: string;
+  target_type: DomainTargetType;
+  registered_at: string;
+  expires_at: string;
+  status: DomainStatus;
+  last_event_ledger: number;
+}
+
+/** One entry in a name's history. */
+export interface DomainEventRecord {
+  name: string;
+  event_type: DomainEventType;
+  owner?: string;
+  address?: string;
+  expires_at?: string;
+  transaction_hash: string;
+  ledger_sequence: number;
+  created_at: string;
+}
+
+/** Shared response envelope for every domains endpoint. */
+export interface DomainsResponse {
+  /** `false` until the indexer has ingested at least one ledger. */
+  indexed: boolean;
+  /** Single record for resolve-by-name, or the primary reverse-lookup match. */
+  domain: DomainRecord | null;
+  domains?: DomainRecord[];
+  events?: DomainEventRecord[];
+  /** Last `name` on this page; pass back as `cursor` for the next one. */
+  cursor?: string;
+}
+
+/** Reverse lookup narrowed to what the badge needs. */
+export interface DomainReverseLookup {
+  domain: DomainRecord | null;
+  domains: DomainRecord[];
+}

@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/layout/page-header";
 import { CrossNetworkBanner } from "@/components/common/cross-network-banner";
 import { CopyContextButton } from "@/components/common/copy-context-button";
+import { DomainBadge } from "@/components/domains";
 import { ContractEventDetails, ContractTransactions, TokenGallery } from "@/components/contracts";
 import { useContractInfo } from "@/lib/hooks";
 import { isValidContractId } from "@/lib/utils";
@@ -35,6 +36,7 @@ export function ContractContent({ id }: ContractContentProps) {
         hash={id}
         backHref="/"
         backLabel={tCommon("home")}
+        badge={<DomainBadge address={id} />}
         showQr={false}
         actions={<CopyContextButton type="contract" data={{ id }} />}
       />

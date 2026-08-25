@@ -1044,5 +1044,11 @@
     "failedToLoadTx": "Falha ao carregar transações",
     "noTransactions": "Sem transações",
     "noTransactionsDesc": "Nenhuma transação encontrada para este pool de liquidez."
+  },
+  "domains": {
+    "alsoKnownAs": "Também conhecido como {name}",
+    "notAvailable": "Domínios pendentes",
+    "notAvailableHint": "Os dados de domínios ainda não estão disponíveis. Eles aparecerão quando o indexador tiver processado o registro.",
+    "more": "+{count} mais"
   }
 }

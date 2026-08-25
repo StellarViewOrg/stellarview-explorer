@@ -3,7 +3,7 @@ import type { Horizon, xdr } from "@stellar/stellar-sdk";
 import { getHorizonClient, getRpcClient, fetchStellarExpert } from "./client";
 import type { StellarExpertResult } from "./client";
 import { DEFAULT_PAGE_SIZE, STALE_TIME, POPULAR_ASSETS } from "@/lib/constants";
-import { fetchTimeSeries, fetchTopN } from "@/lib/indexer";
+import { fetchTimeSeries, fetchTopN, fetchDomainsByAddress } from "@/lib/indexer";
 import type {
   TimeSeriesMetric,
   TopNMetric,
@@ -12,6 +12,7 @@ import type {
   IndexerResult,
   TimeSeriesResponse,
   TopNResponse,
+  DomainReverseLookup,
 } from "@/lib/indexer";
 
 // Stellar Expert API response shapes
@@ -183,6 +184,10 @@ export const stellarKeys = {
     [...stellarKeys.network(network), "stellar_expert", "network_activity"] as const,
   networkStats: (network: NetworkKey) =>
     [...stellarKeys.network(network), "stellar_expert", "stats"] as const,
+
+  // Indexer: Soroban Domains reverse lookup
+  domainsByAddress: (network: NetworkKey, address: string) =>
+    [...stellarKeys.network(network), "indexer", "domains", "address", address] as const,
 
   // Indexer analytics
   indexerTimeSeries: (
@@ -1010,6 +1015,15 @@ export const stellarQueries = {
       };
     },
     staleTime: STALE_TIME,
+  }),
+
+  // Indexer: Soroban Domains reverse lookup (address -> owned domains)
+  domainsByAddress: (network: NetworkKey, address: string) => ({
+    queryKey: stellarKeys.domainsByAddress(network, address),
+    queryFn: (): Promise<IndexerResult<DomainReverseLookup>> => fetchDomainsByAddress(address),
+    // Registrations change rarely, but they do expire and transfer.
+    staleTime: 5 * 60_000,
+    retry: 1,
   }),
 
   // Indexer: time-series analytics

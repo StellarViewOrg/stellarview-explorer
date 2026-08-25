@@ -11,6 +11,7 @@ import { Breadcrumbs } from "@/components/common/breadcrumbs";
 import { MergedAccountView, type AccountMergeOp } from "@/components/accounts/merged-account-view";
 import { AccountStatement } from "@/components/accounts/account-statement";
 import { CopyContextButton } from "@/components/common/copy-context-button";
+import { DomainBadge } from "@/components/domains";
 import { useAccount, useAccountLastOperations, useWatchlist } from "@/lib/hooks";
 import { truncateHash } from "@/lib/utils";
 import { asRecord, isAccountMergeOp } from "@/lib/utils/horizon-types";
@@ -100,6 +101,7 @@ export function AccountContent({ id }: AccountContentProps) {
         hash={id}
         backHref="/accounts"
         backLabel={tNav("accounts")}
+        badge={<DomainBadge address={id} />}
         showQr
         actions={
           <div className="flex items-center gap-2">

@@ -1044,5 +1044,11 @@
     "failedToLoadTx": "加载交易失败",
     "noTransactions": "无交易",
     "noTransactionsDesc": "未找到此流动性池的交易记录。"
+  },
+  "domains": {
+    "alsoKnownAs": "又名 {name}",
+    "notAvailable": "域名待处理",
+    "notAvailableHint": "域名数据尚不可用。索引器处理完注册表后将会显示。",
+    "more": "还有 {count} 个"
   }
 }

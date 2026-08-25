@@ -1044,5 +1044,11 @@
     "failedToLoadTx": "Failed to load transactions",
     "noTransactions": "No transactions",
     "noTransactionsDesc": "No transactions found for this liquidity pool."
+  },
+  "domains": {
+    "alsoKnownAs": "Also known as {name}",
+    "notAvailable": "Domains pending",
+    "notAvailableHint": "Domain data isn't available yet. This will fill in once the indexer has processed the registry.",
+    "more": "+{count} more"
   }
 }

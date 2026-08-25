@@ -1044,5 +1044,11 @@
     "failedToLoadTx": "トランザクションの読み込みに失敗しました",
     "noTransactions": "トランザクションなし",
     "noTransactionsDesc": "この流動性プールのトランザクションが見つかりませんでした。"
+  },
+  "domains": {
+    "alsoKnownAs": "別名 {name}",
+    "notAvailable": "ドメイン準備中",
+    "notAvailableHint": "ドメインデータはまだ利用できません。インデクサーがレジストリを処理すると表示されます。",
+    "more": "他 {count} 件"
   }
 }
