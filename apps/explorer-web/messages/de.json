@@ -19,7 +19,7 @@
   },
   "search": {
     "placeholder": "Transaktionen, Konten suchen...",
-    "inputPlaceholder": "Nach TX-Hash, Konto, Asset, Vertrag oder Ledger suchen...",
+    "inputPlaceholder": "Suche nach Tx-Hash, Konto, Asset, Contract, Ledger oder name.xlm...",
     "noResults": "Keine Ergebnisse gefunden.",
     "noResultsHint": "Versuchen Sie einen Transaktions-Hash, eine Kontoadresse oder Ledger-Nummer.",
     "searchAs": "Suchen als {type}",
@@ -28,7 +28,13 @@
     "quickAccess": "Schnellzugriff",
     "recentTransactions": "Kürzliche Transaktionen",
     "latestLedgers": "Neueste Ledger",
-    "smartContracts": "Smart Contracts"
+    "smartContracts": "Smart Contracts",
+    "domainResolving": "Domain wird aufgelöst...",
+    "domainResolved": "Verweist auf {address}",
+    "domainNotFound": "Diese Domain ist nicht registriert",
+    "domainExpired": "Die Registrierung dieser Domain ist abgelaufen",
+    "domainUnsupported": "Domain-Auflösung ist in diesem Netzwerk nicht verfügbar",
+    "domainError": "Domain konnte nicht aufgelöst werden. Bitte erneut versuchen."
   },
   "entityTypes": {
     "transaction": "Transaktion",
@@ -36,6 +42,7 @@
     "contract": "Vertrag",
     "asset": "Asset",
     "ledger": "Ledger",
+    "domain": "Domain",
     "unknown": "Suchen"
   },
   "common": {

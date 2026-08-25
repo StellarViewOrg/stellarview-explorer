@@ -19,7 +19,7 @@
   },
   "search": {
     "placeholder": "トランザクション、アカウントを検索...",
-    "inputPlaceholder": "TXハッシュ、アカウント、アセット、コントラクト、レジャーで検索...",
+    "inputPlaceholder": "トランザクションハッシュ、アカウント、アセット、コントラクト、レジャー、name.xlm で検索...",
     "noResults": "結果が見つかりません。",
     "noResultsHint": "トランザクションハッシュ、アカウントアドレス、レジャー番号を試してください。",
     "searchAs": "{type} として検索",
@@ -28,7 +28,13 @@
     "quickAccess": "クイックアクセス",
     "recentTransactions": "最近のトランザクション",
     "latestLedgers": "最新レジャー",
-    "smartContracts": "スマートコントラクト"
+    "smartContracts": "スマートコントラクト",
+    "domainResolving": "ドメインを解決中...",
+    "domainResolved": "{address} を指しています",
+    "domainNotFound": "このドメインは登録されていません",
+    "domainExpired": "このドメインの登録は期限切れです",
+    "domainUnsupported": "このネットワークではドメイン解決を利用できません",
+    "domainError": "ドメインを解決できませんでした。もう一度お試しください。"
   },
   "entityTypes": {
     "transaction": "トランザクション",
@@ -36,6 +42,7 @@
     "contract": "コントラクト",
     "asset": "アセット",
     "ledger": "レジャー",
+    "domain": "ドメイン",
     "unknown": "検索"
   },
   "common": {
