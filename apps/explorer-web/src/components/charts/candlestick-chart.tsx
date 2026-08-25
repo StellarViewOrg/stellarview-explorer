@@ -31,6 +31,11 @@ interface CandleDatum extends Candle {
   range: [number, number];
 }
 
+/** Maps indexer candles to the shape the chart plots. Exported for testing. */
+export function toCandleChartData(candles: Candle[]): CandleDatum[] {
+  return candles.map((c) => ({ ...c, range: [c.low, c.high] as [number, number] }));
+}
+
 function formatTimestamp(timestamp: string, resolution: CandleResolution): string {
   const date = new Date(timestamp);
   if (resolution === "1m" || resolution === "1h") {
@@ -136,7 +141,7 @@ export default function CandlestickChart({
   const isAvailable = result?.available === true;
   const candles: CandleDatum[] = useMemo(() => {
     if (!result || !result.available) return [];
-    return result.data.data.map((c) => ({ ...c, range: [c.low, c.high] as [number, number] }));
+    return toCandleChartData(result.data.data);
   }, [result]);
 
   return (

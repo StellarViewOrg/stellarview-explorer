@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -26,10 +26,14 @@ interface AssetContentProps {
   slug: string;
 }
 
+const ASSET_TABS = ["stats", "holders", "trades", "orderbook", "pools", "market", "flags"] as const;
+
 export function AssetContent({ slug }: AssetContentProps) {
   const parsed = parseAssetSlug(slug);
   const t = useTranslations("assetDetails");
   const tCommon = useTranslations("common");
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get("tab");
 
   const isNative = parsed?.issuer === "native";
 
@@ -59,20 +63,34 @@ export function AssetContent({ slug }: AssetContentProps) {
           </div>
         </div>
 
-        <Card variant="elevated" className="border-0">
-          <CardHeader>
-            <CardTitle className="text-base">{t("aboutXlm")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">{t("xlmDescription")}</p>
-            <ul className="text-muted-foreground list-inside list-disc space-y-2">
-              <li>{t("xlmPurpose1")}</li>
-              <li>{t("xlmPurpose2")}</li>
-              <li>{t("xlmPurpose3")}</li>
-              <li>{t("xlmPurpose4")}</li>
-            </ul>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue={requestedTab === "pools" ? "pools" : "about"} className="w-full">
+          <TabsList>
+            <TabsTrigger value="about">{t("overview")}</TabsTrigger>
+            <TabsTrigger value="pools">
+              <Droplets className="mr-1.5 size-3.5" />
+              {t("pools")}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="about" className="mt-4">
+            <Card variant="elevated" className="border-0">
+              <CardHeader>
+                <CardTitle className="text-base">{t("aboutXlm")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">{t("xlmDescription")}</p>
+                <ul className="text-muted-foreground list-inside list-disc space-y-2">
+                  <li>{t("xlmPurpose1")}</li>
+                  <li>{t("xlmPurpose2")}</li>
+                  <li>{t("xlmPurpose3")}</li>
+                  <li>{t("xlmPurpose4")}</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="pools" className="mt-4">
+            <AssetPools code="XLM" issuer="native" />
+          </TabsContent>
+        </Tabs>
       </div>
     );
   }
@@ -149,7 +167,14 @@ export function AssetContent({ slug }: AssetContentProps) {
 
       <AssetSummary asset={asset as AssetRecordExtended} />
 
-      <Tabs defaultValue="stats" className="w-full">
+      <Tabs
+        defaultValue={
+          ASSET_TABS.includes(requestedTab as (typeof ASSET_TABS)[number])
+            ? (requestedTab as (typeof ASSET_TABS)[number])
+            : "stats"
+        }
+        className="w-full"
+      >
         <TabsList>
           <TabsTrigger value="stats">{t("statistics")}</TabsTrigger>
           <TabsTrigger value="holders">

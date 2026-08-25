@@ -97,6 +97,77 @@ describe("PairsPage pagination", () => {
     expect(screen.queryByText(`TKN${PAIR_COUNT - 1}`)).not.toBeInTheDocument();
   });
 
+  it("reorders rows when the liquidity header is clicked", () => {
+    // Deliberately different orderings for volume vs. liquidity so a click
+    // that only reorders by volume (a no-op sort) would fail this test.
+    const sortablePairs = [
+      {
+        id: "pair-a",
+        base: { code: "AAA", issuer: "native" },
+        counter: { code: "XLM", issuer: "native" },
+        lastPrice: 0.1,
+        priceChange24h: 1,
+        volume24h: 300,
+        liquidity: 100,
+      },
+      {
+        id: "pair-b",
+        base: { code: "BBB", issuer: "native" },
+        counter: { code: "XLM", issuer: "native" },
+        lastPrice: 0.1,
+        priceChange24h: 1,
+        volume24h: 200,
+        liquidity: 500,
+      },
+      {
+        id: "pair-c",
+        base: { code: "CCC", issuer: "native" },
+        counter: { code: "XLM", issuer: "native" },
+        lastPrice: 0.1,
+        priceChange24h: 1,
+        volume24h: 100,
+        liquidity: 300,
+      },
+    ];
+    useDexPairs.mockReturnValue({
+      data: { available: true, data: { data: sortablePairs } },
+      isLoading: false,
+    });
+
+    render(<PairsPage />);
+
+    const pairHrefs = () =>
+      screen
+        .getAllByRole("link")
+        .map((a) => a.getAttribute("href"))
+        .filter((href): href is string => !!href?.startsWith("/pair/"));
+
+    // Default sort is volume desc: AAA (300), BBB (200), CCC (100).
+    expect(pairHrefs()).toEqual([
+      "/pair/AAA-native_XLM-native",
+      "/pair/BBB-native_XLM-native",
+      "/pair/CCC-native_XLM-native",
+    ]);
+
+    fireEvent.click(screen.getByRole("button", { name: "liquidity" }));
+
+    // Liquidity desc: BBB (500), CCC (300), AAA (100).
+    expect(pairHrefs()).toEqual([
+      "/pair/BBB-native_XLM-native",
+      "/pair/CCC-native_XLM-native",
+      "/pair/AAA-native_XLM-native",
+    ]);
+
+    fireEvent.click(screen.getByRole("button", { name: "liquidity" }));
+
+    // Clicking the same header again flips direction: liquidity asc.
+    expect(pairHrefs()).toEqual([
+      "/pair/AAA-native_XLM-native",
+      "/pair/CCC-native_XLM-native",
+      "/pair/BBB-native_XLM-native",
+    ]);
+  });
+
   it("shows the not-available empty state when the indexer has no pairs yet", () => {
     useDexPairs.mockReturnValue({
       data: { available: false, reason: "empty" },

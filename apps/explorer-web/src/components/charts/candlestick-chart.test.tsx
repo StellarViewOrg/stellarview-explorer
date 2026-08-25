@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import CandlestickChart from "./candlestick-chart";
+import CandlestickChart, { toCandleChartData } from "./candlestick-chart";
+import candlesFixture from "@/lib/indexer/__fixtures__/candles-response.json";
 
 afterEach(cleanup);
 
@@ -14,6 +15,14 @@ vi.mock("next-intl", () => ({
 }));
 
 import { usePairCandles } from "@/lib/hooks";
+
+describe("toCandleChartData", () => {
+  it("plots the exact OHLC values from the indexer's candle fixture", () => {
+    expect(toCandleChartData(candlesFixture.data)).toEqual(
+      candlesFixture.data.map((c) => ({ ...c, range: [c.low, c.high] }))
+    );
+  });
+});
 
 describe("CandlestickChart", () => {
   it("renders loading state", () => {
@@ -57,35 +66,17 @@ describe("CandlestickChart", () => {
 
   it("renders the chart when candles are available", () => {
     vi.mocked(usePairCandles).mockReturnValue({
-      data: {
-        available: true,
-        data: {
-          pairId: "XLM-native_USDC-GA5Z",
-          resolution: "1h",
-          from: "2024-01-01",
-          to: "2024-01-02",
-          data: [
-            {
-              timestamp: "2024-01-01T00:00:00Z",
-              open: 0.1,
-              high: 0.12,
-              low: 0.09,
-              close: 0.11,
-              volume: 1000,
-            },
-          ],
-        },
-      },
+      data: { available: true, data: candlesFixture },
       isLoading: false,
       error: null,
     } as ReturnType<typeof usePairCandles>);
 
     const { container } = render(
       <CandlestickChart
-        pairId="XLM-native_USDC-GA5Z"
+        pairId={candlesFixture.pairId}
         resolution="1h"
-        from="2024-01-01"
-        to="2024-01-02"
+        from={candlesFixture.from}
+        to={candlesFixture.to}
       />
     );
 

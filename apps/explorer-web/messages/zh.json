@@ -312,7 +312,9 @@
       "noActivityDesc": "过去 7 天内未找到此合约的事件。",
       "recentEvents": "点击任意卡片查看详情 · {count} 个最近事件"
     },
-    "underlyingAsset": "底层资产"
+    "underlyingAsset": "底层资产",
+    "tradingPairsAndPools": "交易对和流动池",
+    "viewPools": "查看流动池"
   },
   "watchlist": {
     "title": "关注列表",
@@ -653,6 +655,7 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Stellar 原生资产",
     "aboutXlm": "关于 XLM",
+    "overview": "概览",
     "xlmDescription": "XLM（Stellar Lumens）是 Stellar 网络的原生资产。它有多种用途：",
     "xlmPurpose1": "支付交易费用（通常每笔操作 0.00001 XLM）",
     "xlmPurpose2": "维持最低账户余额（基础储备）",

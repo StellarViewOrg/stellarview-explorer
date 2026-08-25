@@ -312,7 +312,9 @@
       "noActivityDesc": "Für diesen Vertrag wurden in den letzten 7 Tagen keine Ereignisse gefunden.",
       "recentEvents": "Karte antippen, um Details zu sehen · {count} aktuelle Ereignisse"
     },
-    "underlyingAsset": "Zugrunde Liegender Vermögenswert"
+    "underlyingAsset": "Zugrunde Liegender Vermögenswert",
+    "tradingPairsAndPools": "Handelspaare & Pools",
+    "viewPools": "Pools ansehen"
   },
   "watchlist": {
     "title": "Merkliste",
@@ -653,6 +655,7 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Natives Stellar Asset",
     "aboutXlm": "Über XLM",
+    "overview": "Übersicht",
     "xlmDescription": "XLM (Stellar Lumens) ist das native Asset des Stellar-Netzwerks. Es dient mehreren Zwecken:",
     "xlmPurpose1": "Transaktionsgebühren bezahlen (typischerweise 0.00001 XLM pro Operation)",
     "xlmPurpose2": "Mindestkontostände aufrechterhalten (Basisreserve)",

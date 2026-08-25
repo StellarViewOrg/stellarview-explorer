@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Hash, Box, Coins, ArrowRight } from "lucide-react";
+import { Hash, Box, Coins, ArrowRight, Droplets } from "lucide-react";
 import { HashDisplay } from "@/components/common/hash-display";
 import { AssetLogo } from "@/components/common/asset-logo";
 import { ContractVerification } from "@/components/contracts";
@@ -69,6 +69,20 @@ export function ContractSummary({ contractId }: { contractId: string }) {
                   >
                     <AssetLogo code={sacAsset.code} issuer={sacAsset.issuer} size="sm" />
                     {sacAsset.code}
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground flex items-center gap-2 text-sm">
+                    <Droplets className="size-4" />
+                    {t("tradingPairsAndPools")}
+                  </span>
+                  <Link
+                    href={`/asset/${sacAsset.code}-${sacAsset.issuer}?tab=pools`}
+                    className="hover:text-primary flex items-center gap-1.5 text-sm font-medium transition-colors"
+                  >
+                    {t("viewPools")}
                     <ArrowRight className="size-3.5" />
                   </Link>
                 </div>

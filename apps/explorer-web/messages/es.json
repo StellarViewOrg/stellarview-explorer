@@ -312,7 +312,9 @@
       "noActivityDesc": "No se encontraron eventos para este contrato en los últimos 7 días.",
       "recentEvents": "Toca cualquier tarjeta para ver detalles · {count} eventos recientes"
     },
-    "underlyingAsset": "Activo Subyacente"
+    "underlyingAsset": "Activo Subyacente",
+    "tradingPairsAndPools": "Pares de Trading y Pools",
+    "viewPools": "Ver Pools"
   },
   "watchlist": {
     "title": "Favoritos",
@@ -732,6 +734,7 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Activo Nativo de Stellar",
     "aboutXlm": "Acerca de XLM",
+    "overview": "Resumen",
     "xlmDescription": "XLM (Stellar Lumens) es el activo nativo de la red Stellar. Sirve para múltiples propósitos:",
     "xlmPurpose1": "Pagar tarifas de transacción (típicamente 0.00001 XLM por operación)",
     "xlmPurpose2": "Mantener balances mínimos de cuenta (reserva base)",

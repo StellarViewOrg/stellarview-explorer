@@ -6,6 +6,14 @@
 // 1m/1h/1d) and mirror the pattern already frozen for analytics in
 // `./types.ts` (indexer#33). Reconcile this file once indexer#31 publishes
 // its real response shape.
+//
+// `dex-client.ts` never trusts a raw indexer response to match these types
+// directly — every response is run through the runtime parsers in
+// `dex-adapter.ts`, which are pinned against fixture JSON in
+// `__fixtures__/` (see `dex-adapter.test.ts`). A shape mismatch (ours today,
+// or the real indexer#31 contract once published) surfaces as a caught
+// `DexContractError` — the client treats it the same as a failed request
+// (`reason: "error"`) rather than silently misparsing.
 
 /** One side of a trading pair. `issuer` is "native" for XLM. */
 export interface PairAsset {

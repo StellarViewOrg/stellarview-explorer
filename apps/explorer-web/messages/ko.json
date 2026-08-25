@@ -312,7 +312,9 @@
       "noActivityDesc": "최근 7일 동안 이 계약의 이벤트가 없습니다.",
       "recentEvents": "카드를 탭하여 세부 정보 확인 · 최근 {count}개 이벤트"
     },
-    "underlyingAsset": "기초 자산"
+    "underlyingAsset": "기초 자산",
+    "tradingPairsAndPools": "거래 쌍 및 풀",
+    "viewPools": "풀 보기"
   },
   "watchlist": {
     "title": "관심목록",
@@ -732,6 +734,7 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Stellar 네이티브 자산",
     "aboutXlm": "XLM 소개",
+    "overview": "개요",
     "xlmDescription": "XLM(Stellar Lumens)은 Stellar 네트워크의 네이티브 자산입니다. 다양한 용도로 사용됩니다:",
     "xlmPurpose1": "트랜잭션 수수료 지불 (일반적으로 오퍼레이션당 0.00001 XLM)",
     "xlmPurpose2": "최소 계정 잔액 유지 (기본 준비금)",

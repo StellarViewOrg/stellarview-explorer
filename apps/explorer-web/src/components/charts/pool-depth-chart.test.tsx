@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import { PoolDepthChart } from "./pool-depth-chart";
+import { PoolDepthChart, toDepthChartData } from "./pool-depth-chart";
+import poolDepthFixture from "@/lib/indexer/__fixtures__/pool-depth-response.json";
 
 afterEach(cleanup);
 
@@ -16,6 +17,18 @@ vi.mock("next-intl", () => ({
 import { usePoolDepth } from "@/lib/hooks";
 
 const poolId = "a".repeat(64);
+
+describe("toDepthChartData", () => {
+  it("plots the exact TVL/reserve values from the indexer's pool depth fixture", () => {
+    expect(toDepthChartData(poolDepthFixture.data)).toEqual(
+      poolDepthFixture.data.map((d) => ({
+        timestamp: d.timestamp,
+        tvl: d.tvl,
+        reserves: d.reserves,
+      }))
+    );
+  });
+});
 
 describe("PoolDepthChart", () => {
   it("renders loading state", () => {
@@ -45,31 +58,18 @@ describe("PoolDepthChart", () => {
 
   it("renders the chart when depth history is available", () => {
     vi.mocked(usePoolDepth).mockReturnValue({
-      data: {
-        available: true,
-        data: {
-          poolId,
-          resolution: "1h",
-          from: "2024-01-01",
-          to: "2024-01-02",
-          data: [
-            {
-              timestamp: "2024-01-01T00:00:00Z",
-              reserves: [
-                { asset: "native", amount: 1_000_000 },
-                { asset: "USDC:GA5Z", amount: 110_000 },
-              ],
-              tvl: 2_000_000,
-            },
-          ],
-        },
-      },
+      data: { available: true, data: poolDepthFixture },
       isLoading: false,
       error: null,
     } as ReturnType<typeof usePoolDepth>);
 
     const { container } = render(
-      <PoolDepthChart poolId={poolId} resolution="1h" from="2024-01-01" to="2024-01-02" />
+      <PoolDepthChart
+        poolId={poolDepthFixture.poolId}
+        resolution="1d"
+        from={poolDepthFixture.from}
+        to={poolDepthFixture.to}
+      />
     );
 
     expect(screen.queryByText("notAvailable.title")).not.toBeInTheDocument();

@@ -30,6 +30,19 @@ describe("indexer/dex-client", () => {
       expect(res).toEqual({ available: false, reason: "error" });
     });
 
+    it("returns error (not a silent misparse) when the response doesn't match the contract", async () => {
+      vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        // Missing `base`/`counter`/etc — simulates indexer#31 shipping a
+        // different real shape than the one this UI assumed.
+        json: () => Promise.resolve({ data: [{ id: "x" }] }),
+      });
+
+      const res = await fetchPairs();
+      expect(res).toEqual({ available: false, reason: "error" });
+    });
+
     it("returns empty when data array is empty (indexer#31 stub)", async () => {
       vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
       global.fetch = vi.fn().mockResolvedValue({
@@ -93,7 +106,14 @@ describe("indexer/dex-client", () => {
       vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ pairId: "XLM-native_USDC-GA5Z", data: [] }),
+        json: () =>
+          Promise.resolve({
+            pairId: "XLM-native_USDC-GA5Z",
+            resolution: "1h",
+            from: "2024-01-01",
+            to: "2024-01-02",
+            data: [],
+          }),
       });
 
       const res = await fetchCandles("XLM-native_USDC-GA5Z", "1h", "2024-01-01", "2024-01-02");
@@ -157,7 +177,14 @@ describe("indexer/dex-client", () => {
       vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ poolId, data: [] }),
+        json: () =>
+          Promise.resolve({
+            poolId,
+            resolution: "1h",
+            from: "2024-01-01",
+            to: "2024-01-02",
+            data: [],
+          }),
       });
 
       const res = await fetchPoolDepth(poolId, "1h", "2024-01-01", "2024-01-02");

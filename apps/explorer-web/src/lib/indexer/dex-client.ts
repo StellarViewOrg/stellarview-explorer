@@ -6,6 +6,7 @@ import type {
   PairsResponse,
   PoolDepthResponse,
 } from "./dex-types";
+import { parseCandlesResponse, parsePairsResponse, parsePoolDepthResponse } from "./dex-adapter";
 
 /**
  * Fetch the trading pair list from the indexer.
@@ -32,9 +33,9 @@ export async function fetchPairs(limit = 50): Promise<IndexerResult<PairsRespons
       return { available: false, reason: "error" };
     }
 
-    const body = (await response.json()) as PairsResponse;
+    const body = parsePairsResponse(await response.json());
 
-    if (!body.data || body.data.length === 0) {
+    if (body.data.length === 0) {
       return { available: false, reason: "empty" };
     }
 
@@ -71,9 +72,9 @@ export async function fetchCandles(
       return { available: false, reason: "error" };
     }
 
-    const body = (await response.json()) as CandlesResponse;
+    const body = parseCandlesResponse(await response.json());
 
-    if (!body.data || body.data.length === 0) {
+    if (body.data.length === 0) {
       return { available: false, reason: "empty" };
     }
 
@@ -110,9 +111,9 @@ export async function fetchPoolDepth(
       return { available: false, reason: "error" };
     }
 
-    const body = (await response.json()) as PoolDepthResponse;
+    const body = parsePoolDepthResponse(await response.json());
 
-    if (!body.data || body.data.length === 0) {
+    if (body.data.length === 0) {
       return { available: false, reason: "empty" };
     }
 

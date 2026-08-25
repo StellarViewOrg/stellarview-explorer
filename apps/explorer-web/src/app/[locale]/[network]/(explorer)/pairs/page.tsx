@@ -17,14 +17,9 @@ import {
 } from "@/components/pairs";
 import { useNetwork } from "@/lib/providers";
 import { useDexPairs } from "@/lib/hooks";
-import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
+import { DEFAULT_PAGE_SIZE, DEX_PAIRS_FETCH_LIMIT } from "@/lib/constants";
 import { paginate } from "@/lib/utils";
 import { Search, CandlestickChart } from "lucide-react";
-
-// The indexer's pair list response has no cursor/pagination metadata (see
-// PairsResponse in lib/indexer/dex-types.ts), so we fetch a larger batch once
-// and paginate client-side over the filtered/sorted result.
-const PAIRS_FETCH_LIMIT = 100;
 
 function matchesSearch(pair: PairData, query: string): boolean {
   if (!query) return true;
@@ -36,7 +31,7 @@ export default function PairsPage() {
   const t = useTranslations("pairs");
   const tCommon = useTranslations("common");
   const { network } = useNetwork();
-  const { data: result, isLoading } = useDexPairs(PAIRS_FETCH_LIMIT);
+  const { data: result, isLoading } = useDexPairs(DEX_PAIRS_FETCH_LIMIT);
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<PairSortKey>("volume");
   const [sortDir, setSortDir] = useState<SortDirection>("desc");

@@ -11,6 +11,12 @@ export type {
   IndexerResult,
 } from "./types";
 export { fetchPairs, fetchCandles, fetchPoolDepth } from "./dex-client";
+export {
+  DexContractError,
+  parsePairsResponse,
+  parseCandlesResponse,
+  parsePoolDepthResponse,
+} from "./dex-adapter";
 export type {
   PairAsset,
   Pair,

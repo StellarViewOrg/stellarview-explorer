@@ -312,7 +312,9 @@
       "noActivityDesc": "過去 7 日間でこのコントラクトのイベントが見つかりませんでした。",
       "recentEvents": "カードをタップして詳細を確認 · {count} 件の最近のイベント"
     },
-    "underlyingAsset": "原資産"
+    "underlyingAsset": "原資産",
+    "tradingPairsAndPools": "取引ペアとプール",
+    "viewPools": "プールを見る"
   },
   "watchlist": {
     "title": "ウォッチリスト",
@@ -653,6 +655,7 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Stellarネイティブアセット",
     "aboutXlm": "XLMについて",
+    "overview": "概要",
     "xlmDescription": "XLM（Stellar Lumens）はStellarネットワークのネイティブアセットです。複数の目的があります：",
     "xlmPurpose1": "トランザクション手数料の支払い（通常、操作ごとに0.00001 XLM）",
     "xlmPurpose2": "最低アカウント残高の維持（基本リザーブ）",

@@ -17,7 +17,7 @@ import { NotAvailableState } from "./not-available-state";
 import { chartColors, chartAxisStyle, chartGridStyle } from "./chart-config";
 import { usePoolDepth } from "@/lib/hooks";
 import { formatCompactNumber } from "@/lib/utils";
-import type { CandleResolution, PoolReserve } from "@/lib/indexer";
+import type { CandleResolution, PoolDepthPoint, PoolReserve } from "@/lib/indexer";
 
 interface PoolDepthChartProps {
   poolId: string;
@@ -31,6 +31,15 @@ interface DepthDatum {
   timestamp: string;
   tvl: number;
   reserves: PoolReserve[];
+}
+
+/** Maps indexer pool depth points to the shape the chart plots. Exported for testing. */
+export function toDepthChartData(points: PoolDepthPoint[]): DepthDatum[] {
+  return points.map((d) => ({
+    timestamp: d.timestamp,
+    tvl: d.tvl,
+    reserves: d.reserves,
+  }));
 }
 
 function formatTimestamp(timestamp: string, resolution: CandleResolution): string {
@@ -92,11 +101,7 @@ export function PoolDepthChart({
   const isAvailable = result?.available === true;
   const depth: DepthDatum[] = useMemo(() => {
     if (!result || !result.available) return [];
-    return result.data.data.map((d) => ({
-      timestamp: d.timestamp,
-      tvl: d.tvl,
-      reserves: d.reserves,
-    }));
+    return toDepthChartData(result.data.data);
   }, [result]);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,8 +14,11 @@ import {
   PairTableSkeleton,
   PairTableNotAvailable,
   type PairData,
+  type PairSortKey,
+  type SortDirection,
 } from "@/components/pairs";
 import { useAssetLiquidityPools, useDexPairs } from "@/lib/hooks";
+import { DEX_PAIRS_FETCH_LIMIT } from "@/lib/constants";
 import { formatNumber } from "@/lib/utils";
 import { Droplets } from "lucide-react";
 import type { Horizon } from "@stellar/stellar-sdk";
@@ -86,23 +89,41 @@ function AssetPoolsList({ code, issuer }: AssetPoolsProps) {
 }
 
 function AssetPairsList({ code, issuer }: AssetPoolsProps) {
-  const { data: result, isLoading } = useDexPairs();
+  const { data: result, isLoading } = useDexPairs(DEX_PAIRS_FETCH_LIMIT);
+  const [sortKey, setSortKey] = useState<PairSortKey>("volume");
+  const [sortDir, setSortDir] = useState<SortDirection>("desc");
+
+  const handleSortChange = (key: PairSortKey) => {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  };
 
   const pairs: PairData[] = useMemo(() => {
     if (!result || !result.available) return [];
-    return result.data.data.filter(
+    const filtered = result.data.data.filter(
       (p) =>
         (p.base.code === code && p.base.issuer === issuer) ||
         (p.counter.code === code && p.counter.issuer === issuer)
     );
-  }, [result, code, issuer]);
+    return [...filtered].sort((a, b) => {
+      const aVal = sortKey === "volume" ? a.volume24h : (a.liquidity ?? -Infinity);
+      const bVal = sortKey === "volume" ? b.volume24h : (b.liquidity ?? -Infinity);
+      return sortDir === "desc" ? bVal - aVal : aVal - bVal;
+    });
+  }, [result, code, issuer, sortKey, sortDir]);
 
   if (isLoading) return <PairTableSkeleton rows={3} />;
   if (!result || !result.available) {
     return <PairTableNotAvailable />;
   }
 
-  return <PairTable pairs={pairs} sortKey="volume" sortDir="desc" onSortChange={() => {}} />;
+  return (
+    <PairTable pairs={pairs} sortKey={sortKey} sortDir={sortDir} onSortChange={handleSortChange} />
+  );
 }
 
 export function AssetPools({ code, issuer }: AssetPoolsProps) {
