@@ -1,5 +1,11 @@
 export { fetchTimeSeries, fetchTopN } from "./client";
-export { fetchDomainsByAddress } from "./domains";
+export {
+  fetchDomainsByAddress,
+  fetchDomainsList,
+  fetchDomainDetail,
+  DOMAINS_DEFAULT_PAGE_SIZE,
+  DOMAINS_MAX_PAGE_SIZE,
+} from "./domains";
 export type {
   TimeSeriesMetric,
   TopNMetric,
@@ -17,4 +23,6 @@ export type {
   DomainEventRecord,
   DomainsResponse,
   DomainReverseLookup,
+  DomainsPage,
+  DomainDetail,
 } from "./types";

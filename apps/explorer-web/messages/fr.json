@@ -11,6 +11,7 @@
     "accounts": "Comptes",
     "assets": "Actifs",
     "contracts": "Contrats",
+    "domains": "Domaines",
     "analytics": "Analytiques",
     "learn": "Apprendre",
     "watchlist": "Favoris",
@@ -1056,6 +1057,54 @@
     "alsoKnownAs": "Également connu sous le nom de {name}",
     "notAvailable": "Domaines en attente",
     "notAvailableHint": "Les données de domaines ne sont pas encore disponibles. Elles apparaîtront une fois que l'indexeur aura traité le registre.",
-    "more": "+{count} autres"
+    "more": "+{count} autres",
+    "title": "Domaines",
+    "subtitle": "Domaines Soroban enregistrés sur le réseau",
+    "findDomain": "Rechercher un domaine",
+    "namePlaceholder": "alice.xlm",
+    "invalidName": "Saisissez un nom se terminant par .xlm",
+    "registered": "Domaines enregistrés",
+    "noneRegistered": "Aucun domaine trouvé",
+    "noneRegisteredHint": "Aucun enregistrement ne correspond à ce filtre.",
+    "notRegistered": "Domaine non enregistré",
+    "notRegisteredHint": "Le registre ne contient aucune entrée sous ce nom.",
+    "registration": "Enregistrement",
+    "history": "Historique des événements",
+    "noEvents": "Aucun événement enregistré",
+    "noEventsHint": "Aucun événement du registre n'a encore été indexé pour ce nom.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageNumber": "Page {page}",
+    "status": {
+      "active": "Actif",
+      "expired": "Expiré",
+      "revoked": "Révoqué"
+    },
+    "target": {
+      "account": "Compte",
+      "contract": "Contrat"
+    },
+    "event": {
+      "register": "Enregistré",
+      "transfer": "Transféré",
+      "renew": "Renouvelé",
+      "claim": "Réclamé",
+      "revoke": "Révoqué"
+    },
+    "filter": {
+      "active": "Actifs",
+      "expired": "Expirés",
+      "revoked": "Révoqués",
+      "all": "Tous"
+    },
+    "field": {
+      "status": "Statut",
+      "resolvesTo": "Pointe vers",
+      "targetType": "Type de cible",
+      "owner": "Propriétaire",
+      "registeredAt": "Enregistré",
+      "expiresAt": "Expire",
+      "lastEventLedger": "Dernier registre d'événement"
+    }
   }
 }

@@ -1,4 +1,11 @@
-import type { DomainsResponse, DomainReverseLookup, IndexerResult } from "./types";
+import type {
+  DomainsResponse,
+  DomainReverseLookup,
+  DomainsPage,
+  DomainDetail,
+  DomainStatus,
+  IndexerResult,
+} from "./types";
 
 /**
  * Client for the indexer's Soroban Domains read API (indexer#29).
@@ -14,6 +21,10 @@ import type { DomainsResponse, DomainReverseLookup, IndexerResult } from "./type
 
 const DOMAINS_PATH = "/v1/domains";
 const REQUEST_TIMEOUT_MS = 15_000;
+
+export const DOMAINS_DEFAULT_PAGE_SIZE = 50;
+/** Matches the indexer's own cap. Larger values are rejected server side. */
+export const DOMAINS_MAX_PAGE_SIZE = 200;
 
 /**
  * Returns the indexer base URL from the public env var.
@@ -73,4 +84,63 @@ export async function fetchDomainsByAddress(
     domain: body.domain ?? null,
     domains: body.domains ?? [],
   }));
+}
+
+/** The registry stores names lowercase, and the indexer lowercases on read. */
+function encodeName(name: string): string {
+  return encodeURIComponent(name.trim().toLowerCase());
+}
+
+/**
+ * One page of registered domains.
+ *
+ * `cursor` is the last name on the page; pass it back to fetch the next one.
+ * The indexer returns no cursor on the final page, which is how the caller
+ * knows to stop.
+ */
+export async function fetchDomainsList(
+  status?: DomainStatus,
+  limit = DOMAINS_DEFAULT_PAGE_SIZE,
+  cursor = ""
+): Promise<IndexerResult<DomainsPage>> {
+  const params = new URLSearchParams({
+    limit: String(Math.min(limit, DOMAINS_MAX_PAGE_SIZE)),
+  });
+  if (status) params.set("status", status);
+  if (cursor) params.set("cursor", cursor);
+
+  return fetchDomains(`${DOMAINS_PATH}?${params}`, (body) => ({
+    domains: body.domains ?? [],
+    cursor: body.cursor ?? "",
+  }));
+}
+
+/**
+ * A single name's record together with its event history.
+ *
+ * The two endpoints are independent, so they run concurrently. The record is
+ * the authoritative one: without it there is nothing to render, and its reason
+ * is the one the page should show. A history that fails on its own degrades to
+ * an empty timeline rather than blanking the whole page.
+ */
+export async function fetchDomainDetail(
+  name: string,
+  eventLimit = DOMAINS_DEFAULT_PAGE_SIZE
+): Promise<IndexerResult<DomainDetail>> {
+  const encoded = encodeName(name);
+  const params = new URLSearchParams({
+    limit: String(Math.min(eventLimit, DOMAINS_MAX_PAGE_SIZE)),
+  });
+
+  const [record, history] = await Promise.all([
+    fetchDomains(`${DOMAINS_PATH}/${encoded}`, (body) => body.domain ?? null),
+    fetchDomains(`${DOMAINS_PATH}/${encoded}/events?${params}`, (body) => body.events ?? []),
+  ]);
+
+  if (!record.available) return record;
+
+  return {
+    available: true,
+    data: { domain: record.data, events: history.available ? history.data : [] },
+  };
 }

@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ export function Sidebar() {
     { href: "/accounts", icon: Users, label: t("accounts") },
     { href: "/assets", icon: Coins, label: t("assets") },
     { href: "/contracts", icon: FileCode, label: t("contracts") },
+    { href: "/domains", icon: Globe, label: t("domains") },
     { href: "/analytics", icon: BarChart3, label: t("analytics") },
   ];
 

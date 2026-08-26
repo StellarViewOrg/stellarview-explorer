@@ -11,6 +11,7 @@
     "accounts": "계정",
     "assets": "자산",
     "contracts": "컨트랙트",
+    "domains": "도메인",
     "analytics": "분석",
     "learn": "학습",
     "watchlist": "관심목록",
@@ -1056,6 +1057,54 @@
     "alsoKnownAs": "{name}(으)로도 알려짐",
     "notAvailable": "도메인 준비 중",
     "notAvailableHint": "도메인 데이터를 아직 사용할 수 없습니다. 인덱서가 레지스트리를 처리하면 표시됩니다.",
-    "more": "외 {count}개"
+    "more": "외 {count}개",
+    "title": "도메인",
+    "subtitle": "네트워크에 등록된 Soroban 도메인",
+    "findDomain": "도메인 찾기",
+    "namePlaceholder": "alice.xlm",
+    "invalidName": ".xlm으로 끝나는 이름을 입력하세요",
+    "registered": "등록된 도메인",
+    "noneRegistered": "도메인을 찾을 수 없습니다",
+    "noneRegisteredHint": "이 필터와 일치하는 등록이 없습니다.",
+    "notRegistered": "등록되지 않은 도메인",
+    "notRegisteredHint": "레지스트리에 이 이름으로 된 기록이 없습니다.",
+    "registration": "등록 정보",
+    "history": "이벤트 기록",
+    "noEvents": "기록된 이벤트 없음",
+    "noEventsHint": "이 이름에 대한 레지스트리 이벤트가 아직 색인되지 않았습니다.",
+    "previous": "이전",
+    "next": "다음",
+    "pageNumber": "{page} 페이지",
+    "status": {
+      "active": "활성",
+      "expired": "만료됨",
+      "revoked": "취소됨"
+    },
+    "target": {
+      "account": "계정",
+      "contract": "컨트랙트"
+    },
+    "event": {
+      "register": "등록",
+      "transfer": "이전",
+      "renew": "갱신",
+      "claim": "청구",
+      "revoke": "취소"
+    },
+    "filter": {
+      "active": "활성",
+      "expired": "만료",
+      "revoked": "취소",
+      "all": "전체"
+    },
+    "field": {
+      "status": "상태",
+      "resolvesTo": "연결 대상",
+      "targetType": "대상 유형",
+      "owner": "소유자",
+      "registeredAt": "등록일",
+      "expiresAt": "만료일",
+      "lastEventLedger": "마지막 이벤트 레저"
+    }
   }
 }

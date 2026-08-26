@@ -11,6 +11,7 @@
     "accounts": "账户",
     "assets": "资产",
     "contracts": "合约",
+    "domains": "域名",
     "analytics": "分析",
     "learn": "学习",
     "watchlist": "关注列表",
@@ -1056,6 +1057,54 @@
     "alsoKnownAs": "又名 {name}",
     "notAvailable": "域名待处理",
     "notAvailableHint": "域名数据尚不可用。索引器处理完注册表后将会显示。",
-    "more": "还有 {count} 个"
+    "more": "还有 {count} 个",
+    "title": "域名",
+    "subtitle": "网络上已注册的 Soroban 域名",
+    "findDomain": "查找域名",
+    "namePlaceholder": "alice.xlm",
+    "invalidName": "请输入以 .xlm 结尾的名称",
+    "registered": "已注册域名",
+    "noneRegistered": "未找到域名",
+    "noneRegisteredHint": "没有符合此筛选条件的注册记录。",
+    "notRegistered": "域名未注册",
+    "notRegisteredHint": "注册表中没有该名称的记录。",
+    "registration": "注册信息",
+    "history": "事件历史",
+    "noEvents": "暂无事件记录",
+    "noEventsHint": "该名称的注册表事件尚未被索引。",
+    "previous": "上一页",
+    "next": "下一页",
+    "pageNumber": "第 {page} 页",
+    "status": {
+      "active": "有效",
+      "expired": "已过期",
+      "revoked": "已撤销"
+    },
+    "target": {
+      "account": "账户",
+      "contract": "合约"
+    },
+    "event": {
+      "register": "已注册",
+      "transfer": "已转移",
+      "renew": "已续期",
+      "claim": "已认领",
+      "revoke": "已撤销"
+    },
+    "filter": {
+      "active": "有效",
+      "expired": "已过期",
+      "revoked": "已撤销",
+      "all": "全部"
+    },
+    "field": {
+      "status": "状态",
+      "resolvesTo": "解析到",
+      "targetType": "目标类型",
+      "owner": "所有者",
+      "registeredAt": "注册时间",
+      "expiresAt": "到期时间",
+      "lastEventLedger": "最后事件账本"
+    }
   }
 }

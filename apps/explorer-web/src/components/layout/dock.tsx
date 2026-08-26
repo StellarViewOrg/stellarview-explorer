@@ -14,6 +14,7 @@ import {
   BarChart3,
   Star,
   GraduationCap,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -109,6 +110,7 @@ export function Dock() {
     { href: "/accounts", icon: Users, label: t("accounts") },
     { href: "/assets", icon: Coins, label: t("assets") },
     { href: "/contracts", icon: FileCode, label: t("contracts") },
+    { href: "/domains", icon: Globe, label: t("domains") },
     { href: "/analytics", icon: BarChart3, label: t("analytics") },
   ];
 

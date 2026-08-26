@@ -11,6 +11,7 @@
     "accounts": "Accounts",
     "assets": "Assets",
     "contracts": "Contracts",
+    "domains": "Domains",
     "analytics": "Analytics",
     "learn": "Learn",
     "watchlist": "Watchlist",
@@ -1056,6 +1057,54 @@
     "alsoKnownAs": "Also known as {name}",
     "notAvailable": "Domains pending",
     "notAvailableHint": "Domain data isn't available yet. This will fill in once the indexer has processed the registry.",
-    "more": "+{count} more"
+    "more": "+{count} more",
+    "title": "Domains",
+    "subtitle": "Soroban Domains registered on the network",
+    "findDomain": "Find a domain",
+    "namePlaceholder": "alice.xlm",
+    "invalidName": "Enter a name ending in .xlm",
+    "registered": "Registered domains",
+    "noneRegistered": "No domains found",
+    "noneRegisteredHint": "No registrations match this filter.",
+    "notRegistered": "Domain not registered",
+    "notRegisteredHint": "The registry has no record under this name.",
+    "registration": "Registration",
+    "history": "Event history",
+    "noEvents": "No events recorded",
+    "noEventsHint": "No registry events have been indexed for this name yet.",
+    "previous": "Previous",
+    "next": "Next",
+    "pageNumber": "Page {page}",
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "target": {
+      "account": "Account",
+      "contract": "Contract"
+    },
+    "event": {
+      "register": "Registered",
+      "transfer": "Transferred",
+      "renew": "Renewed",
+      "claim": "Claimed",
+      "revoke": "Revoked"
+    },
+    "filter": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked",
+      "all": "All"
+    },
+    "field": {
+      "status": "Status",
+      "resolvesTo": "Resolves to",
+      "targetType": "Target type",
+      "owner": "Owner",
+      "registeredAt": "Registered",
+      "expiresAt": "Expires",
+      "lastEventLedger": "Last event ledger"
+    }
   }
 }

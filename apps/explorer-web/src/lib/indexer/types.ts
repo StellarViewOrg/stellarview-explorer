@@ -126,3 +126,16 @@ export interface DomainReverseLookup {
   domain: DomainRecord | null;
   domains: DomainRecord[];
 }
+
+/** A page of the domains list. */
+export interface DomainsPage {
+  domains: DomainRecord[];
+  /** Last name on this page. Empty when there is no further page. */
+  cursor: string;
+}
+
+/** A name's record plus its event history. */
+export interface DomainDetail {
+  domain: DomainRecord | null;
+  events: DomainEventRecord[];
+}

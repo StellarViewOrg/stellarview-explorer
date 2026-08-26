@@ -11,6 +11,7 @@
     "accounts": "Konten",
     "assets": "Assets",
     "contracts": "Verträge",
+    "domains": "Domains",
     "analytics": "Analytik",
     "learn": "Lernen",
     "watchlist": "Merkliste",
@@ -1056,6 +1057,54 @@
     "alsoKnownAs": "Auch bekannt als {name}",
     "notAvailable": "Domains ausstehend",
     "notAvailableHint": "Domain-Daten sind noch nicht verfügbar. Sie erscheinen, sobald der Indexer das Registry verarbeitet hat.",
-    "more": "+{count} weitere"
+    "more": "+{count} weitere",
+    "title": "Domains",
+    "subtitle": "Im Netzwerk registrierte Soroban Domains",
+    "findDomain": "Domain suchen",
+    "namePlaceholder": "alice.xlm",
+    "invalidName": "Geben Sie einen Namen ein, der auf .xlm endet",
+    "registered": "Registrierte Domains",
+    "noneRegistered": "Keine Domains gefunden",
+    "noneRegisteredHint": "Keine Registrierung entspricht diesem Filter.",
+    "notRegistered": "Domain nicht registriert",
+    "notRegisteredHint": "Das Registry hat keinen Eintrag unter diesem Namen.",
+    "registration": "Registrierung",
+    "history": "Ereignisverlauf",
+    "noEvents": "Keine Ereignisse erfasst",
+    "noEventsHint": "Für diesen Namen wurden noch keine Registry-Ereignisse indexiert.",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "pageNumber": "Seite {page}",
+    "status": {
+      "active": "Aktiv",
+      "expired": "Abgelaufen",
+      "revoked": "Widerrufen"
+    },
+    "target": {
+      "account": "Konto",
+      "contract": "Contract"
+    },
+    "event": {
+      "register": "Registriert",
+      "transfer": "Übertragen",
+      "renew": "Verlängert",
+      "claim": "Beansprucht",
+      "revoke": "Widerrufen"
+    },
+    "filter": {
+      "active": "Aktiv",
+      "expired": "Abgelaufen",
+      "revoked": "Widerrufen",
+      "all": "Alle"
+    },
+    "field": {
+      "status": "Status",
+      "resolvesTo": "Verweist auf",
+      "targetType": "Zieltyp",
+      "owner": "Eigentümer",
+      "registeredAt": "Registriert",
+      "expiresAt": "Läuft ab",
+      "lastEventLedger": "Letztes Ereignis-Ledger"
+    }
   }
 }

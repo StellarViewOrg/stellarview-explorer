@@ -340,6 +340,24 @@ export function useDomainsByAddress(address: string, enabled = true) {
   });
 }
 
+// Hook for one cursor page of the Soroban Domains list
+export function useDomainsList(
+  status: import("@/lib/indexer").DomainStatus | "all" = "active",
+  cursor = ""
+) {
+  const { network } = useNetwork();
+  return useQuery(stellarQueries.domainsList(network, status, cursor));
+}
+
+// Hook for a single Soroban Domain and its event history
+export function useDomainDetail(name: string) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.domainDetail(network, name),
+    enabled: name.length > 0,
+  });
+}
+
 // Hook for indexer time-series analytics
 export function useIndexerTimeSeries(
   metric: import("@/lib/indexer").TimeSeriesMetric,

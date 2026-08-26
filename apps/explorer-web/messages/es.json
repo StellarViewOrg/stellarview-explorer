@@ -11,6 +11,7 @@
     "accounts": "Cuentas",
     "assets": "Activos",
     "contracts": "Contratos",
+    "domains": "Dominios",
     "analytics": "Analíticas",
     "learn": "Aprender",
     "watchlist": "Favoritos",
@@ -1056,6 +1057,54 @@
     "alsoKnownAs": "También conocido como {name}",
     "notAvailable": "Dominios pendientes",
     "notAvailableHint": "Los datos de dominios aún no están disponibles. Aparecerán cuando el indexador haya procesado el registro.",
-    "more": "+{count} más"
+    "more": "+{count} más",
+    "title": "Dominios",
+    "subtitle": "Dominios Soroban registrados en la red",
+    "findDomain": "Buscar un dominio",
+    "namePlaceholder": "alice.xlm",
+    "invalidName": "Introduce un nombre terminado en .xlm",
+    "registered": "Dominios registrados",
+    "noneRegistered": "No se encontraron dominios",
+    "noneRegisteredHint": "Ningún registro coincide con este filtro.",
+    "notRegistered": "Dominio no registrado",
+    "notRegisteredHint": "El registro no tiene ninguna entrada con este nombre.",
+    "registration": "Registro",
+    "history": "Historial de eventos",
+    "noEvents": "Sin eventos registrados",
+    "noEventsHint": "Todavía no se han indexado eventos del registro para este nombre.",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageNumber": "Página {page}",
+    "status": {
+      "active": "Activo",
+      "expired": "Expirado",
+      "revoked": "Revocado"
+    },
+    "target": {
+      "account": "Cuenta",
+      "contract": "Contrato"
+    },
+    "event": {
+      "register": "Registrado",
+      "transfer": "Transferido",
+      "renew": "Renovado",
+      "claim": "Reclamado",
+      "revoke": "Revocado"
+    },
+    "filter": {
+      "active": "Activos",
+      "expired": "Expirados",
+      "revoked": "Revocados",
+      "all": "Todos"
+    },
+    "field": {
+      "status": "Estado",
+      "resolvesTo": "Apunta a",
+      "targetType": "Tipo de destino",
+      "owner": "Propietario",
+      "registeredAt": "Registrado",
+      "expiresAt": "Expira",
+      "lastEventLedger": "Último ledger con evento"
+    }
   }
 }
