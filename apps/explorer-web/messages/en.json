@@ -19,7 +19,7 @@
   },
   "search": {
     "placeholder": "Search transactions, accounts...",
-    "inputPlaceholder": "Search by tx hash, account, asset, contract, or ledger...",
+    "inputPlaceholder": "Search by tx hash, account, asset, contract, ledger, or name.xlm...",
     "noResults": "No results found.",
     "noResultsHint": "Try a transaction hash, account address, or ledger number.",
     "searchAs": "Search as {type}",
@@ -28,7 +28,13 @@
     "quickAccess": "Quick Access",
     "recentTransactions": "Recent Transactions",
     "latestLedgers": "Latest Ledgers",
-    "smartContracts": "Smart Contracts"
+    "smartContracts": "Smart Contracts",
+    "domainResolving": "Resolving domain...",
+    "domainResolved": "Resolves to {address}",
+    "domainNotFound": "This domain is not registered",
+    "domainExpired": "This domain's registration has expired",
+    "domainUnsupported": "Domain resolution is not available on this network",
+    "domainError": "Couldn't resolve this domain. Please try again."
   },
   "entityTypes": {
     "transaction": "Transaction",
@@ -36,6 +42,7 @@
     "contract": "Contract",
     "asset": "Asset",
     "ledger": "Ledger",
+    "domain": "Domain",
     "unknown": "Search"
   },
   "common": {

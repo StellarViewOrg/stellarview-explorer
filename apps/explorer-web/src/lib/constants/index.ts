@@ -1,4 +1,5 @@
 export * from "./networks";
+export * from "./domains";
 
 // Stellar-specific constants
 export const STROOPS_PER_XLM = 10_000_000;

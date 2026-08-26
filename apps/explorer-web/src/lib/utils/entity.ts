@@ -1,6 +1,22 @@
 import type { EntityType } from "@/types";
 
 /**
+ * Soroban Domain name, e.g. `alice.xlm` or `pay.alice.xlm`.
+ *
+ * Deliberately permissive: the registry has the final say on what is a valid
+ * name, so anything ending in `.xlm` is routed to resolution rather than
+ * rejected here.
+ */
+const DOMAIN_NAME_PATTERN = /^[a-z0-9-]+(\.[a-z0-9-]+)*\.xlm$/i;
+
+/**
+ * Check whether a query looks like a Soroban Domain name.
+ */
+export function isDomainName(query: string): boolean {
+  return DOMAIN_NAME_PATTERN.test(query.trim());
+}
+
+/**
  * Detect the type of entity from a search query
  */
 export function detectEntityType(query: string): EntityType {
@@ -19,6 +35,11 @@ export function detectEntityType(query: string): EntityType {
   // Soroban contract: starts with C, 56 characters
   if (trimmed.startsWith("C") && trimmed.length === 56) {
     return "contract";
+  }
+
+  // Soroban Domain: name.xlm
+  if (isDomainName(trimmed)) {
+    return "domain";
   }
 
   // Ledger sequence: pure number
@@ -108,6 +129,8 @@ export function getEntityTypeName(type: EntityType): string {
       return "Ledger";
     case "asset":
       return "Asset";
+    case "domain":
+      return "Domain";
     default:
       return "Unknown";
   }

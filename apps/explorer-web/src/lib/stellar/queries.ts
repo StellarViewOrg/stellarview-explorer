@@ -3,7 +3,16 @@ import type { Horizon, xdr } from "@stellar/stellar-sdk";
 import { getHorizonClient, getRpcClient, fetchStellarExpert } from "./client";
 import type { StellarExpertResult } from "./client";
 import { DEFAULT_PAGE_SIZE, STALE_TIME, POPULAR_ASSETS } from "@/lib/constants";
-import { fetchTimeSeries, fetchTopN, fetchDomainsByAddress } from "@/lib/indexer";
+import { resolveDomain } from "./domains";
+import type { DomainResolution } from "./domains";
+import {
+  fetchTimeSeries,
+  fetchTopN,
+  fetchDomainsByAddress,
+  fetchDomainsList,
+  fetchDomainDetail,
+  DOMAINS_DEFAULT_PAGE_SIZE,
+} from "@/lib/indexer";
 import type {
   TimeSeriesMetric,
   TopNMetric,
@@ -185,7 +194,11 @@ export const stellarKeys = {
   networkStats: (network: NetworkKey) =>
     [...stellarKeys.network(network), "stellar_expert", "stats"] as const,
 
-  // Indexer: Soroban Domains reverse lookup
+  // Soroban Domains forward resolution
+  domainResolution: (network: NetworkKey, name: string) =>
+    [...stellarKeys.network(network), "domain", name] as const,
+
+  // Indexer: Soroban Domains reverse lookup and browsing
   domainsByAddress: (network: NetworkKey, address: string) =>
     [...stellarKeys.network(network), "indexer", "domains", "address", address] as const,
 
@@ -1015,6 +1028,15 @@ export const stellarQueries = {
       };
     },
     staleTime: STALE_TIME,
+  }),
+
+  // Soroban Domains: forward resolution (name.xlm -> address)
+  domainResolution: (network: NetworkKey, name: string) => ({
+    queryKey: stellarKeys.domainResolution(network, name),
+    queryFn: (): Promise<DomainResolution> => resolveDomain(network, name),
+    // Registrations expire, so this must not be cached indefinitely.
+    staleTime: 60_000,
+    retry: 1,
   }),
 
   // Indexer: Soroban Domains reverse lookup (address -> owned domains)

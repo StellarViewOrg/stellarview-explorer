@@ -19,7 +19,7 @@
   },
   "search": {
     "placeholder": "搜索交易、账户...",
-    "inputPlaceholder": "按交易哈希、账户、资产、合约或账本搜索...",
+    "inputPlaceholder": "按交易哈希、账户、资产、合约、账本或 name.xlm 搜索...",
     "noResults": "未找到结果。",
     "noResultsHint": "尝试交易哈希、账户地址或账本编号。",
     "searchAs": "搜索为 {type}",
@@ -28,7 +28,13 @@
     "quickAccess": "快速访问",
     "recentTransactions": "最近交易",
     "latestLedgers": "最新账本",
-    "smartContracts": "智能合约"
+    "smartContracts": "智能合约",
+    "domainResolving": "正在解析域名...",
+    "domainResolved": "解析到 {address}",
+    "domainNotFound": "该域名尚未注册",
+    "domainExpired": "该域名的注册已过期",
+    "domainUnsupported": "此网络不支持域名解析",
+    "domainError": "无法解析该域名，请重试。"
   },
   "entityTypes": {
     "transaction": "交易",
@@ -36,6 +42,7 @@
     "contract": "合约",
     "asset": "资产",
     "ledger": "账本",
+    "domain": "域名",
     "unknown": "搜索"
   },
   "common": {
