@@ -44,8 +44,8 @@
     "contract": "컨트랙트",
     "asset": "자산",
     "ledger": "원장",
-    "unknown": "검색",
-    "domain": "도메인"
+    "domain": "도메인",
+    "unknown": "검색"
   },
   "common": {
     "copy": "복사",

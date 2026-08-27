@@ -44,8 +44,8 @@
     "contract": "Contrato",
     "asset": "Activo",
     "ledger": "Libro",
-    "unknown": "Buscar",
-    "domain": "Dominio"
+    "domain": "Dominio",
+    "unknown": "Buscar"
   },
   "common": {
     "copy": "Copiar",

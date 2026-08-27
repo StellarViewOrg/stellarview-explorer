@@ -44,8 +44,8 @@
     "contract": "Vertrag",
     "asset": "Asset",
     "ledger": "Ledger",
-    "unknown": "Suchen",
-    "domain": "Domain"
+    "domain": "Domain",
+    "unknown": "Suchen"
   },
   "common": {
     "copy": "Kopieren",

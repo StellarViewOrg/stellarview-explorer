@@ -44,8 +44,8 @@
     "contract": "合约",
     "asset": "资产",
     "ledger": "账本",
-    "unknown": "搜索",
-    "domain": "域名"
+    "domain": "域名",
+    "unknown": "搜索"
   },
   "common": {
     "copy": "复制",

@@ -44,8 +44,8 @@
     "contract": "コントラクト",
     "asset": "アセット",
     "ledger": "レジャー",
-    "unknown": "検索",
-    "domain": "ドメイン"
+    "domain": "ドメイン",
+    "unknown": "検索"
   },
   "common": {
     "copy": "コピー",
