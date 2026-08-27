@@ -76,10 +76,18 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
     DOMAIN_RESOLVE_DEBOUNCE
   );
   const { data: resolution, isFetching: isResolving } = useDomainResolution(debouncedDomain);
-  const resolvedRoute =
-    resolution?.status === "resolved"
-      ? getEntityRoute(resolution.targetType, resolution.address)
-      : null;
+
+  // The resolution lags the input by the debounce, and a recent-search click
+  // can act on a different name than the one in the box. Both mean the cached
+  // resolution may belong to another name, so match on the name before trusting
+  // it: without this, hitting Enter mid-debounce navigates to whatever the
+  // previous name resolved to.
+  const resolutionFor = useCallback(
+    (candidate: string) =>
+      resolution?.name === normalizeDomainName(candidate) ? resolution : undefined,
+    [resolution]
+  );
+  const currentResolution = resolutionFor(trimmedQuery);
 
   // Load recent searches from localStorage
   useEffect(() => {
@@ -130,7 +138,13 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
       // A domain has no page of its own, it resolves to an account or contract.
       // Until that resolution lands, hand off to the search page, which runs
       // the same lookup and renders the outcome.
-      const route = type === "domain" ? resolvedRoute : getEntityRoute(type, searchQuery);
+      const resolved = resolutionFor(searchQuery);
+      const route =
+        type === "domain"
+          ? resolved?.status === "resolved"
+            ? getEntityRoute(resolved.targetType, resolved.address)
+            : null
+          : getEntityRoute(type, searchQuery);
 
       // Save to recent searches
       saveRecentSearch({
@@ -149,7 +163,7 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
         router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
       }
     },
-    [router, saveRecentSearch, resolvedRoute]
+    [router, saveRecentSearch, resolutionFor]
   );
 
   const detectedType = query ? detectEntityType(query) : "unknown";
@@ -158,11 +172,11 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
   // One line under the query telling the user what the domain resolved to, or
   // why it didn't. Never surfaces the underlying contract/RPC error.
   let domainHint = t("domainResolving");
-  if (!isResolving && resolution) {
+  if (!isResolving && currentResolution) {
     domainHint =
-      resolution.status === "resolved"
-        ? t("domainResolved", { address: truncateHash(resolution.address, 6, 6) })
-        : t(DOMAIN_STATUS_MESSAGE_KEY[resolution.status]);
+      currentResolution.status === "resolved"
+        ? t("domainResolved", { address: truncateHash(currentResolution.address, 6, 6) })
+        : t(DOMAIN_STATUS_MESSAGE_KEY[currentResolution.status]);
   }
 
   return (
