@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "XLM-native_USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+      "base": { "code": "XLM", "issuer": "native" },
+      "counter": {
+        "code": "USDC",
+        "issuer": "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
+      },
+      "lastPrice": 0.11234,
+      "priceChange24h": 2.47,
+      "volume24h": 1250000.5,
+      "liquidity": 8300000
+    },
+    {
+      "id": "AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA_XLM-native",
+      "base": {
+        "code": "AQUA",
+        "issuer": "GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
+      },
+      "counter": { "code": "XLM", "issuer": "native" },
+      "lastPrice": null,
+      "priceChange24h": null,
+      "volume24h": 0,
+      "liquidity": null
+    }
+  ]
+}

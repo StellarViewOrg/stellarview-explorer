@@ -10,6 +10,7 @@
     "transactions": "交易",
     "accounts": "账户",
     "assets": "资产",
+    "pairs": "交易对",
     "contracts": "合约",
     "analytics": "分析",
     "learn": "学习",
@@ -57,7 +58,10 @@
     "tryAgain": "重试",
     "clearAll": "清除全部",
     "remove": "移除",
-    "watch": "关注"
+    "watch": "关注",
+    "previous": "上一页",
+    "next": "下一页",
+    "pageOf": "第 {page} 页，共 {total} 页"
   },
   "errors": {
     "somethingWentWrong": "出现问题",
@@ -165,6 +169,54 @@
     "supply": "供应量",
     "price": "价格"
   },
+  "pairs": {
+    "metaTitle": "交易对 | StellarView Explorer",
+    "metaDescription": "浏览 Stellar DEX 上的交易对，查看任意交易对的交易量、流动性和价格。",
+    "title": "交易对",
+    "subtitle": "浏览 Stellar 去中心化交易所的交易对",
+    "findPair": "查找交易对",
+    "searchPlaceholder": "按资产代码搜索（例如 USDC）",
+    "allPairs": "所有交易对",
+    "aboutPairs": "Stellar 交易对",
+    "aboutPairsDescription": "当资产在 Stellar DEX 上或通过流动性池进行交换时，就会形成交易对。使用上方的搜索或排序功能来查看价格、交易量和流动性。",
+    "notAvailable": {
+      "title": "交易数据尚不可用",
+      "description": "索引器处理完交易历史后，交易对聚合数据将显示在此处。"
+    }
+  },
+  "pair": {
+    "pairs": "交易对",
+    "subtitle": "Stellar DEX 上的交易对",
+    "candles": "价格图表",
+    "trades": "成交记录",
+    "orderbook": "订单簿",
+    "recentTrades": "最近成交",
+    "failedToLoadTrades": "加载成交记录失败",
+    "noTrades": "暂无成交记录",
+    "noTradesDesc": "该交易对暂无成交记录。",
+    "time": "时间",
+    "price": "价格",
+    "amount": "数量",
+    "amountOf": "数量 ({code})",
+    "failedToLoadOrderbook": "加载订单簿失败",
+    "emptyOrderbook": "订单簿为空",
+    "emptyOrderbookDesc": "该交易对暂无未成交订单。",
+    "bestBid": "最优买价",
+    "midPrice": "中间价",
+    "bestAsk": "最优卖价",
+    "bids": "买单",
+    "asks": "卖单",
+    "spread": "价差",
+    "resolution": {
+      "1m": "1分钟",
+      "1h": "1小时",
+      "1d": "1天"
+    },
+    "notAvailable": {
+      "title": "交易数据尚不可用",
+      "description": "索引器处理完该交易对的交易历史后，K 线数据将显示在此处。"
+    }
+  },
   "contracts": {
     "metaTitle": "智能合约 | StellarView Explorer",
     "metaDescription": "探索 Stellar 网络上的 Soroban 智能合约。搜索和查看合约详情。",
@@ -266,7 +318,10 @@
       "noActivity": "无代币活动",
       "noActivityDesc": "过去 7 天内未找到此合约的事件。",
       "recentEvents": "点击任意卡片查看详情 · {count} 个最近事件"
-    }
+    },
+    "underlyingAsset": "底层资产",
+    "tradingPairsAndPools": "交易对和流动池",
+    "viewPools": "查看流动池"
   },
   "watchlist": {
     "title": "关注列表",
@@ -353,7 +408,8 @@
     "failedToLoadData": "加载数据条目失败",
     "noDataEntries": "无数据条目",
     "noDataEntriesDesc": "此账户没有存储的键值数据。",
-    "dataEntries": "数据条目 ({count})"
+    "dataEntries": "数据条目 ({count})",
+    "poolShares": "流动性池份额"
   },
   "operations": {
     "create_account": "创建账户",
@@ -606,11 +662,17 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Stellar 原生资产",
     "aboutXlm": "关于 XLM",
+    "overview": "概览",
     "xlmDescription": "XLM（Stellar Lumens）是 Stellar 网络的原生资产。它有多种用途：",
     "xlmPurpose1": "支付交易费用（通常每笔操作 0.00001 XLM）",
     "xlmPurpose2": "维持最低账户余额（基础储备）",
     "xlmPurpose3": "通过要求创建账户时支付少量金额来防止垃圾交易",
-    "xlmPurpose4": "通过 DEX 进行跨资产交易的桥接货币"
+    "xlmPurpose4": "通过 DEX 进行跨资产交易的桥接货币",
+    "pools": "资金池",
+    "tradingPairs": "交易对",
+    "noPools": "暂无流动性池",
+    "noPoolsDesc": "该资产尚未进入任何流动性池。",
+    "failedToLoadPools": "加载流动性池失败"
   },
   "assetsMeta": {
     "stellarLumens": "Stellar Lumens",
@@ -664,6 +726,14 @@
       "holders": "持有者",
       "auth": "授权",
       "noAssetsFound": "未找到资产"
+    },
+    "pairTable": {
+      "pair": "交易对",
+      "price": "价格",
+      "change24h": "24小时涨跌",
+      "volume24h": "24小时交易量",
+      "liquidity": "流动性",
+      "noPairsFound": "未找到交易对"
     },
     "globalSearch": {
       "search": "搜索",
@@ -1050,6 +1120,23 @@
     "pool": "池",
     "failedToLoadTx": "加载交易失败",
     "noTransactions": "无交易",
-    "noTransactionsDesc": "未找到此流动性池的交易记录。"
+    "noTransactionsDesc": "未找到此流动性池的交易记录。",
+    "depthChart": "资金池深度",
+    "activity": "活动",
+    "depositType": "存入",
+    "withdrawType": "提取",
+    "tradeType": "交易",
+    "createdType": "资金池已创建",
+    "removedType": "资金池已移除",
+    "revokedType": "储备已撤销",
+    "noActivity": "暂无活动",
+    "noActivityDesc": "该资金池尚未记录任何存入、提取或交易。",
+    "failedToLoadActivity": "加载活动失败",
+    "sharesReceived": "获得份额",
+    "sharesRedeemed": "赎回份额",
+    "notAvailable": {
+      "title": "资金池历史数据尚不可用",
+      "description": "索引器处理完该资金池的储备历史后，深度数据将显示在此处。"
+    }
   }
 }

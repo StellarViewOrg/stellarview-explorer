@@ -33,7 +33,7 @@ interface AssetTableProps {
   title?: string;
 }
 
-function PriceChange({ change }: { change: number }) {
+export function PriceChange({ change }: { change: number }) {
   if (change === 0) {
     return (
       <span className="text-muted-foreground flex items-center gap-1 text-sm">

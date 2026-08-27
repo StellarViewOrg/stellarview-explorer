@@ -3,10 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Hash, Box, Coins } from "lucide-react";
+import { Hash, Box, Coins, ArrowRight, Droplets } from "lucide-react";
 import { HashDisplay } from "@/components/common/hash-display";
+import { AssetLogo } from "@/components/common/asset-logo";
 import { ContractVerification } from "@/components/contracts";
-import { useContractBalance, useContractCode } from "@/lib/hooks";
+import { Link } from "@/i18n/navigation";
+import { useContractBalance, useContractCode, useContractSacAsset } from "@/lib/hooks";
 import { useTranslations } from "next-intl";
 
 export function ContractSummary({ contractId }: { contractId: string }) {
@@ -14,6 +16,7 @@ export function ContractSummary({ contractId }: { contractId: string }) {
   const { data: balanceData } = useContractBalance(contractId);
   const { data: codeData } = useContractCode(contractId);
   const isSac = codeData?.type === "sac";
+  const { data: sacAsset } = useContractSacAsset(contractId, isSac);
 
   return (
     <Card>
@@ -55,6 +58,36 @@ export function ContractSummary({ contractId }: { contractId: string }) {
               <span className="text-muted-foreground text-sm">{t("status")}</span>
               <Badge className="bg-success/15 text-success border-success/25">{t("active")}</Badge>
             </div>
+            {isSac && sacAsset && (
+              <>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground text-sm">{t("underlyingAsset")}</span>
+                  <Link
+                    href={`/asset/${sacAsset.code}-${sacAsset.issuer}`}
+                    className="hover:text-primary flex items-center gap-1.5 text-sm font-medium transition-colors"
+                  >
+                    <AssetLogo code={sacAsset.code} issuer={sacAsset.issuer} size="sm" />
+                    {sacAsset.code}
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground flex items-center gap-2 text-sm">
+                    <Droplets className="size-4" />
+                    {t("tradingPairsAndPools")}
+                  </span>
+                  <Link
+                    href={`/asset/${sacAsset.code}-${sacAsset.issuer}?tab=pools`}
+                    className="hover:text-primary flex items-center gap-1.5 text-sm font-medium transition-colors"
+                  >
+                    {t("viewPools")}
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                </div>
+              </>
+            )}
             {balanceData?.exists && parseFloat(balanceData.balance) > 0 && (
               <>
                 <Separator />

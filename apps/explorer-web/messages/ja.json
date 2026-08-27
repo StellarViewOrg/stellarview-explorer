@@ -10,6 +10,7 @@
     "transactions": "トランザクション",
     "accounts": "アカウント",
     "assets": "アセット",
+    "pairs": "ペア",
     "contracts": "コントラクト",
     "analytics": "分析",
     "learn": "学ぶ",
@@ -57,7 +58,10 @@
     "tryAgain": "再試行",
     "clearAll": "すべてクリア",
     "remove": "削除",
-    "watch": "フォロー"
+    "watch": "フォロー",
+    "previous": "前へ",
+    "next": "次へ",
+    "pageOf": "{page} / {total} ページ"
   },
   "errors": {
     "somethingWentWrong": "問題が発生しました",
@@ -165,6 +169,54 @@
     "supply": "供給量",
     "price": "価格"
   },
+  "pairs": {
+    "metaTitle": "取引ペア | StellarView Explorer",
+    "metaDescription": "Stellar DEX の取引ペアを閲覧できます。任意のペアの出来高、流動性、価格を確認しましょう。",
+    "title": "取引ペア",
+    "subtitle": "Stellar の分散型取引所の取引ペアを閲覧",
+    "findPair": "ペアを検索",
+    "searchPlaceholder": "アセットコードで検索（例: USDC）",
+    "allPairs": "すべてのペア",
+    "aboutPairs": "Stellar の取引ペア",
+    "aboutPairsDescription": "取引ペアは、Stellar DEX またはリクイディティプールを通じてアセットが交換されると形成されます。上のリストを検索・並べ替えて、価格、出来高、流動性を確認できます。",
+    "notAvailable": {
+      "title": "取引データはまだ利用できません",
+      "description": "インデクサーが取引履歴の処理を完了すると、ペアの集計データがここに表示されます。"
+    }
+  },
+  "pair": {
+    "pairs": "ペア",
+    "subtitle": "Stellar DEX の取引ペア",
+    "candles": "価格チャート",
+    "trades": "取引",
+    "orderbook": "オーダーブック",
+    "recentTrades": "最近の取引",
+    "failedToLoadTrades": "取引の読み込みに失敗しました",
+    "noTrades": "まだ取引はありません",
+    "noTradesDesc": "このペアの取引は記録されていません。",
+    "time": "時刻",
+    "price": "価格",
+    "amount": "数量",
+    "amountOf": "数量（{code}）",
+    "failedToLoadOrderbook": "オーダーブックの読み込みに失敗しました",
+    "emptyOrderbook": "オーダーブックは空です",
+    "emptyOrderbookDesc": "このペアの未決済注文はありません。",
+    "bestBid": "最良買値",
+    "midPrice": "仲値",
+    "bestAsk": "最良売値",
+    "bids": "買い注文",
+    "asks": "売り注文",
+    "spread": "スプレッド",
+    "resolution": {
+      "1m": "1分",
+      "1h": "1時間",
+      "1d": "1日"
+    },
+    "notAvailable": {
+      "title": "取引データはまだ利用できません",
+      "description": "インデクサーがこのペアの取引履歴の処理を完了すると、ローソク足データがここに表示されます。"
+    }
+  },
   "contracts": {
     "metaTitle": "スマートコントラクト | StellarView Explorer",
     "metaDescription": "Stellarネットワーク上のSorobanスマートコントラクトを探索。コントラクトの詳細を検索・表示。",
@@ -266,7 +318,10 @@
       "noActivity": "トークンアクティビティなし",
       "noActivityDesc": "過去 7 日間でこのコントラクトのイベントが見つかりませんでした。",
       "recentEvents": "カードをタップして詳細を確認 · {count} 件の最近のイベント"
-    }
+    },
+    "underlyingAsset": "原資産",
+    "tradingPairsAndPools": "取引ペアとプール",
+    "viewPools": "プールを見る"
   },
   "watchlist": {
     "title": "ウォッチリスト",
@@ -353,7 +408,8 @@
     "failedToLoadData": "データエントリの読み込みに失敗しました",
     "noDataEntries": "データエントリなし",
     "noDataEntriesDesc": "このアカウントにはキーバリューデータが保存されていません。",
-    "dataEntries": "データエントリ ({count})"
+    "dataEntries": "データエントリ ({count})",
+    "poolShares": "流動性プールシェア"
   },
   "operations": {
     "create_account": "アカウント作成",
@@ -606,11 +662,17 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Stellarネイティブアセット",
     "aboutXlm": "XLMについて",
+    "overview": "概要",
     "xlmDescription": "XLM（Stellar Lumens）はStellarネットワークのネイティブアセットです。複数の目的があります：",
     "xlmPurpose1": "トランザクション手数料の支払い（通常、操作ごとに0.00001 XLM）",
     "xlmPurpose2": "最低アカウント残高の維持（基本リザーブ）",
     "xlmPurpose3": "アカウント作成に少額を要求することでスパムを防止",
-    "xlmPurpose4": "DEXを介したクロスアセット取引のブリッジ通貨"
+    "xlmPurpose4": "DEXを介したクロスアセット取引のブリッジ通貨",
+    "pools": "プール",
+    "tradingPairs": "取引ペア",
+    "noPools": "流動性プールなし",
+    "noPoolsDesc": "このアセットはまだ流動性プールに含まれていません。",
+    "failedToLoadPools": "流動性プールの読み込みに失敗しました"
   },
   "assetsMeta": {
     "stellarLumens": "Stellar Lumens",
@@ -664,6 +726,14 @@
       "holders": "保有者",
       "auth": "認証",
       "noAssetsFound": "アセットが見つかりません"
+    },
+    "pairTable": {
+      "pair": "ペア",
+      "price": "価格",
+      "change24h": "24時間変動",
+      "volume24h": "24時間出来高",
+      "liquidity": "流動性",
+      "noPairsFound": "ペアが見つかりません"
     },
     "globalSearch": {
       "search": "検索",
@@ -1050,6 +1120,23 @@
     "pool": "プール",
     "failedToLoadTx": "トランザクションの読み込みに失敗しました",
     "noTransactions": "トランザクションなし",
-    "noTransactionsDesc": "この流動性プールのトランザクションが見つかりませんでした。"
+    "noTransactionsDesc": "この流動性プールのトランザクションが見つかりませんでした。",
+    "depthChart": "プール深度",
+    "activity": "アクティビティ",
+    "depositType": "入金",
+    "withdrawType": "出金",
+    "tradeType": "取引",
+    "createdType": "プール作成",
+    "removedType": "プール削除",
+    "revokedType": "準備金取り消し",
+    "noActivity": "まだアクティビティがありません",
+    "noActivityDesc": "このプールでは入金、出金、取引が記録されていません。",
+    "failedToLoadActivity": "アクティビティの読み込みに失敗しました",
+    "sharesReceived": "受け取ったシェア",
+    "sharesRedeemed": "償還したシェア",
+    "notAvailable": {
+      "title": "プールの履歴はまだ利用できません",
+      "description": "インデクサーがこのプールの準備金を時系列で処理すると、履歴の深度がここに表示されます。"
+    }
   }
 }

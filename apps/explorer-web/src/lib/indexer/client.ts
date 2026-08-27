@@ -12,7 +12,7 @@ import type {
  * Returns the indexer base URL from the public env var.
  * Empty string or undefined → indexer is not configured.
  */
-function getBaseUrl(): string {
+export function getBaseUrl(): string {
   return process.env.NEXT_PUBLIC_INDEXER_URL?.replace(/\/+$/, "") ?? "";
 }
 

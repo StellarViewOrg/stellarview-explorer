@@ -10,6 +10,7 @@
     "transactions": "Transacciones",
     "accounts": "Cuentas",
     "assets": "Activos",
+    "pairs": "Pares",
     "contracts": "Contratos",
     "analytics": "Analíticas",
     "learn": "Aprender",
@@ -57,7 +58,10 @@
     "tryAgain": "Reintentar",
     "clearAll": "Borrar todo",
     "remove": "Eliminar",
-    "watch": "Seguir"
+    "watch": "Seguir",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {page} de {total}"
   },
   "errors": {
     "somethingWentWrong": "Algo salió mal",
@@ -165,6 +169,54 @@
     "supply": "Suministro",
     "price": "Precio"
   },
+  "pairs": {
+    "metaTitle": "Pares de Trading | StellarView Explorer",
+    "metaDescription": "Explora los pares de trading en el DEX de Stellar. Consulta volumen, liquidez y precio de cualquier par.",
+    "title": "Pares de Trading",
+    "subtitle": "Explora los pares de trading en el exchange descentralizado de Stellar",
+    "findPair": "Buscar un Par",
+    "searchPlaceholder": "Buscar por código de activo (p. ej., USDC)",
+    "allPairs": "Todos los Pares",
+    "aboutPairs": "Pares de Trading en Stellar",
+    "aboutPairsDescription": "Los pares de trading se forman cuando los activos se intercambian en el DEX de Stellar o mediante un pool de liquidez. Busca u ordena la lista de arriba para explorar precio, volumen y liquidez.",
+    "notAvailable": {
+      "title": "Los datos de trading aún no están disponibles",
+      "description": "Los agregados de pares aparecerán aquí una vez que el indexador procese el historial de trading."
+    }
+  },
+  "pair": {
+    "pairs": "Pares",
+    "subtitle": "Par de trading en el DEX de Stellar",
+    "candles": "Gráfico de Precio",
+    "trades": "Operaciones",
+    "orderbook": "Libro de Órdenes",
+    "recentTrades": "Operaciones Recientes",
+    "failedToLoadTrades": "Error al cargar las operaciones",
+    "noTrades": "Aún no hay operaciones",
+    "noTradesDesc": "No se han registrado operaciones para este par.",
+    "time": "Hora",
+    "price": "Precio",
+    "amount": "Cantidad",
+    "amountOf": "Cantidad ({code})",
+    "failedToLoadOrderbook": "Error al cargar el libro de órdenes",
+    "emptyOrderbook": "Libro de órdenes vacío",
+    "emptyOrderbookDesc": "No hay órdenes abiertas para este par.",
+    "bestBid": "Mejor Compra",
+    "midPrice": "Precio Medio",
+    "bestAsk": "Mejor Venta",
+    "bids": "Compras",
+    "asks": "Ventas",
+    "spread": "Spread",
+    "resolution": {
+      "1m": "1m",
+      "1h": "1h",
+      "1d": "1d"
+    },
+    "notAvailable": {
+      "title": "Los datos de trading aún no están disponibles",
+      "description": "Los datos de velas aparecerán aquí una vez que el indexador procese el historial de este par."
+    }
+  },
   "contracts": {
     "metaTitle": "Contratos inteligentes | StellarView Explorer",
     "metaDescription": "Explora contratos inteligentes Soroban en la red Stellar. Busca y ve detalles de contratos.",
@@ -266,7 +318,10 @@
       "noActivity": "Sin actividad de token",
       "noActivityDesc": "No se encontraron eventos para este contrato en los últimos 7 días.",
       "recentEvents": "Toca cualquier tarjeta para ver detalles · {count} eventos recientes"
-    }
+    },
+    "underlyingAsset": "Activo Subyacente",
+    "tradingPairsAndPools": "Pares de Trading y Pools",
+    "viewPools": "Ver Pools"
   },
   "watchlist": {
     "title": "Favoritos",
@@ -353,7 +408,8 @@
     "failedToLoadData": "Error al cargar las entradas de datos",
     "noDataEntries": "Sin entradas de datos",
     "noDataEntriesDesc": "Esta cuenta no tiene datos clave-valor almacenados.",
-    "dataEntries": "Entradas de Datos ({count})"
+    "dataEntries": "Entradas de Datos ({count})",
+    "poolShares": "Participaciones del Pool de Liquidez"
   },
   "operations": {
     "create_account": "Crear cuenta",
@@ -601,6 +657,14 @@
       "auth": "Auth",
       "noAssetsFound": "No se encontraron activos"
     },
+    "pairTable": {
+      "pair": "Par",
+      "price": "Precio",
+      "change24h": "Cambio 24h",
+      "volume24h": "Volumen 24h",
+      "liquidity": "Liquidez",
+      "noPairsFound": "No se encontraron pares"
+    },
     "globalSearch": {
       "search": "Buscar",
       "keyboardShortcut": "⌘",
@@ -677,11 +741,17 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Activo Nativo de Stellar",
     "aboutXlm": "Acerca de XLM",
+    "overview": "Resumen",
     "xlmDescription": "XLM (Stellar Lumens) es el activo nativo de la red Stellar. Sirve para múltiples propósitos:",
     "xlmPurpose1": "Pagar tarifas de transacción (típicamente 0.00001 XLM por operación)",
     "xlmPurpose2": "Mantener balances mínimos de cuenta (reserva base)",
     "xlmPurpose3": "Prevenir spam requiriendo pequeñas cantidades para crear cuentas",
-    "xlmPurpose4": "Moneda puente para transacciones entre activos vía el DEX"
+    "xlmPurpose4": "Moneda puente para transacciones entre activos vía el DEX",
+    "pools": "Pools",
+    "tradingPairs": "Pares de Trading",
+    "noPools": "Sin pools de liquidez",
+    "noPoolsDesc": "Este activo aún no forma parte de ningún pool de liquidez.",
+    "failedToLoadPools": "Error al cargar los pools de liquidez"
   },
   "ledgerDetails": {
     "title": "Libro",
@@ -1050,6 +1120,23 @@
     "pool": "Pool",
     "failedToLoadTx": "Error al cargar las transacciones",
     "noTransactions": "Sin transacciones",
-    "noTransactionsDesc": "No se encontraron transacciones para este pool de liquidez."
+    "noTransactionsDesc": "No se encontraron transacciones para este pool de liquidez.",
+    "depthChart": "Profundidad del Pool",
+    "activity": "Actividad",
+    "depositType": "Depósito",
+    "withdrawType": "Retiro",
+    "tradeType": "Operación",
+    "createdType": "Pool Creado",
+    "removedType": "Pool Eliminado",
+    "revokedType": "Reservas Revocadas",
+    "noActivity": "Sin actividad todavía",
+    "noActivityDesc": "No se han registrado depósitos, retiros ni operaciones para este pool.",
+    "failedToLoadActivity": "Error al cargar la actividad",
+    "sharesReceived": "Participaciones recibidas",
+    "sharesRedeemed": "Participaciones canjeadas",
+    "notAvailable": {
+      "title": "El historial del pool aún no está disponible",
+      "description": "La profundidad histórica aparecerá aquí una vez que el indexador procese las reservas de este pool a lo largo del tiempo."
+    }
   }
 }
