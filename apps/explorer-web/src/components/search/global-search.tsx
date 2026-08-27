@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { Search, ArrowRightLeft, Users, FileCode, Coins, Layers, Clock } from "lucide-react";
+import { Search, ArrowRightLeft, Users, FileCode, Coins, Layers, Clock, Globe } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -13,8 +13,10 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { detectEntityType, getEntityRoute, truncateHash } from "@/lib/utils";
+import { detectEntityType, getEntityRoute, isDomainName, truncateHash } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useDomainResolution } from "@/lib/hooks";
+import { DOMAIN_STATUS_MESSAGE_KEY, normalizeDomainName } from "@/lib/stellar";
 import type { EntityType } from "@/types";
 import { useTranslations } from "next-intl";
 
@@ -24,8 +26,11 @@ const entityIcons: Record<EntityType, typeof Search> = {
   contract: FileCode,
   asset: Coins,
   ledger: Layers,
+  domain: Globe,
   unknown: Search,
 };
+
+const DOMAIN_RESOLVE_DEBOUNCE = 300;
 
 const RECENT_SEARCHES_KEY = "stellar-explorer-recent-searches";
 const MAX_RECENT = 5;
@@ -34,6 +39,18 @@ interface RecentSearch {
   query: string;
   type: EntityType;
   timestamp: number;
+}
+
+/** Holds back a fast-changing value so typing doesn't fire one RPC per keystroke. */
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debounced;
 }
 
 interface GlobalSearchProps {
@@ -49,6 +66,28 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
   const t = useTranslations("search");
   const tEntity = useTranslations("entityTypes");
   const tComponents = useTranslations("components.globalSearch");
+
+  // Soroban Domains: resolve `name.xlm` to the address it points at, so Enter
+  // lands on the account/contract page instead of the search results page.
+  const trimmedQuery = query.trim();
+  const isDomainQuery = isDomainName(trimmedQuery);
+  const debouncedDomain = useDebouncedValue(
+    isDomainQuery ? normalizeDomainName(trimmedQuery) : "",
+    DOMAIN_RESOLVE_DEBOUNCE
+  );
+  const { data: resolution, isFetching: isResolving } = useDomainResolution(debouncedDomain);
+
+  // The resolution lags the input by the debounce, and a recent-search click
+  // can act on a different name than the one in the box. Both mean the cached
+  // resolution may belong to another name, so match on the name before trusting
+  // it: without this, hitting Enter mid-debounce navigates to whatever the
+  // previous name resolved to.
+  const resolutionFor = useCallback(
+    (candidate: string) =>
+      resolution?.name === normalizeDomainName(candidate) ? resolution : undefined,
+    [resolution]
+  );
+  const currentResolution = resolutionFor(trimmedQuery);
 
   // Load recent searches from localStorage
   useEffect(() => {
@@ -96,7 +135,16 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
       if (!searchQuery.trim()) return;
 
       const type = detectEntityType(searchQuery);
-      const route = getEntityRoute(type, searchQuery);
+      // A domain has no page of its own, it resolves to an account or contract.
+      // Until that resolution lands, hand off to the search page, which runs
+      // the same lookup and renders the outcome.
+      const resolved = resolutionFor(searchQuery);
+      const route =
+        type === "domain"
+          ? resolved?.status === "resolved"
+            ? getEntityRoute(resolved.targetType, resolved.address)
+            : null
+          : getEntityRoute(type, searchQuery);
 
       // Save to recent searches
       saveRecentSearch({
@@ -115,11 +163,21 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
         router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
       }
     },
-    [router, saveRecentSearch]
+    [router, saveRecentSearch, resolutionFor]
   );
 
   const detectedType = query ? detectEntityType(query) : "unknown";
   const Icon = entityIcons[detectedType];
+
+  // One line under the query telling the user what the domain resolved to, or
+  // why it didn't. Never surfaces the underlying contract/RPC error.
+  let domainHint = t("domainResolving");
+  if (!isResolving && currentResolution) {
+    domainHint =
+      currentResolution.status === "resolved"
+        ? t("domainResolved", { address: truncateHash(currentResolution.address, 6, 6) })
+        : t(DOMAIN_STATUS_MESSAGE_KEY[currentResolution.status]);
+  }
 
   return (
     <>
@@ -189,9 +247,11 @@ export function GlobalSearch({ className, heroMode = false }: GlobalSearchProps)
               <CommandItem value={query} onSelect={() => handleSearch(query)} className="gap-3">
                 <Icon className="size-4" />
                 <div className="flex-1 overflow-hidden">
-                  <p className="truncate font-mono text-sm">{truncateHash(query, 16, 16)}</p>
+                  <p className="truncate font-mono text-sm">
+                    {isDomainQuery ? trimmedQuery : truncateHash(query, 16, 16)}
+                  </p>
                   <p className="text-muted-foreground text-xs">
-                    {t("searchAs", { type: tEntity(detectedType) })}
+                    {isDomainQuery ? domainHint : t("searchAs", { type: tEntity(detectedType) })}
                   </p>
                 </div>
               </CommandItem>

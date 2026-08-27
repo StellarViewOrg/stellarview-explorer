@@ -342,6 +342,15 @@ export function useNetworkStats() {
   return useQuery(stellarQueries.networkStats(network));
 }
 
+// Hook for Soroban Domains forward resolution (name.xlm -> address)
+export function useDomainResolution(name: string, enabled = true) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.domainResolution(network, name),
+    enabled: enabled && name.length > 0,
+  });
+}
+
 // Hook for the Soroban Domains reverse lookup (address -> owned domains)
 export function useDomainsByAddress(address: string, enabled = true) {
   const { network } = useNetwork();

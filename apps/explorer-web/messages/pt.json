@@ -20,7 +20,7 @@
   },
   "search": {
     "placeholder": "Buscar transações, contas...",
-    "inputPlaceholder": "Buscar por hash de tx, conta, ativo, contrato ou livro...",
+    "inputPlaceholder": "Buscar por hash de tx, conta, ativo, contrato, ledger ou name.xlm...",
     "noResults": "Nenhum resultado encontrado.",
     "noResultsHint": "Tente um hash de transação, endereço de conta ou número de livro.",
     "searchAs": "Buscar como {type}",
@@ -29,7 +29,13 @@
     "quickAccess": "Acesso Rápido",
     "recentTransactions": "Transações Recentes",
     "latestLedgers": "Últimos Livros",
-    "smartContracts": "Contratos Inteligentes"
+    "smartContracts": "Contratos Inteligentes",
+    "domainResolving": "Resolvendo domínio...",
+    "domainResolved": "Aponta para {address}",
+    "domainNotFound": "Este domínio não está registrado",
+    "domainExpired": "O registro deste domínio expirou",
+    "domainUnsupported": "A resolução de domínios não está disponível nesta rede",
+    "domainError": "Não foi possível resolver este domínio. Tente novamente."
   },
   "entityTypes": {
     "transaction": "Transação",
@@ -37,6 +43,7 @@
     "contract": "Contrato",
     "asset": "Ativo",
     "ledger": "Livro",
+    "domain": "Domínio",
     "unknown": "Buscar"
   },
   "common": {

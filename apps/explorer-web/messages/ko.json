@@ -20,7 +20,7 @@
   },
   "search": {
     "placeholder": "트랜잭션, 계정 검색...",
-    "inputPlaceholder": "트랜잭션 해시, 계정, 자산, 컨트랙트 또는 원장 검색...",
+    "inputPlaceholder": "트랜잭션 해시, 계정, 자산, 컨트랙트, 레저 또는 name.xlm으로 검색...",
     "noResults": "결과를 찾을 수 없습니다.",
     "noResultsHint": "트랜잭션 해시, 계정 주소 또는 원장 번호를 입력해 보세요.",
     "searchAs": "{type}(으)로 검색",
@@ -29,7 +29,13 @@
     "quickAccess": "빠른 접근",
     "recentTransactions": "최근 트랜잭션",
     "latestLedgers": "최신 원장",
-    "smartContracts": "스마트 컨트랙트"
+    "smartContracts": "스마트 컨트랙트",
+    "domainResolving": "도메인 확인 중...",
+    "domainResolved": "{address}(으)로 연결됩니다",
+    "domainNotFound": "등록되지 않은 도메인입니다",
+    "domainExpired": "이 도메인의 등록이 만료되었습니다",
+    "domainUnsupported": "이 네트워크에서는 도메인 확인을 사용할 수 없습니다",
+    "domainError": "도메인을 확인할 수 없습니다. 다시 시도해 주세요."
   },
   "entityTypes": {
     "transaction": "트랜잭션",
@@ -37,6 +43,7 @@
     "contract": "컨트랙트",
     "asset": "자산",
     "ledger": "원장",
+    "domain": "도메인",
     "unknown": "검색"
   },
   "common": {

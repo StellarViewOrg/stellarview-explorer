@@ -6,8 +6,19 @@ import { Suspense, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/common/empty-state";
-import { detectEntityType, getEntityRoute } from "@/lib/utils";
-import { Search, ArrowRightLeft, Users, FileCode, Coins, Layers, ArrowRight } from "lucide-react";
+import { detectEntityType, getEntityRoute, isDomainName } from "@/lib/utils";
+import {
+  Search,
+  ArrowRightLeft,
+  Users,
+  FileCode,
+  Coins,
+  Layers,
+  ArrowRight,
+  Globe,
+} from "lucide-react";
+import { useDomainResolution } from "@/lib/hooks";
+import { DOMAIN_STATUS_MESSAGE_KEY, normalizeDomainName } from "@/lib/stellar";
 import { Link } from "@/i18n/navigation";
 import type { EntityType } from "@/types";
 import { useTranslations } from "next-intl";
@@ -18,6 +29,7 @@ const entityIcons: Record<EntityType, typeof Search> = {
   contract: FileCode,
   asset: Coins,
   ledger: Layers,
+  domain: Globe,
   unknown: Search,
 };
 
@@ -27,9 +39,22 @@ function SearchResultsContent() {
   const query = searchParams.get("q") || "";
   const t = useTranslations("searchPage");
   const tEntity = useTranslations("entityTypes");
+  const tSearch = useTranslations("search");
 
   const detectedType = query ? detectEntityType(query) : "unknown";
-  const route = query ? getEntityRoute(detectedType, query) : null;
+
+  // Soroban Domains resolve to an account or contract, so the target route is
+  // only known once the registry lookup comes back.
+  const isDomainQuery = isDomainName(query);
+  const { data: resolution, isFetching: isResolving } = useDomainResolution(
+    isDomainQuery ? normalizeDomainName(query) : ""
+  );
+  const domainRoute =
+    resolution?.status === "resolved"
+      ? getEntityRoute(resolution.targetType, resolution.address)
+      : null;
+
+  const route = isDomainQuery ? domainRoute : query ? getEntityRoute(detectedType, query) : null;
   const shouldRedirect = !!route && detectedType !== "unknown";
   const hasRedirected = useRef(false);
 
@@ -52,6 +77,24 @@ function SearchResultsContent() {
           <div className="animate-pulse">
             <p className="text-muted-foreground">{t("redirecting")}</p>
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // A domain that hasn't resolved: show why, rather than the generic
+  // "try searching as..." list, which has nothing useful to offer here.
+  if (isDomainQuery) {
+    return (
+      <Card>
+        <CardContent className="py-12 text-center">
+          <Globe className="text-muted-foreground mx-auto mb-4 size-8" />
+          <p className="font-mono text-sm break-all">{normalizeDomainName(query)}</p>
+          <p className="text-muted-foreground mt-2 text-sm">
+            {isResolving || !resolution || resolution.status === "resolved"
+              ? tSearch("domainResolving")
+              : tSearch(DOMAIN_STATUS_MESSAGE_KEY[resolution.status])}
+          </p>
         </CardContent>
       </Card>
     );
