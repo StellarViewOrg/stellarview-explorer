@@ -10,13 +10,14 @@
     "transactions": "Transactions",
     "accounts": "Accounts",
     "assets": "Assets",
+    "pairs": "Pairs",
     "contracts": "Contracts",
-    "domains": "Domains",
     "analytics": "Analytics",
     "learn": "Learn",
     "watchlist": "Watchlist",
     "collapse": "Collapse",
-    "toggleMenu": "Toggle menu"
+    "toggleMenu": "Toggle menu",
+    "domains": "Domains"
   },
   "search": {
     "placeholder": "Search transactions, accounts...",
@@ -43,8 +44,8 @@
     "contract": "Contract",
     "asset": "Asset",
     "ledger": "Ledger",
-    "domain": "Domain",
-    "unknown": "Search"
+    "unknown": "Search",
+    "domain": "Domain"
   },
   "common": {
     "copy": "Copy",
@@ -58,7 +59,10 @@
     "tryAgain": "Try again",
     "clearAll": "Clear All",
     "remove": "Remove",
-    "watch": "Watch"
+    "watch": "Watch",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {total}"
   },
   "errors": {
     "somethingWentWrong": "Something went wrong",
@@ -166,6 +170,54 @@
     "supply": "Supply",
     "price": "Price"
   },
+  "pairs": {
+    "metaTitle": "Trading Pairs | StellarView Explorer",
+    "metaDescription": "Explore trading pairs on the Stellar DEX. View volume, liquidity, and price for any pair.",
+    "title": "Trading Pairs",
+    "subtitle": "Explore trading pairs on the Stellar decentralized exchange",
+    "findPair": "Find a Pair",
+    "searchPlaceholder": "Search by asset code (e.g., USDC)",
+    "allPairs": "All Pairs",
+    "aboutPairs": "Stellar Trading Pairs",
+    "aboutPairsDescription": "Trading pairs are formed when assets are exchanged on the Stellar DEX or through a liquidity pool. Search or sort the list above to explore price, volume, and liquidity.",
+    "notAvailable": {
+      "title": "Trading data isn't available yet",
+      "description": "Pair aggregates will appear here once the indexer processes trading history."
+    }
+  },
+  "pair": {
+    "pairs": "Pairs",
+    "subtitle": "Trading pair on the Stellar DEX",
+    "candles": "Price Chart",
+    "trades": "Trades",
+    "orderbook": "Orderbook",
+    "recentTrades": "Recent Trades",
+    "failedToLoadTrades": "Failed to load trades",
+    "noTrades": "No trades yet",
+    "noTradesDesc": "No trades have been recorded for this pair.",
+    "time": "Time",
+    "price": "Price",
+    "amount": "Amount",
+    "amountOf": "Amount ({code})",
+    "failedToLoadOrderbook": "Failed to load orderbook",
+    "emptyOrderbook": "Empty orderbook",
+    "emptyOrderbookDesc": "No open orders for this pair.",
+    "bestBid": "Best Bid",
+    "midPrice": "Mid Price",
+    "bestAsk": "Best Ask",
+    "bids": "Bids",
+    "asks": "Asks",
+    "spread": "Spread",
+    "resolution": {
+      "1m": "1m",
+      "1h": "1h",
+      "1d": "1d"
+    },
+    "notAvailable": {
+      "title": "Trading data isn't available yet",
+      "description": "Candle data will appear here once the indexer processes this pair's trading history."
+    }
+  },
   "contracts": {
     "metaTitle": "Smart Contracts | StellarView Explorer",
     "metaDescription": "Explore Soroban smart contracts on the Stellar network. Search and view contract details.",
@@ -267,7 +319,10 @@
       "noActivity": "No token activity",
       "noActivityDesc": "No events found for this contract in the last 7 days.",
       "recentEvents": "Tap any card to flip and see details · {count} recent events"
-    }
+    },
+    "underlyingAsset": "Underlying Asset",
+    "tradingPairsAndPools": "Trading Pairs & Pools",
+    "viewPools": "View Pools"
   },
   "watchlist": {
     "title": "Watchlist",
@@ -354,7 +409,8 @@
     "failedToLoadData": "Failed to load data entries",
     "noDataEntries": "No data entries",
     "noDataEntriesDesc": "This account has no key-value data stored.",
-    "dataEntries": "Data Entries ({count})"
+    "dataEntries": "Data Entries ({count})",
+    "poolShares": "Liquidity Pool Shares"
   },
   "operations": {
     "create_account": "Create Account",
@@ -602,6 +658,14 @@
       "auth": "Auth",
       "noAssetsFound": "No assets found"
     },
+    "pairTable": {
+      "pair": "Pair",
+      "price": "Price",
+      "change24h": "24h Change",
+      "volume24h": "24h Volume",
+      "liquidity": "Liquidity",
+      "noPairsFound": "No pairs found"
+    },
     "globalSearch": {
       "search": "Search",
       "keyboardShortcut": "⌘",
@@ -678,11 +742,17 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Native Stellar Asset",
     "aboutXlm": "About XLM",
+    "overview": "Overview",
     "xlmDescription": "XLM (Stellar Lumens) is the native asset of the Stellar network. It serves multiple purposes:",
     "xlmPurpose1": "Pay transaction fees (typically 0.00001 XLM per operation)",
     "xlmPurpose2": "Maintain minimum account balances (base reserve)",
     "xlmPurpose3": "Prevent spam by requiring small amounts for account creation",
-    "xlmPurpose4": "Bridge currency for cross-asset transactions via the DEX"
+    "xlmPurpose4": "Bridge currency for cross-asset transactions via the DEX",
+    "pools": "Pools",
+    "tradingPairs": "Trading Pairs",
+    "noPools": "No liquidity pools",
+    "noPoolsDesc": "This asset isn't held in any liquidity pool yet.",
+    "failedToLoadPools": "Failed to load liquidity pools"
   },
   "ledgerDetails": {
     "title": "Ledger",
@@ -1051,7 +1121,24 @@
     "pool": "Pool",
     "failedToLoadTx": "Failed to load transactions",
     "noTransactions": "No transactions",
-    "noTransactionsDesc": "No transactions found for this liquidity pool."
+    "noTransactionsDesc": "No transactions found for this liquidity pool.",
+    "depthChart": "Pool Depth",
+    "activity": "Activity",
+    "depositType": "Deposit",
+    "withdrawType": "Withdraw",
+    "tradeType": "Trade",
+    "createdType": "Pool Created",
+    "removedType": "Pool Removed",
+    "revokedType": "Reserves Revoked",
+    "noActivity": "No activity yet",
+    "noActivityDesc": "No deposits, withdrawals, or trades have been recorded for this pool.",
+    "failedToLoadActivity": "Failed to load activity",
+    "sharesReceived": "Shares received",
+    "sharesRedeemed": "Shares redeemed",
+    "notAvailable": {
+      "title": "Pool history isn't available yet",
+      "description": "Historical depth will appear here once the indexer processes this pool's reserves over time."
+    }
   },
   "domains": {
     "alsoKnownAs": "Also known as {name}",

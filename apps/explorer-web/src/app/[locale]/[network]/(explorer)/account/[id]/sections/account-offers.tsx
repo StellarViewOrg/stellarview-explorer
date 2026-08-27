@@ -5,11 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { LoadingCard } from "@/components/common/loading-card";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
+import { Link } from "@/i18n/navigation";
 import { useAccountOffers } from "@/lib/hooks";
-import { formatNumber } from "@/lib/utils";
-import { ArrowLeftRight } from "lucide-react";
+import { formatNumber, buildPairSlug } from "@/lib/utils";
+import { ArrowLeftRight, ChevronRight } from "lucide-react";
 import type { Horizon } from "@stellar/stellar-sdk";
 import { useTranslations } from "next-intl";
+
+function offerAsset(asset: { asset_type: string; asset_code?: string; asset_issuer?: string }): {
+  code: string;
+  issuer: string;
+} {
+  return asset.asset_type === "native"
+    ? { code: "XLM", issuer: "native" }
+    : { code: asset.asset_code ?? "", issuer: asset.asset_issuer ?? "" };
+}
 
 export function AccountOffers({ accountId }: { accountId: string }) {
   const { data, isLoading, error, refetch } = useAccountOffers(accountId);
@@ -32,6 +42,8 @@ export function AccountOffers({ accountId }: { accountId: string }) {
       <CardContent>
         <div className="space-y-2">
           {data.records.map((offer: Horizon.ServerApi.OfferRecord) => {
+            const sellingAsset = offerAsset(offer.selling);
+            const buyingAsset = offerAsset(offer.buying);
             const selling =
               offer.selling.asset_type === "native"
                 ? "XLM"
@@ -42,22 +54,28 @@ export function AccountOffers({ accountId }: { accountId: string }) {
                 : `${offer.buying.asset_code}/${offer.buying.asset_issuer?.slice(0, 4)}…`;
 
             return (
-              <div
+              <Link
                 key={offer.id}
-                className="bg-card/50 flex flex-col gap-1.5 rounded-lg p-3 sm:flex-row sm:items-center sm:justify-between"
+                href={`/pair/${buildPairSlug(sellingAsset, buyingAsset)}`}
+                className="group bg-card/50 hover:bg-muted/50 flex flex-col gap-1.5 rounded-lg p-3 transition-colors sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex items-center gap-2 text-sm">
                   <Badge variant="outline">{t("sellAsset", { asset: selling })}</Badge>
                   <span className="text-muted-foreground">→</span>
                   <Badge variant="outline">{t("buyAsset", { asset: buying })}</Badge>
                 </div>
-                <div className="text-muted-foreground text-xs">
-                  {t("amount")}:{" "}
-                  <span className="text-foreground font-medium">{formatNumber(offer.amount)}</span>
-                  {" · "}
-                  {t("price")}: <span className="text-foreground font-medium">{offer.price}</span>
+                <div className="flex items-center gap-2">
+                  <div className="text-muted-foreground text-xs">
+                    {t("amount")}:{" "}
+                    <span className="text-foreground font-medium">
+                      {formatNumber(offer.amount)}
+                    </span>
+                    {" · "}
+                    {t("price")}: <span className="text-foreground font-medium">{offer.price}</span>
+                  </div>
+                  <ChevronRight className="text-muted-foreground size-4 transition-transform group-hover:translate-x-0.5" />
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

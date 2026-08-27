@@ -33,6 +33,10 @@ services/indexer/bin/
 .DS_Store
 *.pem
 
+# local-only scratch/dev tools (e.g. mock servers for manual QA)
+.scratch/
+apps/*/.scratch/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

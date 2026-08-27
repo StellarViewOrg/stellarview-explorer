@@ -26,3 +26,21 @@ export type {
   DomainsPage,
   DomainDetail,
 } from "./types";
+export { fetchPairs, fetchCandles, fetchPoolDepth } from "./dex-client";
+export {
+  DexContractError,
+  parsePairsResponse,
+  parseCandlesResponse,
+  parsePoolDepthResponse,
+} from "./dex-adapter";
+export type {
+  PairAsset,
+  Pair,
+  PairsResponse,
+  CandleResolution,
+  Candle,
+  CandlesResponse,
+  PoolReserve,
+  PoolDepthPoint,
+  PoolDepthResponse,
+} from "./dex-types";

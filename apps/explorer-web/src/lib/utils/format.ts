@@ -163,3 +163,71 @@ export function parseAssetSlug(slug: string): { code: string; issuer: string } |
 
   return { code, issuer };
 }
+
+/**
+ * Build a pair slug in format "BASECODE-BASEISSUER_COUNTERCODE-COUNTERISSUER"
+ * (each half in the same "CODE-ISSUER"/"XLM-native" format as `parseAssetSlug`).
+ */
+export function buildPairSlug(
+  base: { code: string; issuer: string },
+  counter: { code: string; issuer: string }
+): string {
+  return `${base.code}-${base.issuer}_${counter.code}-${counter.issuer}`;
+}
+
+/**
+ * Parse a pair slug in format "BASECODE-BASEISSUER_COUNTERCODE-COUNTERISSUER".
+ */
+export function parsePairSlug(
+  slug: string
+): { base: { code: string; issuer: string }; counter: { code: string; issuer: string } } | null {
+  const decoded = decodeURIComponent(slug);
+  const parts = decoded.split("_");
+  if (parts.length !== 2) return null;
+
+  const base = parseAssetSlug(parts[0]);
+  const counter = parseAssetSlug(parts[1]);
+  if (!base || !counter) return null;
+
+  return { base, counter };
+}
+
+export interface PaginationResult<T> {
+  items: T[];
+  pageCount: number;
+  /** Clamped to a valid index, in case the requested page fell out of range. */
+  currentPage: number;
+}
+
+/**
+ * Slice `items` into a page, clamping an out-of-range `page` (e.g. after a
+ * filter shrinks the list) back into `[0, pageCount - 1]`.
+ */
+export function paginate<T>(items: T[], page: number, pageSize: number): PaginationResult<T> {
+  const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+  const currentPage = Math.min(Math.max(0, page), pageCount - 1);
+
+  return {
+    items: items.slice(currentPage * pageSize, (currentPage + 1) * pageSize),
+    pageCount,
+    currentPage,
+  };
+}
+
+/**
+ * Parse the string returned by invoking a Stellar Asset Contract's `name()`
+ * function. Classic-asset-backed SACs return "native" for XLM or
+ * "CODE:ISSUER" for everything else. Returns null for anything that doesn't
+ * match this shape (e.g. an arbitrary WASM token contract's own `name()`),
+ * so callers don't misidentify a non-SAC contract as wrapping a classic asset.
+ */
+export function parseSacAssetName(name: string): { code: string; issuer: string } | null {
+  if (name === "native") {
+    return { code: "XLM", issuer: "native" };
+  }
+
+  const match = /^([A-Za-z0-9]{1,12}):(G[A-Z2-7]{55})$/.exec(name);
+  if (!match) return null;
+
+  return { code: match[1], issuer: match[2] };
+}

@@ -10,13 +10,14 @@
     "transactions": "트랜잭션",
     "accounts": "계정",
     "assets": "자산",
+    "pairs": "페어",
     "contracts": "컨트랙트",
-    "domains": "도메인",
     "analytics": "분석",
     "learn": "학습",
     "watchlist": "관심목록",
     "collapse": "접기",
-    "toggleMenu": "메뉴 전환"
+    "toggleMenu": "메뉴 전환",
+    "domains": "도메인"
   },
   "search": {
     "placeholder": "트랜잭션, 계정 검색...",
@@ -43,8 +44,8 @@
     "contract": "컨트랙트",
     "asset": "자산",
     "ledger": "원장",
-    "domain": "도메인",
-    "unknown": "검색"
+    "unknown": "검색",
+    "domain": "도메인"
   },
   "common": {
     "copy": "복사",
@@ -58,7 +59,10 @@
     "tryAgain": "다시 시도",
     "clearAll": "모두 지우기",
     "remove": "삭제",
-    "watch": "관심목록에 추가"
+    "watch": "관심목록에 추가",
+    "previous": "이전",
+    "next": "다음",
+    "pageOf": "{total}페이지 중 {page}페이지"
   },
   "errors": {
     "somethingWentWrong": "문제가 발생했습니다",
@@ -166,6 +170,54 @@
     "supply": "공급량",
     "price": "가격"
   },
+  "pairs": {
+    "metaTitle": "거래 페어 | StellarView Explorer",
+    "metaDescription": "Stellar DEX의 거래 페어를 살펴보세요. 모든 페어의 거래량, 유동성, 가격을 확인할 수 있습니다.",
+    "title": "거래 페어",
+    "subtitle": "Stellar 탈중앙화 거래소의 거래 페어 살펴보기",
+    "findPair": "페어 찾기",
+    "searchPlaceholder": "자산 코드로 검색 (예: USDC)",
+    "allPairs": "전체 페어",
+    "aboutPairs": "Stellar 거래 페어",
+    "aboutPairsDescription": "거래 페어는 자산이 Stellar DEX 또는 유동성 풀을 통해 교환될 때 형성됩니다. 위 목록을 검색하거나 정렬하여 가격, 거래량, 유동성을 확인해 보세요.",
+    "notAvailable": {
+      "title": "거래 데이터를 아직 사용할 수 없습니다",
+      "description": "인덱서가 거래 내역 처리를 완료하면 페어 집계 데이터가 여기에 표시됩니다."
+    }
+  },
+  "pair": {
+    "pairs": "페어",
+    "subtitle": "Stellar DEX의 거래 페어",
+    "candles": "가격 차트",
+    "trades": "거래 내역",
+    "orderbook": "호가창",
+    "recentTrades": "최근 거래",
+    "failedToLoadTrades": "거래 내역을 불러오지 못했습니다",
+    "noTrades": "아직 거래 내역이 없습니다",
+    "noTradesDesc": "이 페어에 기록된 거래가 없습니다.",
+    "time": "시간",
+    "price": "가격",
+    "amount": "수량",
+    "amountOf": "수량 ({code})",
+    "failedToLoadOrderbook": "호가창을 불러오지 못했습니다",
+    "emptyOrderbook": "호가창이 비어 있습니다",
+    "emptyOrderbookDesc": "이 페어에 대한 미체결 주문이 없습니다.",
+    "bestBid": "최우선 매수호가",
+    "midPrice": "중간가",
+    "bestAsk": "최우선 매도호가",
+    "bids": "매수",
+    "asks": "매도",
+    "spread": "스프레드",
+    "resolution": {
+      "1m": "1분",
+      "1h": "1시간",
+      "1d": "1일"
+    },
+    "notAvailable": {
+      "title": "거래 데이터를 아직 사용할 수 없습니다",
+      "description": "인덱서가 이 페어의 거래 내역 처리를 완료하면 캔들 데이터가 여기에 표시됩니다."
+    }
+  },
   "contracts": {
     "metaTitle": "스마트 컨트랙트 | StellarView Explorer",
     "metaDescription": "Stellar 네트워크의 Soroban 스마트 컨트랙트를 탐색하세요. 컨트랙트 세부 정보를 검색하고 확인하세요.",
@@ -267,7 +319,10 @@
       "noActivity": "토큰 활동 없음",
       "noActivityDesc": "최근 7일 동안 이 계약의 이벤트가 없습니다.",
       "recentEvents": "카드를 탭하여 세부 정보 확인 · 최근 {count}개 이벤트"
-    }
+    },
+    "underlyingAsset": "기초 자산",
+    "tradingPairsAndPools": "거래 쌍 및 풀",
+    "viewPools": "풀 보기"
   },
   "watchlist": {
     "title": "관심목록",
@@ -354,7 +409,8 @@
     "failedToLoadData": "데이터 항목 로드 실패",
     "noDataEntries": "데이터 항목 없음",
     "noDataEntriesDesc": "이 계정에는 저장된 키-값 데이터가 없습니다.",
-    "dataEntries": "데이터 항목 ({count})"
+    "dataEntries": "데이터 항목 ({count})",
+    "poolShares": "유동성 풀 지분"
   },
   "operations": {
     "create_account": "계정 생성",
@@ -602,6 +658,14 @@
       "auth": "인증",
       "noAssetsFound": "자산을 찾을 수 없습니다"
     },
+    "pairTable": {
+      "pair": "페어",
+      "price": "가격",
+      "change24h": "24시간 변동률",
+      "volume24h": "24시간 거래량",
+      "liquidity": "유동성",
+      "noPairsFound": "페어를 찾을 수 없습니다"
+    },
     "globalSearch": {
       "search": "검색",
       "keyboardShortcut": "⌘",
@@ -678,11 +742,17 @@
     "xlmTitle": "Stellar Lumens",
     "xlmSubtitle": "XLM - Stellar 네이티브 자산",
     "aboutXlm": "XLM 소개",
+    "overview": "개요",
     "xlmDescription": "XLM(Stellar Lumens)은 Stellar 네트워크의 네이티브 자산입니다. 다양한 용도로 사용됩니다:",
     "xlmPurpose1": "트랜잭션 수수료 지불 (일반적으로 오퍼레이션당 0.00001 XLM)",
     "xlmPurpose2": "최소 계정 잔액 유지 (기본 준비금)",
     "xlmPurpose3": "계정 생성에 소량 요구하여 스팸 방지",
-    "xlmPurpose4": "DEX를 통한 교차 자산 거래의 브릿지 통화"
+    "xlmPurpose4": "DEX를 통한 교차 자산 거래의 브릿지 통화",
+    "pools": "풀",
+    "tradingPairs": "거래 페어",
+    "noPools": "유동성 풀 없음",
+    "noPoolsDesc": "이 자산은 아직 어떤 유동성 풀에도 포함되어 있지 않습니다.",
+    "failedToLoadPools": "유동성 풀을 불러오지 못했습니다"
   },
   "ledgerDetails": {
     "title": "원장",
@@ -1051,7 +1121,24 @@
     "pool": "풀",
     "failedToLoadTx": "트랜잭션 로드 실패",
     "noTransactions": "트랜잭션 없음",
-    "noTransactionsDesc": "이 유동성 풀에 대한 트랜잭션을 찾을 수 없습니다."
+    "noTransactionsDesc": "이 유동성 풀에 대한 트랜잭션을 찾을 수 없습니다.",
+    "depthChart": "풀 깊이",
+    "activity": "활동",
+    "depositType": "예치",
+    "withdrawType": "출금",
+    "tradeType": "거래",
+    "createdType": "풀 생성됨",
+    "removedType": "풀 제거됨",
+    "revokedType": "준비금 취소됨",
+    "noActivity": "아직 활동 없음",
+    "noActivityDesc": "이 풀에 대해 기록된 예치, 출금 또는 거래가 없습니다.",
+    "failedToLoadActivity": "활동을 불러오지 못했습니다",
+    "sharesReceived": "받은 지분",
+    "sharesRedeemed": "상환된 지분",
+    "notAvailable": {
+      "title": "풀 기록을 아직 사용할 수 없습니다",
+      "description": "인덱서가 이 풀의 준비금을 시간 경과에 따라 처리하면 여기에 과거 깊이가 표시됩니다."
+    }
   },
   "domains": {
     "alsoKnownAs": "{name}(으)로도 알려짐",

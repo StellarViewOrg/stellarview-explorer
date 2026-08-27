@@ -17,6 +17,13 @@ export const GC_TIME = 5 * 60_000;
 // UI constants
 export const HASH_TRUNCATE_LENGTH = 8;
 
+// The indexer's pair list response has no cursor/pagination metadata (see
+// PairsResponse in lib/indexer/dex-types.ts), so every view that needs the
+// full pair list fetches this batch size once and filters/sorts/paginates
+// client-side over the result. Shared so a per-asset filter (like on
+// AssetPairsList) sees the same universe of pairs as /pairs.
+export const DEX_PAIRS_FETCH_LIMIT = 100;
+
 // Popular assets with their issuers (single source of truth)
 export const POPULAR_ASSETS = [
   { code: "USDC", issuer: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN" },

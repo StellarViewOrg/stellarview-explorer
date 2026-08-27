@@ -2,12 +2,16 @@ import type { NetworkKey } from "@/types";
 import type { Horizon, xdr } from "@stellar/stellar-sdk";
 import { getHorizonClient, getRpcClient, fetchStellarExpert } from "./client";
 import type { StellarExpertResult } from "./client";
-import { DEFAULT_PAGE_SIZE, STALE_TIME, POPULAR_ASSETS } from "@/lib/constants";
+import { DEFAULT_PAGE_SIZE, STALE_TIME, POPULAR_ASSETS, NETWORKS } from "@/lib/constants";
+import { parseSacAssetName } from "@/lib/utils";
 import { resolveDomain } from "./domains";
 import type { DomainResolution } from "./domains";
 import {
   fetchTimeSeries,
   fetchTopN,
+  fetchPairs,
+  fetchCandles,
+  fetchPoolDepth,
   fetchDomainsByAddress,
   fetchDomainsList,
   fetchDomainDetail,
@@ -21,6 +25,10 @@ import type {
   IndexerResult,
   TimeSeriesResponse,
   TopNResponse,
+  CandleResolution,
+  PairsResponse,
+  CandlesResponse,
+  PoolDepthResponse,
   DomainReverseLookup,
   DomainsPage,
   DomainDetail,
@@ -126,8 +134,14 @@ export const stellarKeys = {
     [...stellarKeys.assets(network), "list", cursor] as const,
   assetTrades: (network: NetworkKey, code: string, issuer: string) =>
     [...stellarKeys.asset(network, code, issuer), "trades"] as const,
-  assetOrderbook: (network: NetworkKey, code: string, issuer: string) =>
-    [...stellarKeys.asset(network, code, issuer), "orderbook"] as const,
+  assetOrderbook: (
+    network: NetworkKey,
+    code: string,
+    issuer: string,
+    counterCode = "XLM",
+    counterIssuer = "native"
+  ) =>
+    [...stellarKeys.asset(network, code, issuer), "orderbook", counterCode, counterIssuer] as const,
   topAssets: (network: NetworkKey) => [...stellarKeys.assets(network), "top"] as const,
 
   // Contracts (Soroban)
@@ -143,6 +157,8 @@ export const stellarKeys = {
     [...stellarKeys.contract(network, id), "invocations"] as const,
   contractBalance: (network: NetworkKey, id: string) =>
     [...stellarKeys.contract(network, id), "balance"] as const,
+  contractSacAsset: (network: NetworkKey, id: string) =>
+    [...stellarKeys.contract(network, id), "sac-asset"] as const,
 
   // Fee stats
   feeStats: (network: NetworkKey) => [...stellarKeys.network(network), "feeStats"] as const,
@@ -164,6 +180,27 @@ export const stellarKeys = {
     [...stellarKeys.asset(network, code, issuer), "liquidity_pools"] as const,
   liquidityPoolTransactions: (network: NetworkKey, id: string) =>
     [...stellarKeys.network(network), "liquidity_pools", id, "transactions"] as const,
+  liquidityPoolActivity: (network: NetworkKey, id: string) =>
+    [...stellarKeys.network(network), "liquidity_pools", id, "activity"] as const,
+
+  // Indexer: liquidity pool depth history (indexer#31, provisional contract)
+  poolDepth: (
+    network: NetworkKey,
+    poolId: string,
+    resolution: CandleResolution,
+    from: string,
+    to: string
+  ) =>
+    [
+      ...stellarKeys.network(network),
+      "indexer",
+      "dex",
+      "pool-depth",
+      poolId,
+      resolution,
+      from,
+      to,
+    ] as const,
 
   // Claimable balances
   claimableBalancesList: (
@@ -229,6 +266,45 @@ export const stellarKeys = {
     ] as const,
   indexerTopN: (network: NetworkKey, metric: TopNMetric, window: TimeWindow, limit: number) =>
     [...stellarKeys.network(network), "indexer", "top", metric, window, limit] as const,
+
+  // Indexer: DEX pairs & candles (indexer#31, provisional contract)
+  dexPairsList: (network: NetworkKey, limit: number) =>
+    [...stellarKeys.network(network), "indexer", "dex", "pairs", limit] as const,
+  pairCandles: (
+    network: NetworkKey,
+    pairId: string,
+    resolution: CandleResolution,
+    from: string,
+    to: string
+  ) =>
+    [
+      ...stellarKeys.network(network),
+      "indexer",
+      "dex",
+      "candles",
+      pairId,
+      resolution,
+      from,
+      to,
+    ] as const,
+
+  // Trades and orderbook for an arbitrary pair (generalizes assetTrades/assetOrderbook,
+  // which are hardcoded against XLM as counter, to any base/counter combination)
+  pairTrades: (
+    network: NetworkKey,
+    baseCode: string,
+    baseIssuer: string,
+    counterCode: string,
+    counterIssuer: string
+  ) =>
+    [
+      ...stellarKeys.network(network),
+      "pair_trades",
+      baseCode,
+      baseIssuer,
+      counterCode,
+      counterIssuer,
+    ] as const,
 };
 
 // Query option factories for TanStack Query
@@ -466,7 +542,13 @@ export const stellarQueries = {
     buyingCode = "XLM",
     buyingIssuer?: string
   ) => ({
-    queryKey: stellarKeys.assetOrderbook(network, sellingCode, sellingIssuer),
+    queryKey: stellarKeys.assetOrderbook(
+      network,
+      sellingCode,
+      sellingIssuer,
+      buyingCode,
+      buyingCode === "XLM" ? "native" : buyingIssuer
+    ),
     queryFn: async () => {
       const horizon = getHorizonClient(network);
       const { Asset } = await import("@stellar/stellar-sdk");
@@ -760,6 +842,40 @@ export const stellarQueries = {
     staleTime: Infinity, // Contract code is immutable
   }),
 
+  // Resolve a Stellar Asset Contract (SAC) to the classic asset it wraps, by
+  // invoking its `name()` function via a read-only RPC simulation (no
+  // signing/submission — the source account only needs a valid address).
+  // Callers should gate this on `contractCode(...).type === "sac"`.
+  contractSacAsset: (network: NetworkKey, contractId: string) => ({
+    queryKey: stellarKeys.contractSacAsset(network, contractId),
+    queryFn: async (): Promise<{ code: string; issuer: string } | null> => {
+      const { Contract, TransactionBuilder, Account, Keypair, BASE_FEE, scValToNative, rpc } =
+        await import("@stellar/stellar-sdk");
+
+      const contract = new Contract(contractId);
+      const sourceAccount = new Account(Keypair.random().publicKey(), "0");
+      const tx = new TransactionBuilder(sourceAccount, {
+        fee: BASE_FEE,
+        networkPassphrase: NETWORKS[network].passphrase,
+      })
+        .addOperation(contract.call("name"))
+        .setTimeout(30)
+        .build();
+
+      const rpcClient = getRpcClient(network);
+      const sim = await rpcClient.simulateTransaction(tx);
+
+      if (!rpc.Api.isSimulationSuccess(sim) || !sim.result?.retval) {
+        return null;
+      }
+
+      const name = scValToNative(sim.result.retval);
+      return typeof name === "string" ? parseSacAssetName(name) : null;
+    },
+    staleTime: Infinity, // the classic asset a SAC wraps never changes
+    retry: false, // a non-token WASM contract will legitimately fail simulation; don't retry
+  }),
+
   // Contract invocation history via Horizon (InvokeHostFunction operations)
   contractInvocations: (network: NetworkKey, contractId: string, limit = DEFAULT_PAGE_SIZE) => ({
     queryKey: stellarKeys.contractInvocations(network, contractId),
@@ -881,6 +997,30 @@ export const stellarQueries = {
       const horizon = getHorizonClient(network);
       return horizon.transactions().forLiquidityPool(id).order("desc").limit(limit).call();
     },
+    staleTime: STALE_TIME,
+  }),
+
+  // Deposit/withdraw/trade activity for a liquidity pool, via Horizon effects
+  liquidityPoolActivity: (network: NetworkKey, id: string, limit = DEFAULT_PAGE_SIZE) => ({
+    queryKey: stellarKeys.liquidityPoolActivity(network, id),
+    queryFn: async () => {
+      const horizon = getHorizonClient(network);
+      return horizon.effects().forLiquidityPool(id).order("desc").limit(limit).call();
+    },
+    staleTime: STALE_TIME,
+  }),
+
+  // Indexer: historical depth (reserves/TVL) for a liquidity pool (indexer#31, provisional contract)
+  poolDepth: (
+    network: NetworkKey,
+    poolId: string,
+    resolution: CandleResolution,
+    from: string,
+    to: string
+  ) => ({
+    queryKey: stellarKeys.poolDepth(network, poolId, resolution, from, to),
+    queryFn: (): Promise<IndexerResult<PoolDepthResponse>> =>
+      fetchPoolDepth(poolId, resolution, from, to),
     staleTime: STALE_TIME,
   }),
 
@@ -1099,5 +1239,58 @@ export const stellarQueries = {
     queryFn: (): Promise<IndexerResult<TopNResponse>> => fetchTopN(metric, window, limit),
     staleTime: 5 * 60_000,
     retry: 1,
+  }),
+
+  // Indexer: DEX pairs list (indexer#31, provisional contract — see lib/indexer/dex-types.ts)
+  dexPairsList: (network: NetworkKey, limit = 50) => ({
+    queryKey: stellarKeys.dexPairsList(network, limit),
+    queryFn: (): Promise<IndexerResult<PairsResponse>> => fetchPairs(limit),
+    staleTime: 5 * 60_000,
+    retry: 1,
+  }),
+
+  // Indexer: OHLC candles for a trading pair (indexer#31, provisional contract)
+  pairCandles: (
+    network: NetworkKey,
+    pairId: string,
+    resolution: CandleResolution,
+    from: string,
+    to: string
+  ) => ({
+    queryKey: stellarKeys.pairCandles(network, pairId, resolution, from, to),
+    queryFn: (): Promise<IndexerResult<CandlesResponse>> =>
+      fetchCandles(pairId, resolution, from, to),
+    staleTime: 5 * 60_000,
+    retry: 1,
+  }),
+
+  // Recent individual trades for an arbitrary pair (distinct from assetTradeAggregations,
+  // which returns bucketed 24h stats against XLM only — this returns the raw trade list
+  // for any base/counter combination, for a "recent trades" table).
+  pairTrades: (
+    network: NetworkKey,
+    baseCode: string,
+    baseIssuer: string,
+    counterCode: string,
+    counterIssuer: string,
+    limit = DEFAULT_PAGE_SIZE
+  ) => ({
+    queryKey: stellarKeys.pairTrades(network, baseCode, baseIssuer, counterCode, counterIssuer),
+    queryFn: async () => {
+      const horizon = getHorizonClient(network);
+      const { Asset } = await import("@stellar/stellar-sdk");
+
+      const baseAsset = baseCode === "XLM" ? Asset.native() : new Asset(baseCode, baseIssuer);
+      const counterAsset =
+        counterCode === "XLM" ? Asset.native() : new Asset(counterCode, counterIssuer);
+
+      return horizon
+        .trades()
+        .forAssetPair(baseAsset, counterAsset)
+        .order("desc")
+        .limit(limit)
+        .call();
+    },
+    staleTime: 30_000, // matches orderbook freshness so pair page shows consistent data age
   }),
 };
