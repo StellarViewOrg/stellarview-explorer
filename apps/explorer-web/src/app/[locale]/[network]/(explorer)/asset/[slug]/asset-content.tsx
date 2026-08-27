@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,7 @@ import { LoadingCard } from "@/components/common/loading-card";
 import { ErrorState } from "@/components/common/error-state";
 import { useAsset, useAssetMetadata } from "@/lib/hooks";
 import { parseAssetSlug } from "@/lib/utils";
-import { Lock, Unlock, Building2, BarChart3, BookOpen, Star, Users } from "lucide-react";
+import { Lock, Unlock, Building2, BarChart3, BookOpen, Star, Users, Droplets } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AssetRecordExtended } from "./sections/types";
 import { AssetSummary } from "./sections/asset-summary";
@@ -20,15 +20,20 @@ import { AssetHolders } from "./sections/asset-holders";
 import { AssetTrades } from "./sections/asset-trades";
 import { AssetOrderbook } from "./sections/asset-orderbook";
 import { AssetMarketData } from "./sections/asset-market-data";
+import { AssetPools } from "./sections/asset-pools";
 
 interface AssetContentProps {
   slug: string;
 }
 
+const ASSET_TABS = ["stats", "holders", "trades", "orderbook", "pools", "market", "flags"] as const;
+
 export function AssetContent({ slug }: AssetContentProps) {
   const parsed = parseAssetSlug(slug);
   const t = useTranslations("assetDetails");
   const tCommon = useTranslations("common");
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get("tab");
 
   const isNative = parsed?.issuer === "native";
 
@@ -58,20 +63,34 @@ export function AssetContent({ slug }: AssetContentProps) {
           </div>
         </div>
 
-        <Card variant="elevated" className="border-0">
-          <CardHeader>
-            <CardTitle className="text-base">{t("aboutXlm")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">{t("xlmDescription")}</p>
-            <ul className="text-muted-foreground list-inside list-disc space-y-2">
-              <li>{t("xlmPurpose1")}</li>
-              <li>{t("xlmPurpose2")}</li>
-              <li>{t("xlmPurpose3")}</li>
-              <li>{t("xlmPurpose4")}</li>
-            </ul>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue={requestedTab === "pools" ? "pools" : "about"} className="w-full">
+          <TabsList>
+            <TabsTrigger value="about">{t("overview")}</TabsTrigger>
+            <TabsTrigger value="pools">
+              <Droplets className="mr-1.5 size-3.5" />
+              {t("pools")}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="about" className="mt-4">
+            <Card variant="elevated" className="border-0">
+              <CardHeader>
+                <CardTitle className="text-base">{t("aboutXlm")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">{t("xlmDescription")}</p>
+                <ul className="text-muted-foreground list-inside list-disc space-y-2">
+                  <li>{t("xlmPurpose1")}</li>
+                  <li>{t("xlmPurpose2")}</li>
+                  <li>{t("xlmPurpose3")}</li>
+                  <li>{t("xlmPurpose4")}</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="pools" className="mt-4">
+            <AssetPools code="XLM" issuer="native" />
+          </TabsContent>
+        </Tabs>
       </div>
     );
   }
@@ -148,7 +167,14 @@ export function AssetContent({ slug }: AssetContentProps) {
 
       <AssetSummary asset={asset as AssetRecordExtended} />
 
-      <Tabs defaultValue="stats" className="w-full">
+      <Tabs
+        defaultValue={
+          ASSET_TABS.includes(requestedTab as (typeof ASSET_TABS)[number])
+            ? (requestedTab as (typeof ASSET_TABS)[number])
+            : "stats"
+        }
+        className="w-full"
+      >
         <TabsList>
           <TabsTrigger value="stats">{t("statistics")}</TabsTrigger>
           <TabsTrigger value="holders">
@@ -162,6 +188,10 @@ export function AssetContent({ slug }: AssetContentProps) {
           <TabsTrigger value="orderbook">
             <BookOpen className="mr-1.5 size-3.5" />
             Orderbook
+          </TabsTrigger>
+          <TabsTrigger value="pools">
+            <Droplets className="mr-1.5 size-3.5" />
+            {t("pools")}
           </TabsTrigger>
           <TabsTrigger value="market">
             <Star className="mr-1.5 size-3.5" />
@@ -180,6 +210,9 @@ export function AssetContent({ slug }: AssetContentProps) {
         </TabsContent>
         <TabsContent value="orderbook" className="mt-4">
           <AssetOrderbook code={asset.asset_code} issuer={asset.asset_issuer} />
+        </TabsContent>
+        <TabsContent value="pools" className="mt-4">
+          <AssetPools code={asset.asset_code} issuer={asset.asset_issuer} />
         </TabsContent>
         <TabsContent value="market" className="mt-4">
           <AssetMarketData code={asset.asset_code} issuer={asset.asset_issuer} />

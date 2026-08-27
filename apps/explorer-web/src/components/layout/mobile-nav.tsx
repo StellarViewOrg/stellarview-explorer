@@ -8,6 +8,7 @@ import {
   ArrowRightLeft,
   Users,
   Coins,
+  CandlestickChart,
   FileCode,
   BarChart3,
   Star,
@@ -33,6 +34,7 @@ export function MobileNav() {
     { href: "/transactions", icon: ArrowRightLeft, label: t("transactions") },
     { href: "/accounts", icon: Users, label: t("accounts") },
     { href: "/assets", icon: Coins, label: t("assets") },
+    { href: "/pairs", icon: CandlestickChart, label: t("pairs") },
     { href: "/contracts", icon: FileCode, label: t("contracts") },
     { href: "/analytics", icon: BarChart3, label: t("analytics") },
   ];

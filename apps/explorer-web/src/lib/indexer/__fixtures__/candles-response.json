@@ -1,0 +1,24 @@
+{
+  "pairId": "XLM-native_USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+  "resolution": "1h",
+  "from": "2024-01-01T00:00:00Z",
+  "to": "2024-01-02T00:00:00Z",
+  "data": [
+    {
+      "timestamp": "2024-01-01T00:00:00Z",
+      "open": 0.1,
+      "high": 0.12,
+      "low": 0.09,
+      "close": 0.11,
+      "volume": 105000
+    },
+    {
+      "timestamp": "2024-01-01T01:00:00Z",
+      "open": 0.11,
+      "high": 0.115,
+      "low": 0.108,
+      "close": 0.112,
+      "volume": 62000
+    }
+  ]
+}

@@ -169,6 +169,17 @@ export function useContractCode(contractId: string) {
   });
 }
 
+// Hook to resolve a Stellar Asset Contract to the classic asset it wraps.
+// Callers should pass `enabled: isSac` (from useContractCode) since this
+// performs an RPC simulation call.
+export function useContractSacAsset(contractId: string, enabled = true) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.contractSacAsset(network, contractId),
+    enabled: enabled && !!contractId && contractId.startsWith("C") && contractId.length === 56,
+  });
+}
+
 // Hook for contract storage
 export function useContractStorage(contractId: string) {
   const { network } = useNetwork();
@@ -271,6 +282,15 @@ export function useLiquidityPoolTransactions(id: string) {
   });
 }
 
+// Hook for deposit/withdraw/trade activity in a liquidity pool (Horizon effects)
+export function useLiquidityPoolActivity(id: string) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.liquidityPoolActivity(network, id),
+    enabled: !!id && id.length === 64,
+  });
+}
+
 // Hook for claimable balances (optionally filtered by asset)
 export function useClaimableBalances(assetCode?: string, assetIssuer?: string, cursor?: string) {
   const { network } = useNetwork();
@@ -357,5 +377,69 @@ export function useIndexerTopN(
   return useQuery({
     ...stellarQueries.indexerTopN(network, metric, window, limit),
     enabled,
+  });
+}
+
+// Hook for the DEX trading pair list (indexer#31, provisional contract)
+export function useDexPairs(limit = 50) {
+  const { network } = useNetwork();
+  return useQuery(stellarQueries.dexPairsList(network, limit));
+}
+
+// Hook for OHLC candles of a trading pair (indexer#31, provisional contract)
+export function usePairCandles(
+  pairId: string,
+  resolution: import("@/lib/indexer").CandleResolution,
+  from: string,
+  to: string,
+  enabled = true
+) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.pairCandles(network, pairId, resolution, from, to),
+    enabled: enabled && !!pairId,
+  });
+}
+
+// Hook for historical reserve/TVL depth of a liquidity pool (indexer#31, provisional contract)
+export function usePoolDepth(
+  poolId: string,
+  resolution: import("@/lib/indexer").CandleResolution,
+  from: string,
+  to: string,
+  enabled = true
+) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.poolDepth(network, poolId, resolution, from, to),
+    enabled: enabled && !!poolId,
+  });
+}
+
+// Hook for recent individual trades of an arbitrary pair (not just against XLM)
+export function usePairTrades(
+  baseCode: string,
+  baseIssuer: string,
+  counterCode: string,
+  counterIssuer: string
+) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.pairTrades(network, baseCode, baseIssuer, counterCode, counterIssuer),
+    enabled: !!baseCode && !!baseIssuer && !!counterCode && !!counterIssuer,
+  });
+}
+
+// Hook for the orderbook snapshot of an arbitrary pair (not just against XLM)
+export function usePairOrderbook(
+  baseCode: string,
+  baseIssuer: string,
+  counterCode: string,
+  counterIssuer: string
+) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.assetOrderbook(network, baseCode, baseIssuer, counterCode, counterIssuer),
+    enabled: !!baseCode && !!baseIssuer && !!counterCode && !!counterIssuer,
   });
 }

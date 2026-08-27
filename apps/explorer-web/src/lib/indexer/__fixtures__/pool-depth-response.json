@@ -1,0 +1,30 @@
+{
+  "poolId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "resolution": "1d",
+  "from": "2024-01-01T00:00:00Z",
+  "to": "2024-01-08T00:00:00Z",
+  "data": [
+    {
+      "timestamp": "2024-01-01T00:00:00Z",
+      "reserves": [
+        { "asset": "native", "amount": 1000000 },
+        {
+          "asset": "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+          "amount": 110000
+        }
+      ],
+      "tvl": 2000000
+    },
+    {
+      "timestamp": "2024-01-02T00:00:00Z",
+      "reserves": [
+        { "asset": "native", "amount": 1020000 },
+        {
+          "asset": "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+          "amount": 112000
+        }
+      ],
+      "tvl": 2050000
+    }
+  ]
+}

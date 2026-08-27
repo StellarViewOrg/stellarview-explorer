@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -11,10 +12,19 @@ import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { TransactionCard, TransactionCardSkeleton } from "@/components/cards/transaction-card";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
+import {
+  PoolDepthChart,
+  DateRangePicker,
+  CandleResolutionPicker,
+  rangePresetToISO,
+  type DateRangePreset,
+} from "@/components/charts";
+import { PoolActivity } from "./sections/pool-activity";
 import { useLiquidityPool, useLiquidityPoolTransactions } from "@/lib/hooks";
 import { formatNumber, formatCompactNumber, truncateHash } from "@/lib/utils";
-import { Droplets, ArrowLeftRight, Percent } from "lucide-react";
+import { Droplets, ArrowLeftRight, Percent, Activity } from "lucide-react";
 import type { Horizon } from "@stellar/stellar-sdk";
+import type { CandleResolution } from "@/lib/indexer";
 import { useTranslations } from "next-intl";
 
 interface LiquidityPoolContentProps {
@@ -162,6 +172,9 @@ function PoolTransactions({ id }: { id: string }) {
 export function LiquidityPoolContent({ id }: LiquidityPoolContentProps) {
   const { data: pool, isLoading, error, refetch } = useLiquidityPool(id);
   const t = useTranslations("liquidityPool");
+  const [resolution, setResolution] = useState<CandleResolution>("1h");
+  const [range, setRange] = useState<DateRangePreset>("7d");
+  const { from, to } = rangePresetToISO(range);
 
   if (isLoading) {
     return (
@@ -215,10 +228,24 @@ export function LiquidityPoolContent({ id }: LiquidityPoolContentProps) {
 
       <PoolSummary pool={pool} />
 
-      <Tabs defaultValue="transactions" className="w-full">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <CandleResolutionPicker value={resolution} onChange={setResolution} />
+        <DateRangePicker value={range} onChange={setRange} />
+      </div>
+
+      <PoolDepthChart poolId={id} resolution={resolution} from={from} to={to} height={280} />
+
+      <Tabs defaultValue="activity" className="w-full">
         <TabsList>
+          <TabsTrigger value="activity">
+            <Activity className="mr-1.5 size-3.5" />
+            {t("activity")}
+          </TabsTrigger>
           <TabsTrigger value="transactions">{t("transactions")}</TabsTrigger>
         </TabsList>
+        <TabsContent value="activity" className="mt-4">
+          <PoolActivity id={id} />
+        </TabsContent>
         <TabsContent value="transactions" className="mt-4">
           <PoolTransactions id={id} />
         </TabsContent>
