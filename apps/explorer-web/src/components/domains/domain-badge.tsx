@@ -16,17 +16,21 @@ interface DomainBadgeProps {
 /**
  * "Also known as name.xlm" badge for an account or contract that owns a domain.
  *
- * Three outcomes, and the difference between them matters:
+ * Four outcomes, and the differences between them matter:
  *
  * - the address owns a domain: show it
  * - the address owns none: render nothing, so an address without a domain never
  *   gets a false positive
- * - the indexer hasn't ingested domain data yet, isn't configured, or failed:
+ * - an indexer is configured but has no domain data yet, or the request failed:
  *   show a muted "not available yet" badge, so the feature reads as pending
  *   rather than broken or silently missing
+ * - no indexer is configured for this deployment: render nothing. Nothing is
+ *   pending, so saying so on every account and contract page would tell the
+ *   visitor something untrue. The domains section still carries the
+ *   "not available yet" explanation, so the feature stays discoverable.
  *
- * The distinction comes from the API body's `indexed` field, never from an HTTP
- * status, so this activates on its own once the indexer backfills.
+ * Whether data exists comes from the API body's `indexed` field, never from an
+ * HTTP status, so this activates on its own once the indexer backfills.
  */
 export function DomainBadge({ address, className }: DomainBadgeProps) {
   const { data: result, isLoading } = useDomainsByAddress(address);
@@ -34,6 +38,9 @@ export function DomainBadge({ address, className }: DomainBadgeProps) {
 
   // Nothing to say until the first response lands.
   if (isLoading || !result) return null;
+
+  // No indexer at all in this deployment: there is no pending state to report.
+  if (!result.available && result.reason === "not_configured") return null;
 
   if (!result.available) {
     return (

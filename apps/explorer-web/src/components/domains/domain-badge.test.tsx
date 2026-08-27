@@ -76,12 +76,12 @@ describe("DomainBadge", () => {
     expect(screen.getByText("notAvailable")).toBeInTheDocument();
   });
 
-  it("shows the same pending state when the indexer is not configured", () => {
+  it("renders nothing when no indexer is configured, rather than a false pending state", () => {
     mockLookup({ available: false, reason: "not_configured" });
 
-    render(<DomainBadge address={ACCOUNT} />);
+    const { container } = render(<DomainBadge address={ACCOUNT} />);
 
-    expect(screen.getByText("notAvailable")).toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it("shows the pending state rather than an error when the request fails", () => {
