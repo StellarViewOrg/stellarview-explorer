@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/common/empty-state";
 import { useTranslations } from "next-intl";
 
@@ -11,15 +10,12 @@ import { useTranslations } from "next-intl";
  * Deliberately a "not available yet" state rather than an error or a hidden
  * feature, so the section reads as pending. It activates on its own once the
  * indexer backfills.
+ *
+ * Renders bare so it can sit inside an existing card. Call sites that need a
+ * surface of their own wrap it.
  */
 export function DomainsUnavailable() {
   const t = useTranslations("domains");
 
-  return (
-    <Card>
-      <CardContent className="py-8">
-        <EmptyState title={t("notAvailable")} description={t("notAvailableHint")} icon="search" />
-      </CardContent>
-    </Card>
-  );
+  return <EmptyState title={t("notAvailable")} description={t("notAvailableHint")} icon="search" />;
 }

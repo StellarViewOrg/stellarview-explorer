@@ -8,13 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/common/empty-state";
-import { LoadingCard } from "@/components/common/loading-card";
 import { NetworkBadge } from "@/components/common/network-badge";
 import { DomainStatusBadge, DomainsUnavailable } from "@/components/domains";
 import { useDomainsList } from "@/lib/hooks";
 import { useNetwork } from "@/lib/providers";
 import { isDomainName, truncateHash } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { DOMAINS_DEFAULT_PAGE_SIZE } from "@/lib/indexer";
 import type { DomainStatus } from "@/lib/indexer";
 import { Globe, Search, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -59,7 +59,10 @@ export default function DomainsPage() {
 
   const domains = result?.available ? result.data.domains : [];
   const nextCursor = result?.available ? result.data.cursor : "";
-  const hasNext = !!nextCursor && domains.length > 0;
+  // The indexer returns a cursor for every non-empty page, including the last
+  // one, so the cursor alone cannot tell us whether more exist. A page that
+  // came back short is the end of the list.
+  const hasNext = !!nextCursor && domains.length === DOMAINS_DEFAULT_PAGE_SIZE;
 
   const goNext = () => {
     if (!hasNext) return;
@@ -127,7 +130,11 @@ export default function DomainsPage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <LoadingCard rows={5} />
+            <div className="space-y-2" role="status" aria-busy="true">
+              {Array.from({ length: 5 }, (_, i) => (
+                <div key={i} className="bg-muted/30 h-14 animate-pulse rounded-lg" />
+              ))}
+            </div>
           ) : !result?.available ? (
             <DomainsUnavailable />
           ) : domains.length === 0 ? (

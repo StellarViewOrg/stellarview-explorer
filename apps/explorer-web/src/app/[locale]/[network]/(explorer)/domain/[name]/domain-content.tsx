@@ -73,7 +73,11 @@ export function DomainContent({ name }: DomainContentProps) {
     return (
       <div className="space-y-6">
         {header}
-        <DomainsUnavailable />
+        <Card>
+          <CardContent className="py-8">
+            <DomainsUnavailable />
+          </CardContent>
+        </Card>
       </div>
     );
   }

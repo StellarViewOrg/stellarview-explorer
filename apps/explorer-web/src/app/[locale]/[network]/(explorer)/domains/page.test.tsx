@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import DomainsPage from "./page";
+import { DOMAINS_DEFAULT_PAGE_SIZE } from "@/lib/indexer";
 import type { DomainRecord } from "@/lib/indexer";
 
 const push = vi.fn();
@@ -100,8 +101,26 @@ describe("DomainsPage", () => {
     expect(screen.getByRole("button", { name: /previous/i })).toBeDisabled();
   });
 
-  it("enables paging forward when a cursor comes back", () => {
+  /**
+   * The indexer sets the cursor to the last name on every non-empty page,
+   * including the final one, so a cursor by itself does not mean more exist.
+   * Trusting it leaves Next enabled forever and walks the user into a blank
+   * page. A short page is the end of the list.
+   */
+  it("disables paging on a short final page even though a cursor came back", () => {
     mockList({ available: true, data: { domains: [RECORD], cursor: "alice.xlm" } });
+
+    render(<DomainsPage />);
+
+    expect(screen.getByRole("button", { name: /next/i })).toBeDisabled();
+  });
+
+  it("enables paging forward on a full page", () => {
+    const full = Array.from({ length: DOMAINS_DEFAULT_PAGE_SIZE }, (_, i) => ({
+      ...RECORD,
+      name: `name${i}.xlm`,
+    }));
+    mockList({ available: true, data: { domains: full, cursor: full.at(-1)!.name } });
 
     render(<DomainsPage />);
 
