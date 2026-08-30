@@ -16,6 +16,9 @@ import {
   fetchDomainsList,
   fetchDomainDetail,
   DOMAINS_DEFAULT_PAGE_SIZE,
+  fetchVerificationStatus,
+  fetchVerificationSourceFile,
+  fetchVerificationSubmission,
 } from "@/lib/indexer";
 import type {
   TimeSeriesMetric,
@@ -33,6 +36,8 @@ import type {
   DomainsPage,
   DomainDetail,
   DomainStatus,
+  VerificationRecord,
+  SourceFileContent,
 } from "@/lib/indexer";
 
 // Stellar Expert API response shapes
@@ -159,6 +164,14 @@ export const stellarKeys = {
     [...stellarKeys.contract(network, id), "balance"] as const,
   contractSacAsset: (network: NetworkKey, id: string) =>
     [...stellarKeys.contract(network, id), "sac-asset"] as const,
+
+  // Indexer: reproducible source verification (indexer#36, provisional contract)
+  contractVerification: (network: NetworkKey, wasmHash: string) =>
+    [...stellarKeys.network(network), "indexer", "verification", wasmHash] as const,
+  verificationSourceFile: (network: NetworkKey, wasmHash: string, path: string) =>
+    [...stellarKeys.network(network), "indexer", "verification", wasmHash, "source", path] as const,
+  verificationSubmission: (network: NetworkKey, submissionId: string) =>
+    [...stellarKeys.network(network), "indexer", "verification-submission", submissionId] as const,
 
   // Fee stats
   feeStats: (network: NetworkKey) => [...stellarKeys.network(network), "feeStats"] as const,
@@ -874,6 +887,35 @@ export const stellarQueries = {
     },
     staleTime: Infinity, // the classic asset a SAC wraps never changes
     retry: false, // a non-token WASM contract will legitimately fail simulation; don't retry
+  }),
+
+  // Indexer: reproducible source verification lookup, keyed by wasm_hash
+  // (indexer#36, provisional contract). `data: null` means "available but
+  // not verified" — a legitimate answer, not an error.
+  contractVerification: (network: NetworkKey, wasmHash: string) => ({
+    queryKey: stellarKeys.contractVerification(network, wasmHash),
+    queryFn: (): Promise<IndexerResult<VerificationRecord | null>> =>
+      fetchVerificationStatus(wasmHash),
+    staleTime: 60_000,
+    retry: 1,
+  }),
+
+  // Indexer: one source file's content from a verified contract's source tree.
+  verificationSourceFile: (network: NetworkKey, wasmHash: string, path: string) => ({
+    queryKey: stellarKeys.verificationSourceFile(network, wasmHash, path),
+    queryFn: (): Promise<IndexerResult<SourceFileContent>> =>
+      fetchVerificationSourceFile(wasmHash, path),
+    staleTime: Infinity, // verified source for a given wasm_hash never changes
+    retry: 1,
+  }),
+
+  // Indexer: poll a pending verification submission until it resolves.
+  verificationSubmission: (network: NetworkKey, submissionId: string) => ({
+    queryKey: stellarKeys.verificationSubmission(network, submissionId),
+    queryFn: (): Promise<IndexerResult<VerificationRecord>> =>
+      fetchVerificationSubmission(submissionId),
+    staleTime: 0,
+    retry: 1,
   }),
 
   // Contract invocation history via Horizon (InvokeHostFunction operations)

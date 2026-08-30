@@ -189,6 +189,40 @@ export function useContractStorage(contractId: string) {
   });
 }
 
+// Hook for a contract's verification record, looked up by its wasm_hash.
+// `wasmHash` comes from `useContractCode`; pass an empty string while it's
+// still loading and the query stays disabled.
+export function useContractVerification(wasmHash: string) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.contractVerification(network, wasmHash),
+    enabled: !!wasmHash,
+  });
+}
+
+// Hook for one source file's content from a verified contract.
+export function useVerificationSourceFile(wasmHash: string, path: string) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.verificationSourceFile(network, wasmHash, path),
+    enabled: !!wasmHash && !!path,
+  });
+}
+
+// Hook that polls a pending verification submission until it reaches a
+// terminal status (verified, mismatch, or build_failed).
+export function useVerificationSubmission(submissionId: string) {
+  const { network } = useNetwork();
+  return useQuery({
+    ...stellarQueries.verificationSubmission(network, submissionId),
+    enabled: !!submissionId,
+    refetchInterval: (query) => {
+      const status = query.state.data?.available ? query.state.data.data.status : "pending";
+      return status === "pending" ? 3000 : false;
+    },
+  });
+}
+
 // Hook for assets list with pagination
 export function useAssetsList(cursor?: string) {
   const { network } = useNetwork();

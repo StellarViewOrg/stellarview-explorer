@@ -28,6 +28,23 @@ export type {
 } from "./types";
 export { fetchPairs, fetchCandles, fetchPoolDepth } from "./dex-client";
 export {
+  fetchVerificationStatus,
+  fetchVerificationSourceFile,
+  submitVerification,
+  fetchVerificationSubmission,
+} from "./verification";
+export type {
+  VerificationStatus,
+  VerificationToolchain,
+  VerificationBuildProfile,
+  SourceTreeNode,
+  VerificationSourceRef,
+  VerificationRecord,
+  SourceFileContent,
+  VerificationSubmissionRequest,
+  VerificationSubmissionResult,
+} from "./verification-types";
+export {
   DexContractError,
   parsePairsResponse,
   parseCandlesResponse,
