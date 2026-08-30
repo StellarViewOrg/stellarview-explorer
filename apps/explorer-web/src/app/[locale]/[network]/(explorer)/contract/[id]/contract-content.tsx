@@ -7,10 +7,15 @@ import { PageHeader } from "@/components/layout/page-header";
 import { CrossNetworkBanner } from "@/components/common/cross-network-banner";
 import { CopyContextButton } from "@/components/common/copy-context-button";
 import { DomainBadge } from "@/components/domains";
-import { ContractEventDetails, ContractTransactions, TokenGallery } from "@/components/contracts";
+import {
+  ContractConsole,
+  ContractEventDetails,
+  ContractTransactions,
+  TokenGallery,
+} from "@/components/contracts";
 import { useContractInfo } from "@/lib/hooks";
 import { isValidContractId } from "@/lib/utils";
-import { Activity, Database, Code, ArrowRightLeft, Zap, LayoutGrid } from "lucide-react";
+import { Activity, Database, Code, ArrowRightLeft, Zap, LayoutGrid, Terminal } from "lucide-react";
 import { ContractSummary } from "./sections/contract-summary";
 import { ContractInvocations } from "./sections/contract-invocations";
 import { ContractStorage } from "./sections/contract-storage";
@@ -51,6 +56,10 @@ export function ContractContent({ id }: ContractContentProps) {
             <Activity className="mr-2 size-4" />
             {t("events")}
           </TabsTrigger>
+          <TabsTrigger value="console">
+            <Terminal className="mr-2 size-4" />
+            {t("readWriteConsole")}
+          </TabsTrigger>
           <TabsTrigger value="invocations">
             <Zap className="mr-2 size-4" />
             Invocations
@@ -72,8 +81,12 @@ export function ContractContent({ id }: ContractContentProps) {
             {t("code")}
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="events" className="mt-4">
           <ContractEventDetails contractId={id} live />
+        </TabsContent>
+        <TabsContent value="console" className="mt-4">
+          <ContractConsole contractId={id} />
         </TabsContent>
         <TabsContent value="invocations" className="mt-4">
           <ContractInvocations contractId={id} />
