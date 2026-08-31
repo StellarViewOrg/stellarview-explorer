@@ -40,8 +40,8 @@ describe("VerificationBadge", () => {
     expect(screen.getByText("Mismatch")).toBeTruthy();
   });
 
-  it("renders the build-failed label", () => {
-    renderWithIntl(<VerificationBadge status="build_failed" />);
-    expect(screen.getByText("Build Failed")).toBeTruthy();
+  it("renders the failed label", () => {
+    renderWithIntl(<VerificationBadge status="failed" />);
+    expect(screen.getByText("Failed")).toBeTruthy();
   });
 });

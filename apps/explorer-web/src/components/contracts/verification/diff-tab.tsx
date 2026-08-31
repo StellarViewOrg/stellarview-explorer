@@ -6,19 +6,17 @@ import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useContractVerification, useVerificationSourceFile } from "@/lib/hooks";
-import type { SourceTreeNode } from "@/lib/indexer";
+import {
+  useContractVerification,
+  useVerificationSourceTree,
+  useVerificationSourceFile,
+} from "@/lib/hooks";
+import type { SourceFileMeta } from "@/lib/indexer";
 import { DiffView } from "./diff-view";
 
 interface DiffTabProps {
   currentWasmHash: string;
-  currentTree: SourceTreeNode[];
-}
-
-function listFiles(nodes: SourceTreeNode[]): string[] {
-  return nodes.flatMap((node) =>
-    node.type === "file" ? [node.path] : listFiles(node.children ?? [])
-  );
+  currentTree: SourceFileMeta[];
 }
 
 export function DiffTab({ currentWasmHash, currentTree }: DiffTabProps) {
@@ -29,12 +27,14 @@ export function DiffTab({ currentWasmHash, currentTree }: DiffTabProps) {
 
   const { data: compareResult, isLoading: compareLoading } = useContractVerification(compareHash);
   const compareRecord = compareResult?.available ? compareResult.data : null;
+  const { data: compareTreeResult } = useVerificationSourceTree(compareRecord ? compareHash : "");
 
   const sharedFiles = useMemo(() => {
     if (!compareRecord) return [];
-    const currentFiles = new Set(listFiles(currentTree));
-    return listFiles(compareRecord.sourceTree).filter((path) => currentFiles.has(path));
-  }, [compareRecord, currentTree]);
+    const currentFiles = new Set(currentTree.map((f) => f.path));
+    const tree = compareTreeResult?.available ? compareTreeResult.data : [];
+    return tree.map((f) => f.path).filter((path) => currentFiles.has(path));
+  }, [compareRecord, compareTreeResult, currentTree]);
 
   const currentFile = useVerificationSourceFile(currentWasmHash, selectedPath ?? "");
   const compareFile = useVerificationSourceFile(compareHash, selectedPath ?? "");

@@ -1,38 +1,23 @@
-// Frozen API contract types for the indexer's reproducible source verification
-// service (indexer#36). The service is expected to ship a stub returning
-// "unverified/no data" before the build pipeline is live, so the shapes below
-// are what the explorer builds its full UI against — badge, source browser,
-// diff view, and submission flow all render from these types regardless of
-// whether the real build pipeline is running yet.
+// API contract types for the indexer's reproducible source verification
+// service, matching the frozen surface shipped in indexer#48:
+// - GET  /v1/verify/wasm/{wasmHash}
+// - GET  /v1/verify/wasm/{wasmHash}/source
+// - GET  /v1/verify/wasm/{wasmHash}/source/{path...}
+// - POST /v1/verify
+//
+// The sandboxed build pipeline that actually reproduces a build and compares
+// wasm hashes is still out of scope on the indexer (tracked separately): every
+// submission stays in "pending" for now, and the explorer must treat that as
+// "not yet verified", not as a mismatch.
 
 /** Outcome of a verification attempt, or the current record's state. */
-export type VerificationStatus =
-  | "verified"
-  | "unverified"
-  | "pending"
-  | "mismatch"
-  | "build_failed";
+export type VerificationStatus = "unverified" | "pending" | "verified" | "mismatch" | "failed";
 
-/** Toolchain metadata a submission was built with. */
-export interface VerificationToolchain {
-  rustVersion: string;
-  sdkVersion: string;
-}
-
-/** Build optimization profile used to reproduce the WASM binary. */
-export type VerificationBuildProfile = "release" | "release-with-logs";
-
-/** One node in a verified contract's source file tree. */
-export interface SourceTreeNode {
+/** One file in a verified contract's source tree (no nesting - a flat list of paths). */
+export interface SourceFileMeta {
   path: string;
-  type: "file" | "dir";
-  children?: SourceTreeNode[];
+  bytes: number;
 }
-
-/** Where a submission's source came from. */
-export type VerificationSourceRef =
-  | { type: "git"; repositoryUrl: string; commit: string }
-  | { type: "archive"; archiveUrl: string };
 
 /**
  * A verification record for one `wasm_hash`. Verifications are keyed by
@@ -40,34 +25,38 @@ export type VerificationSourceRef =
  * contract IDs shares one record.
  */
 export interface VerificationRecord {
+  id: number;
   wasmHash: string;
+  contractId: string;
+  network: string;
+  repositoryUrl: string | null;
+  gitRef: string | null;
+  gitCommit: string | null;
+  rustVersion: string | null;
+  sorobanSdkVersion: string | null;
   status: VerificationStatus;
-  submittedAt: string;
-  verifiedAt: string | null;
-  submitter: string | null;
-  toolchain: VerificationToolchain;
-  buildProfile: VerificationBuildProfile;
-  source: VerificationSourceRef | null;
-  sourceTree: SourceTreeNode[];
-  /** Present when status is "build_failed" or "mismatch". */
+  computedWasmHash: string | null;
   failureReason: string | null;
-  buildLogUrl: string | null;
+  submittedAt: string;
+  completedAt: string | null;
 }
 
 /** Content of one verified source file. */
 export interface SourceFileContent {
+  wasmHash: string;
   path: string;
   content: string;
+  bytes: number;
 }
 
 export interface VerificationSubmissionRequest {
   contractId: string;
-  source: VerificationSourceRef;
-  toolchain: VerificationToolchain;
-  buildProfile: VerificationBuildProfile;
-}
-
-export interface VerificationSubmissionResult {
-  submissionId: string;
-  status: VerificationStatus;
+  network: string;
+  repositoryUrl?: string;
+  gitRef?: string;
+  gitCommit?: string;
+  rustVersion?: string;
+  sorobanSdkVersion?: string;
+  /** path -> full source content of that file. At least one entry is required. */
+  files: Record<string, string>;
 }

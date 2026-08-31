@@ -37,7 +37,7 @@ const badgeStyles: Record<
     className:
       "bg-gradient-to-r from-destructive/20 to-destructive/10 text-destructive border-destructive/30",
   },
-  build_failed: {
+  failed: {
     icon: AlertTriangle,
     className:
       "bg-gradient-to-r from-destructive/20 to-destructive/10 text-destructive border-destructive/30",
@@ -53,7 +53,7 @@ const labelKeys: Record<VerificationBadgeStatus, string> = {
   unverified: "badgeUnverified",
   pending: "badgePending",
   mismatch: "badgeMismatch",
-  build_failed: "badgeBuildFailed",
+  failed: "badgeFailed",
   not_available: "badgeNotAvailable",
 };
 

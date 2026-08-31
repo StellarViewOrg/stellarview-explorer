@@ -1,29 +1,28 @@
 import type {
   VerificationRecord,
+  SourceFileMeta,
   SourceFileContent,
   VerificationSubmissionRequest,
-  VerificationSubmissionResult,
 } from "./verification-types";
 import type { IndexerResult } from "./types";
 
 /**
- * Client for the indexer's reproducible source verification API (indexer#36).
+ * Client for the indexer's reproducible source verification API, matching
+ * the frozen contract shipped in indexer#48 (`GET /v1/verify/wasm/{hash}`,
+ * `.../source`, `.../source/{path...}`, `POST /v1/verify`).
  *
  * Like the domains API, availability of the *service* and availability of a
  * *record* are different things: a `not_configured`/`error` result means the
- * indexer isn't reachable at all, while a successful response with
- * `verified: false` and no record is a legitimate "not verified" answer that
- * must render as an unverified badge, not an error.
+ * indexer isn't reachable at all, while a successful response reporting
+ * `verified: false` (no submission yet) is a legitimate "not verified"
+ * answer that must render as an unverified badge, not an error.
  *
- * The verification build pipeline itself hasn't shipped yet at the time this
- * client was written — indexer#36 only commits to freezing this contract and
- * serving a stub. Until the real pipeline lands, every lookup here answers
- * `verified: false` and every submission answers `pending` forever, which the
- * UI surfaces as the "verification isn't available yet" state rather than a
- * broken form.
+ * The indexer's sandboxed build pipeline hasn't shipped yet: every
+ * submission is recorded and stays in `status: "pending"` until it does. The
+ * UI must treat `"pending"` as "not yet verified", not as a mismatch.
  */
 
-const VERIFICATION_PATH = "/v1/verification";
+const VERIFY_PATH = "/v1/verify";
 const REQUEST_TIMEOUT_MS = 15_000;
 const SUBMIT_TIMEOUT_MS = 30_000;
 
@@ -31,10 +30,13 @@ function getBaseUrl(): string {
   return process.env.NEXT_PUBLIC_INDEXER_URL?.replace(/\/+$/, "") ?? "";
 }
 
-interface VerificationLookupResponse {
-  verified: boolean;
-  record: VerificationRecord | null;
+interface UnverifiedLookupResponse {
+  wasmHash: string;
+  verified: false;
+  status: "unverified";
 }
+
+type VerificationLookupResponse = UnverifiedLookupResponse | VerificationRecord;
 
 async function fetchVerificationJson<T>(
   path: string,
@@ -64,22 +66,38 @@ async function fetchVerificationJson<T>(
 }
 
 /**
- * Looks up the verification record for a deployed contract's `wasm_hash`.
- *
- * A `record: null` with `verified: false` is the normal "not yet verified"
- * answer and must not be treated as an error.
+ * Looks up the latest verification record for a deployed contract's
+ * `wasm_hash`. A `{ verified: false }` response is the normal "not yet
+ * verified" answer and must not be treated as an error.
  */
 export async function fetchVerificationStatus(
   wasmHash: string
 ): Promise<IndexerResult<VerificationRecord | null>> {
   const result = await fetchVerificationJson<VerificationLookupResponse>(
-    `${VERIFICATION_PATH}/${wasmHash}`,
+    `${VERIFY_PATH}/wasm/${wasmHash}`,
     { headers: { Accept: "application/json" } },
     REQUEST_TIMEOUT_MS
   );
 
   if (!result.available) return result;
-  return { available: true, data: result.data.record };
+  if ("verified" in result.data && result.data.verified === false) {
+    return { available: true, data: null };
+  }
+  return { available: true, data: result.data as VerificationRecord };
+}
+
+/** Fetches the file tree (path + size) of a verified `wasm_hash`'s source. */
+export async function fetchVerificationSourceTree(
+  wasmHash: string
+): Promise<IndexerResult<SourceFileMeta[]>> {
+  const result = await fetchVerificationJson<{ wasmHash: string; files: SourceFileMeta[] }>(
+    `${VERIFY_PATH}/wasm/${wasmHash}/source`,
+    { headers: { Accept: "application/json" } },
+    REQUEST_TIMEOUT_MS
+  );
+
+  if (!result.available) return result;
+  return { available: true, data: result.data.files };
 }
 
 /** Fetches the content of one file from a verified contract's source tree. */
@@ -87,40 +105,33 @@ export async function fetchVerificationSourceFile(
   wasmHash: string,
   path: string
 ): Promise<IndexerResult<SourceFileContent>> {
-  const params = new URLSearchParams({ path });
   return fetchVerificationJson<SourceFileContent>(
-    `${VERIFICATION_PATH}/${wasmHash}/source?${params}`,
+    `${VERIFY_PATH}/wasm/${wasmHash}/source/${path}`,
     { headers: { Accept: "application/json" } },
     REQUEST_TIMEOUT_MS
   );
 }
 
 /**
- * Submits source and build metadata for a deployed contract. The returned
- * `submissionId` is used to poll `fetchVerificationSubmission` until the
- * sandboxed build finishes and the record resolves to a terminal status.
+ * Submits source and build metadata for a deployed contract. `files` must
+ * be a non-empty map of file path -> full source content: the indexer
+ * stores exactly what's submitted, it does not clone a repository or fetch
+ * an archive on the caller's behalf.
+ *
+ * The returned record's `status` starts as `"pending"`; re-fetching
+ * `fetchVerificationStatus(wasmHash)` is how the UI polls for a terminal
+ * result once the build pipeline is live.
  */
 export async function submitVerification(
   request: VerificationSubmissionRequest
-): Promise<IndexerResult<VerificationSubmissionResult>> {
-  return fetchVerificationJson<VerificationSubmissionResult>(
-    VERIFICATION_PATH,
+): Promise<IndexerResult<VerificationRecord>> {
+  return fetchVerificationJson<VerificationRecord>(
+    VERIFY_PATH,
     {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(request),
     },
     SUBMIT_TIMEOUT_MS
-  );
-}
-
-/** Polls the status of a previously submitted verification request. */
-export async function fetchVerificationSubmission(
-  submissionId: string
-): Promise<IndexerResult<VerificationRecord>> {
-  return fetchVerificationJson<VerificationRecord>(
-    `${VERIFICATION_PATH}/submissions/${submissionId}`,
-    { headers: { Accept: "application/json" } },
-    REQUEST_TIMEOUT_MS
   );
 }

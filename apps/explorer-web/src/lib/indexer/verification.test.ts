@@ -1,26 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   fetchVerificationStatus,
+  fetchVerificationSourceTree,
   fetchVerificationSourceFile,
   submitVerification,
-  fetchVerificationSubmission,
 } from "./verification";
 import type { VerificationRecord } from "./verification-types";
 
 const WASM_HASH = "a".repeat(64);
 
 const RECORD: VerificationRecord = {
+  id: 1,
   wasmHash: WASM_HASH,
-  status: "verified",
-  submittedAt: "2026-01-01T00:00:00Z",
-  verifiedAt: "2026-01-01T00:05:00Z",
-  submitter: "GA62IQXVM62EIMLR2Z63L3V2HLBF2RPCSXTQKPEHEGTR6ARVYW4SUKLF",
-  toolchain: { rustVersion: "1.79.0", sdkVersion: "21.0.0" },
-  buildProfile: "release",
-  source: { type: "git", repositoryUrl: "https://example.com/repo", commit: "abc123" },
-  sourceTree: [{ path: "src/lib.rs", type: "file" }],
+  contractId: "C".padEnd(56, "A"),
+  network: "testnet",
+  repositoryUrl: "https://example.com/repo",
+  gitRef: "main",
+  gitCommit: "abc123",
+  rustVersion: "1.79.0",
+  sorobanSdkVersion: "21.0.0",
+  status: "pending",
+  computedWasmHash: null,
   failureReason: null,
-  buildLogUrl: null,
+  submittedAt: "2026-01-01T00:00:00.000Z",
+  completedAt: null,
 };
 
 function mockResponse(body: unknown, ok = true) {
@@ -52,9 +55,9 @@ describe("indexer/verification", () => {
     });
   });
 
-  it("treats a null record as an available, unverified answer", async () => {
+  it("treats a { verified: false } response as an available, unverified answer", async () => {
     vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
-    mockResponse({ verified: false, record: null });
+    mockResponse({ wasmHash: WASM_HASH, verified: false, status: "unverified" });
 
     await expect(fetchVerificationStatus(WASM_HASH)).resolves.toEqual({
       available: true,
@@ -62,9 +65,9 @@ describe("indexer/verification", () => {
     });
   });
 
-  it("returns the verification record when verified", async () => {
+  it("returns the verification record when one exists", async () => {
     vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
-    mockResponse({ verified: true, record: RECORD });
+    mockResponse(RECORD);
 
     await expect(fetchVerificationStatus(WASM_HASH)).resolves.toEqual({
       available: true,
@@ -72,42 +75,55 @@ describe("indexer/verification", () => {
     });
   });
 
-  it("fetches source file content", async () => {
+  it("fetches the source file tree", async () => {
     vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
-    mockResponse({ path: "src/lib.rs", content: "pub fn main() {}" });
+    mockResponse({ wasmHash: WASM_HASH, files: [{ path: "src/lib.rs", bytes: 17 }] });
+
+    await expect(fetchVerificationSourceTree(WASM_HASH)).resolves.toEqual({
+      available: true,
+      data: [{ path: "src/lib.rs", bytes: 17 }],
+    });
+  });
+
+  it("fetches source file content from a path segment", async () => {
+    vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
+    mockResponse({
+      wasmHash: WASM_HASH,
+      path: "src/lib.rs",
+      content: "pub fn main() {}",
+      bytes: 17,
+    });
 
     await expect(fetchVerificationSourceFile(WASM_HASH, "src/lib.rs")).resolves.toEqual({
       available: true,
-      data: { path: "src/lib.rs", content: "pub fn main() {}" },
+      data: { wasmHash: WASM_HASH, path: "src/lib.rs", content: "pub fn main() {}", bytes: 17 },
     });
-  });
-
-  it("submits a verification request", async () => {
-    vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
-    mockResponse({ submissionId: "sub_1", status: "pending" });
-
-    const result = await submitVerification({
-      contractId: "C".padEnd(56, "A"),
-      source: { type: "git", repositoryUrl: "https://example.com/repo", commit: "abc123" },
-      toolchain: { rustVersion: "1.79.0", sdkVersion: "21.0.0" },
-      buildProfile: "release",
-    });
-
-    expect(result).toEqual({ available: true, data: { submissionId: "sub_1", status: "pending" } });
     expect(global.fetch).toHaveBeenCalledWith(
-      "http://indexer/v1/verification",
-      expect.objectContaining({ method: "POST" })
+      "http://indexer/v1/verify/wasm/" + WASM_HASH + "/source/src/lib.rs",
+      expect.anything()
     );
   });
 
-  it("polls submission status", async () => {
+  it("submits a verification request with source file contents", async () => {
     vi.stubEnv("NEXT_PUBLIC_INDEXER_URL", "http://indexer");
     mockResponse(RECORD);
 
-    await expect(fetchVerificationSubmission("sub_1")).resolves.toEqual({
-      available: true,
-      data: RECORD,
+    const result = await submitVerification({
+      contractId: "C".padEnd(56, "A"),
+      network: "testnet",
+      repositoryUrl: "https://example.com/repo",
+      gitRef: "main",
+      gitCommit: "abc123",
+      rustVersion: "1.79.0",
+      sorobanSdkVersion: "21.0.0",
+      files: { "src/lib.rs": "pub fn main() {}" },
     });
+
+    expect(result).toEqual({ available: true, data: RECORD });
+    expect(global.fetch).toHaveBeenCalledWith(
+      "http://indexer/v1/verify",
+      expect.objectContaining({ method: "POST" })
+    );
   });
 
   it("returns error when fetch throws", async () => {
