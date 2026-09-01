@@ -12,10 +12,20 @@ import {
   ContractEventDetails,
   ContractTransactions,
   TokenGallery,
+  VerificationPanel,
 } from "@/components/contracts";
 import { useContractInfo } from "@/lib/hooks";
 import { isValidContractId } from "@/lib/utils";
-import { Activity, Database, Code, ArrowRightLeft, Zap, LayoutGrid, Terminal } from "lucide-react";
+import {
+  Activity,
+  Database,
+  Code,
+  ArrowRightLeft,
+  Zap,
+  LayoutGrid,
+  Terminal,
+  ShieldCheck,
+} from "lucide-react";
 import { ContractSummary } from "./sections/contract-summary";
 import { ContractInvocations } from "./sections/contract-invocations";
 import { ContractStorage } from "./sections/contract-storage";
@@ -80,6 +90,10 @@ export function ContractContent({ id }: ContractContentProps) {
             <Code className="mr-2 size-4" />
             {t("code")}
           </TabsTrigger>
+          <TabsTrigger value="verification">
+            <ShieldCheck className="mr-2 size-4" />
+            {t("verificationTab")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="events" className="mt-4">
@@ -102,6 +116,9 @@ export function ContractContent({ id }: ContractContentProps) {
         </TabsContent>
         <TabsContent value="code" className="mt-4">
           <ContractCode contractId={id} />
+        </TabsContent>
+        <TabsContent value="verification" className="mt-4">
+          <VerificationPanel contractId={id} />
         </TabsContent>
       </Tabs>
     </div>
