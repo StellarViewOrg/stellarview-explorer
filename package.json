@@ -18,5 +18,5 @@
     "format:web": "bun run --cwd apps/explorer-web format",
     "format:check:web": "bun run --cwd apps/explorer-web format:check"
   },
-  "packageManager": "bun@1.2.15"
+  "packageManager": "bun@1.4.2"
 }
