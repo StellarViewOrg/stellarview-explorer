@@ -1,0 +1,62 @@
+name: Bug report
+description: Report something that is broken in StellarView Explorer
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much detail as you can, it makes triage much faster.
+
+  - type: dropdown
+    id: network
+    attributes:
+      label: Network
+      description: Which Stellar network were you browsing?
+      options:
+        - Public
+        - Testnet
+        - Futurenet
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: What did you do, step by step?
+      placeholder: |
+        1. Go to '...'
+        2. Search for '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The release tag, deployment date, or commit SHA if you know it
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or logs
+      description: Drag and drop images here, or paste relevant console or network output
+    validations:
+      required: false
