@@ -2,7 +2,7 @@
 
 > A premium block explorer for the Stellar network — built for developers, traders, and ecosystem builders.
 
-[![Live](https://img.shields.io/badge/status-live-brightgreen)](#) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](#license) [![Next.js](https://img.shields.io/badge/Next.js-16-black)](#) [![Go](https://img.shields.io/badge/Indexer-Go-00ADD8)](#)
+[![Live](https://img.shields.io/badge/status-live-brightgreen)](#) [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](#license) [![Next.js](https://img.shields.io/badge/Next.js-16-black)](#) [![Go](https://img.shields.io/badge/Indexer-Go-00ADD8)](#)
 
 ---
 
@@ -121,4 +121,4 @@ Contributions are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) befo
 
 ## License
 
-MIT
+Apache License 2.0. See [LICENSE](./LICENSE) for details.
