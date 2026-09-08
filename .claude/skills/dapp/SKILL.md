@@ -1,23 +1,23 @@
 ---
 name: dapp
-description: Stellar dApp / frontend development. Covers the JavaScript stellar-sdk (browser + Node.js), Freighter wallet, Stellar Wallets Kit (multi-wallet), Wallet Standard, smart accounts with passkeys, transaction building / signing / submission, Soroban contract invocation from the client, simulation, and error handling. Use when building a React/Next.js/Node.js app that talks to Stellar or Soroban.
+description: Stellar dApp / frontend development. Covers the JavaScript stellar-sdk (browser + Node.js), Freighter wallet, Stellar Wallets Kit (multi-wallet), Wallet Standard, smart accounts with passkeys, transaction building / signing / submission, smart contract invocation from the client, simulation, and error handling. Use when building a React/Next.js/Node.js app that talks to Stellar — classic operations or smart contracts.
 user-invocable: true
 argument-hint: "[dapp task]"
 ---
 
 # Stellar dApp / Frontend
 
-Client-side development with `@stellar/stellar-sdk`, wallet connection, signing, and submitting transactions. Covers both classic Stellar operations and Soroban contract invocation from the browser or Node.js.
+Client-side development with `@stellar/stellar-sdk`, wallet connection, signing, and submitting transactions. Covers both classic Stellar operations and smart contract invocation from the browser or Node.js.
 
 ## When to use this skill
 - Connecting Freighter or other wallets via Stellar Wallets Kit
 - Building, simulating, signing, and submitting transactions
-- Invoking Soroban contracts from a frontend
+- Invoking Stellar smart contracts from a frontend
 - Implementing smart accounts with passkeys
 - Handling network passphrases (Mainnet / Testnet / local)
 
 ## Related skills
-- Writing the contract being invoked → `../soroban/SKILL.md`
+- Writing the contract being invoked → `../smart-contracts/SKILL.md`
 - Issuing assets and managing trustlines → `../assets/SKILL.md`
 - Querying chain state via RPC / Horizon → `../data/SKILL.md`
 - Building paid APIs or agent payment clients → `../agentic-payments/SKILL.md`
@@ -42,17 +42,19 @@ Client-side development with `@stellar/stellar-sdk`, wallet connection, signing,
 
 ## Recommended Dependencies
 
-> **Requires Node.js 20+** — the Stellar SDK dropped Node 18 support.
+> **Requires Node.js 22+.** As of SDK v16, Node 22 is the minimum (older Node produces an `EBADENGINE` warning). v16 also folded `@stellar/stellar-base` into `@stellar/stellar-sdk`, is ESM-first, and uses native `fetch` instead of axios. If you still import `@stellar/stellar-base` directly, switch the import to `@stellar/stellar-sdk` and uninstall the base package (keeping both breaks `instanceof` checks). See the [migration guide](https://stellar.github.io/js-stellar-sdk/guides/00-migration).
 
 ```bash
 npm install @stellar/stellar-sdk @stellar/freighter-api
-# Or for multi-wallet support:
-npm install @stellar/stellar-sdk @creit.tech/stellar-wallets-kit
+# Or for multi-wallet support — Wallets Kit v2 is distributed on JSR, not npm:
+npx jsr add @creit-tech/stellar-wallets-kit
 ```
+
+> **Sourcing:** SDK mechanics below (init, transaction building, contract invocation, submission, data fetching, error handling) track the official [JS SDK docs](https://stellar.github.io/js-stellar-sdk/) (which also publish [`llms.txt`](https://stellar.github.io/js-stellar-sdk/llms.txt) / [`llms-full.txt`](https://stellar.github.io/js-stellar-sdk/llms-full.txt) bundles for agents). Wallet integrations (Freighter, Stellar Wallets Kit), passkey smart accounts, and the OpenZeppelin relayer are separate packages, not part of the JS SDK — verify those against their own upstream docs.
 
 ## SDK Initialization
 
-> For the full API reference (RPC methods, Horizon endpoints, migration guide), see [api-rpc-horizon.md](../data/SKILL.md).
+> For the full API reference (RPC methods, Horizon endpoints, migration guide), see the [data skill](../data/SKILL.md).
 
 ### Basic Setup
 ```typescript
@@ -86,20 +88,29 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-export const config = {
-  testnet: {
-    horizonUrl: "https://horizon-testnet.stellar.org",
-    rpcUrl: "https://soroban-testnet.stellar.org",
-    networkPassphrase: StellarSdk.Networks.TESTNET,
-    friendbotUrl: "https://friendbot.stellar.org",
-  },
-  mainnet: {
-    horizonUrl: "https://horizon.stellar.org",
-    rpcUrl: requireEnv("NEXT_PUBLIC_STELLAR_MAINNET_RPC_URL"),
-    networkPassphrase: StellarSdk.Networks.PUBLIC,
-    friendbotUrl: null,
-  },
-}[NETWORK]!;
+function getConfig(network: string) {
+  switch (network) {
+    case "testnet":
+      return {
+        horizonUrl: "https://horizon-testnet.stellar.org",
+        rpcUrl: "https://soroban-testnet.stellar.org",
+        networkPassphrase: StellarSdk.Networks.TESTNET,
+        friendbotUrl: "https://friendbot.stellar.org" as string | null,
+      };
+    case "mainnet":
+      return {
+        horizonUrl: "https://horizon.stellar.org",
+        // Resolved lazily so testnet runs don't require the mainnet env var
+        rpcUrl: requireEnv("NEXT_PUBLIC_STELLAR_MAINNET_RPC_URL"),
+        networkPassphrase: StellarSdk.Networks.PUBLIC,
+        friendbotUrl: null,
+      };
+    default:
+      throw new Error(`Unknown network: ${network}`);
+  }
+}
+
+export const config = getConfig(NETWORK);
 
 export const horizon = new StellarSdk.Horizon.Server(config.horizonUrl);
 export const rpc = new StellarSdk.rpc.Server(config.rpcUrl);
@@ -186,49 +197,47 @@ export function useFreighter() {
 ```
 
 ### Stellar Wallets Kit (Multi-Wallet)
+
 ```typescript
 // hooks/useStellarWallet.ts
 import { useState, useCallback } from "react";
-import {
-  StellarWalletsKit,
-  WalletNetwork,
-  allowAllModules,
-  FREIGHTER_ID,
-  LOBSTR_ID,
-  XBULL_ID,
-} from "@creit.tech/stellar-wallets-kit";
+import { StellarWalletsKit, Networks } from "@creit-tech/stellar-wallets-kit";
+import { defaultModules } from "@creit-tech/stellar-wallets-kit/modules/utils";
 
-const kit = new StellarWalletsKit({
-  network: WalletNetwork.TESTNET,
-  selectedWalletId: FREIGHTER_ID,
-  modules: allowAllModules(),
+// v2 is a static singleton: init once at module load, then call static methods —
+// there is no instance to construct or pass around.
+// defaultModules() loads every wallet that needs no extra setup; modules with
+// prerequisites (WalletConnect, Ledger, Trezor) must be imported and added explicitly.
+StellarWalletsKit.init({
+  modules: defaultModules(),
+  network: Networks.TESTNET,
 });
 
 export function useStellarWallet() {
   const [address, setAddress] = useState<string | null>(null);
 
   const connect = useCallback(async () => {
-    await kit.openModal({
-      onWalletSelected: async (option) => {
-        kit.setWallet(option.id);
-        const { address } = await kit.getAddress();
-        setAddress(address);
-      },
-    });
+    // authModal() opens the wallet picker, sets the chosen module active,
+    // and returns the address — one call replaces v1's openModal callback dance.
+    const { address } = await StellarWalletsKit.authModal();
+    setAddress(address);
   }, []);
 
-  const disconnect = useCallback(() => {
+  const disconnect = useCallback(async () => {
+    await StellarWalletsKit.disconnect();
     setAddress(null);
   }, []);
 
   const sign = useCallback(async (xdr: string) => {
-    const { signedTxXdr } = await kit.signTransaction(xdr);
+    const { signedTxXdr } = await StellarWalletsKit.signTransaction(xdr);
     return signedTxXdr;
   }, []);
 
-  return { address, connect, disconnect, sign, kit };
+  return { address, connect, disconnect, sign };
 }
 ```
+
+> **Migrating from v1?** (noted July 2026) v1 lived on npm under the dotted scope `@creit.tech/stellar-wallets-kit`, with `new StellarWalletsKit({...})`, `allowAllModules()`, and `openModal({ onWalletSelected })`. v2 moved to JSR under `@creit-tech/stellar-wallets-kit`, made the kit fully static, replaced `allowAllModules()` with `defaultModules()`, and folded wallet selection + address fetch into `authModal()`. npm parity is maintained for now, but the maintainers say npm updates will eventually stop — install from JSR. Pre-selecting a wallet (`setWallet(FREIGHTER_ID)`) still works; the ID constants now live in per-wallet module subpaths like `@creit-tech/stellar-wallets-kit/modules/freighter`.
 
 ## Transaction Building
 
@@ -263,7 +272,57 @@ export async function buildPaymentTx(
 }
 ```
 
-### Soroban Contract Invocation
+### Smart Contract Invocation (`contract.Client`)
+
+The canonical way to call a Soroban contract from JS is the `contract.Client`, not hand-built `Contract.call` + `assembleTransaction`. The client reads the contract's interface from the network, so each method is callable by name and returns an `AssembledTransaction`. You get a native JS result and don't build ScVals by hand.
+
+```typescript
+import { contract } from "@stellar/stellar-sdk";
+import { config } from "@/lib/stellar";
+
+// Describe just the methods you call. `Client.from<T>()` uses this to type
+// the returned client, so calls are checked and autocompleted — no codegen.
+// For a contract with many methods, generate this interface from its spec
+// with the SDK's binding CLI instead of writing it by hand.
+interface CounterContract {
+  increment: (
+    options?: contract.MethodOptions,
+  ) => Promise<contract.AssembledTransaction<number>>;
+}
+
+// `signTransaction` comes from the wallet (e.g. Freighter/Wallets Kit in the
+// browser). `contract.basicNodeSigner(keypair, networkPassphrase)` is the
+// Node equivalent for scripts and tests.
+export async function getCounterClient(
+  contractId: string,
+  publicKey: string,
+  signTransaction: contract.ClientOptions["signTransaction"],
+) {
+  return contract.Client.from<CounterContract>({
+    contractId,
+    rpcUrl: config.rpcUrl,
+    networkPassphrase: config.networkPassphrase,
+    publicKey,
+    signTransaction,
+  });
+}
+
+// Preview (free simulation) then sign + send to apply on-chain.
+export async function increment(client: contract.Client & CounterContract) {
+  const tx = await client.increment();
+  console.log("preview:", tx.result); // predicted return value, no signature
+  const sent = await tx.signAndSend(); // submits and polls to completion
+  return sent.result;
+}
+```
+
+`AssembledTransaction` also supports fine-grained control (`{ fee, simulate, timeoutInSeconds }` as a second arg) and multi-party auth via `tx.needsNonInvokerSigningBy()` / `tx.signAuthEntries()`. See [Invoke a Contract](https://stellar.github.io/js-stellar-sdk/guides/06-invoke-a-contract) and [Authorize a Contract Call](https://stellar.github.io/js-stellar-sdk/guides/07-contract-auth).
+
+<details>
+<summary><b>Advanced: low-level invocation without a client</b></summary>
+
+Use this only when you need direct control over the transaction (e.g. batching a contract call with classic operations). Otherwise prefer `contract.Client` above.
+
 ```typescript
 import * as StellarSdk from "@stellar/stellar-sdk";
 import { rpc, config } from "@/lib/stellar";
@@ -275,10 +334,9 @@ export async function invokeContract(
   args: StellarSdk.xdr.ScVal[]
 ) {
   const account = await rpc.getAccount(sourceAddress);
-
   const contract = new StellarSdk.Contract(contractId);
 
-  let transaction = new StellarSdk.TransactionBuilder(account, {
+  const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: StellarSdk.BASE_FEE,
     networkPassphrase: config.networkPassphrase,
   })
@@ -286,28 +344,18 @@ export async function invokeContract(
     .setTimeout(180)
     .build();
 
-  // Simulate to get resource estimates
-  const simulation = await rpc.simulateTransaction(transaction);
-
-  if (StellarSdk.rpc.Api.isSimulationError(simulation)) {
-    throw new Error(`Simulation failed: ${simulation.error}`);
-  }
-
-  // Assemble with proper resources
-  transaction = StellarSdk.rpc.assembleTransaction(
-    transaction,
-    simulation
-  ).build();
-
-  return transaction.toXDR();
+  // `prepareTransaction` simulates and applies footprint/auth/fees in one step.
+  // (Equivalent to simulateTransaction + rpc.assembleTransaction.)
+  const prepared = await rpc.prepareTransaction(transaction);
+  return prepared.toXDR();
 }
 ```
 
-### Building ScVal Arguments
+**Building ScVal arguments by hand** (only needed for the low-level path — `contract.Client` converts native JS args for you):
+
 ```typescript
 import * as StellarSdk from "@stellar/stellar-sdk";
 
-// Common conversions
 const addressVal = StellarSdk.Address.fromString(address).toScVal();
 const i128Val = StellarSdk.nativeToScVal(BigInt(amount), { type: "i128" });
 const u32Val = StellarSdk.nativeToScVal(42, { type: "u32" });
@@ -325,9 +373,14 @@ const structVal = StellarSdk.nativeToScVal(
   }
 );
 
-// Vec
-const vecVal = StellarSdk.nativeToScVal([1, 2, 3], { type: "i128" });
+// Vec of i128 — the element type is applied to each item
+const vecVal = StellarSdk.nativeToScVal(
+  [1, 2, 3].map((n) => BigInt(n)),
+  { type: "i128" }
+);
 ```
+
+</details>
 
 ## Transaction Submission
 
@@ -342,7 +395,7 @@ export async function submitTransaction(signedXdr: string) {
     config.networkPassphrase
   );
 
-  // For Soroban transactions, use RPC
+  // For smart contract transactions, use RPC
   if (transaction.operations.some(op => op.type === "invokeHostFunction")) {
     return submitSorobanTransaction(signedXdr);
   }
@@ -360,15 +413,13 @@ async function submitSorobanTransaction(signedXdr: string) {
   const response = await rpc.sendTransaction(transaction);
 
   if (response.status === "ERROR") {
-    throw new Error(`Transaction failed: ${response.errorResult}`);
+    throw new Error(`Send failed: ${response.errorResult}`);
   }
 
-  // Poll for completion
-  let getResponse = await rpc.getTransaction(response.hash);
-  while (getResponse.status === "NOT_FOUND") {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    getResponse = await rpc.getTransaction(response.hash);
-  }
+  // Poll for completion. pollTransaction handles the retry loop (default 5
+  // attempts, 1s apart — tune with { attempts, sleepStrategy }) instead of a
+  // hand-rolled while loop that can spin forever.
+  const getResponse = await rpc.pollTransaction(response.hash);
 
   if (getResponse.status === "SUCCESS") {
     return {
@@ -441,6 +492,7 @@ export function ConnectButton() {
 import { useState } from "react";
 import { useFreighter } from "@/hooks/useFreighter";
 import { buildPaymentTx, submitTransaction } from "@/lib/transactions";
+import { config } from "@/lib/stellar";
 
 export function SendPayment() {
   const { address, sign } = useFreighter();
@@ -541,6 +593,7 @@ export default function RootLayout({
 
 ### Account Balance
 ```typescript
+import { NotFoundError } from "@stellar/stellar-sdk";
 import { horizon } from "@/lib/stellar";
 
 export async function getBalance(address: string) {
@@ -551,15 +604,43 @@ export async function getBalance(address: string) {
     );
     return nativeBalance?.balance || "0";
   } catch (error) {
-    if (error.response?.status === 404) {
-      return "0"; // Account not funded
+    // loadAccount rejects with the typed NotFoundError for an unfunded account.
+    if (error instanceof NotFoundError) {
+      return "0"; // Account not funded yet
     }
     throw error;
   }
 }
 ```
 
+> For submission failures, Horizon returns result codes under `error.response?.data?.extras?.result_codes` (`transaction` + per-`operation`). See [Handle Errors](https://stellar.github.io/js-stellar-sdk/guides/05-handle-errors).
+
 ### Contract State
+
+For a read-only contract call, `rpc.Server` has one-line shortcuts that build the contract interface for you (including the built-in spec for Stellar Asset Contracts), so no client setup or manual ScVal work is needed:
+
+```typescript
+import { rpc } from "@/lib/stellar";
+
+// Run a read-only method and get the decoded result directly.
+const { result: balance, isReadCall } = await rpc.queryContract<bigint>(
+  tokenId,
+  "balance",
+  { id: "G..." } // named args, keyed by parameter name; omit for no-arg methods
+);
+
+// Discover a contract's callable methods from just its ID.
+const methods = await rpc.getContractMethods(tokenId);
+// [{ name: "balance", inputs: [{ name: "id", type: "Address" }], outputs: ["I128"] }, ...]
+```
+
+`isReadCall` is per-call: `false` means the `result` is only a simulation preview of a call that would change state (apply it by signing a transaction via `contract.Client`).
+
+<details>
+<summary><b>Advanced: read a raw ledger entry</b></summary>
+
+Reach for `getLedgerEntries` only when you need a specific storage key that isn't exposed as a contract method.
+
 ```typescript
 import * as StellarSdk from "@stellar/stellar-sdk";
 import { rpc } from "@/lib/stellar";
@@ -587,6 +668,8 @@ export async function getContractData(
   );
 }
 ```
+
+</details>
 
 ## Smart Accounts (Passkey Wallets)
 
@@ -652,7 +735,7 @@ const client = new RPChannels.ChannelsClient({
   apiKey: "your-api-key",
 });
 
-// Submit a Soroban contract call with fee sponsorship
+// Submit a smart contract call with fee sponsorship
 const response = await client.submitSorobanTransaction({
   func: contractFunc,
   auth: contractAuth,

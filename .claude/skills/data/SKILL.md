@@ -18,7 +18,7 @@ API access for reading chain state. Stellar RPC is the preferred entry point for
 
 ## Related skills
 - Building transactions to send → `../dapp/SKILL.md`
-- Soroban contract simulation and event emission → `../soroban/SKILL.md`
+- Smart contract simulation and event emission → `../smart-contracts/SKILL.md`
 - Asset balance and trustline lookups → `../assets/SKILL.md`
 - Standards (SEP-7 deeplinks, SEP-10 auth) → `../standards/SKILL.md`
 
@@ -31,7 +31,7 @@ Stellar provides two API paradigms:
 
 | API | Status | Use Case |
 |-----|--------|----------|
-| **Stellar RPC** | Preferred | Soroban, real-time state, new projects |
+| **Stellar RPC** | Preferred | Smart contracts, real-time state, new projects |
 | **Horizon** | Legacy-focused | Historical data, legacy applications |
 
 **Recommendation**: Use Stellar RPC for all new projects. Use Horizon mainly for historical queries and legacy compatibility paths.
@@ -347,7 +347,7 @@ const account = await rpc.getAccount(publicKey);
 // Horizon (for classic transactions)
 const result = await horizonServer.submitTransaction(tx);
 
-// RPC (for Soroban transactions)
+// RPC (for smart contract transactions)
 const response = await rpc.sendTransaction(tx);
 const result = await pollForResult(response.hash);
 ```
@@ -419,7 +419,7 @@ RPC "Infinite Scroll" is powered by the Stellar data lake — a cloud-based obje
 For complex queries, event streaming, or custom data pipelines beyond what RPC/Horizon provide:
 
 - **Mercury** — Stellar-native indexer with Retroshades, GraphQL API (https://mercurydata.app)
-- **SubQuery** — Multi-chain indexer with Stellar/Soroban support, event handlers (https://subquery.network)
+- **SubQuery** — Multi-chain indexer with Stellar support, event handlers (https://subquery.network)
 - **Goldsky** — Real-time data replication pipelines and subgraphs (https://goldsky.com)
 - **StellarExpert API** — Free, no-auth REST API for assets, accounts, ledger resolution (https://stellar.expert/openapi.html)
 
@@ -427,7 +427,7 @@ See the full indexer directory: https://developers.stellar.org/docs/data/indexer
 
 ## Network Configuration
 
-> For a React/Next.js-specific setup, see [frontend-stellar-sdk.md](../dapp/SKILL.md).
+> For a React/Next.js-specific setup, see the [dapp skill](../dapp/SKILL.md).
 > For mainnet RPC, set `STELLAR_MAINNET_RPC_URL` from a provider in the [RPC providers directory](https://developers.stellar.org/docs/data/apis/rpc/providers).
 
 ### Environment-Based Setup
@@ -449,29 +449,33 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-const configs: Record<string, NetworkConfig> = {
-  mainnet: {
+// Lazy per-network factories: requireEnv only runs for the selected network,
+// so testnet/local work without the mainnet env var set.
+const configs: Record<string, () => NetworkConfig> = {
+  mainnet: () => ({
     rpcUrl: requireEnv("STELLAR_MAINNET_RPC_URL"),
     horizonUrl: "https://horizon.stellar.org",
     networkPassphrase: StellarSdk.Networks.PUBLIC,
     friendbotUrl: null,
-  },
-  testnet: {
+  }),
+  testnet: () => ({
     rpcUrl: "https://soroban-testnet.stellar.org",
     horizonUrl: "https://horizon-testnet.stellar.org",
     networkPassphrase: StellarSdk.Networks.TESTNET,
     friendbotUrl: "https://friendbot.stellar.org",
-  },
-  local: {
+  }),
+  local: () => ({
     rpcUrl: "http://localhost:8000/soroban/rpc",
     horizonUrl: "http://localhost:8000",
     networkPassphrase: "Standalone Network ; February 2017",
     friendbotUrl: "http://localhost:8000/friendbot",
-  },
+  }),
 };
 
 const network = process.env.STELLAR_NETWORK || "testnet";
-export const config = configs[network];
+const makeConfig = configs[network];
+if (!makeConfig) throw new Error(`Unknown network: ${network}`);
+export const config = makeConfig();
 
 export const rpc = new StellarSdk.rpc.Server(config.rpcUrl);
 export const horizon = new StellarSdk.Horizon.Server(config.horizonUrl);
@@ -481,7 +485,7 @@ export const horizon = new StellarSdk.Horizon.Server(config.horizonUrl);
 
 ### Use RPC for:
 - New application development
-- Soroban contract interactions
+- Smart contract interactions
 - Transaction simulation and submission
 - Real-time account state
 
