@@ -250,7 +250,9 @@ describe("contract-client", () => {
         }),
       } as never);
 
-      vi.mocked(freighter.signTransaction).mockImplementation((xdr) => Promise.resolve(xdr));
+      vi.mocked(freighter.signTransaction).mockImplementation((xdr) =>
+        Promise.resolve({ signedTxXdr: xdr, signerAddress: DUMMY_PUBLIC_KEY })
+      );
 
       const writePromise = executeContractWrite(
         "testnet",
@@ -302,7 +304,9 @@ describe("contract-client", () => {
         }),
       } as never);
 
-      vi.mocked(freighter.signTransaction).mockImplementation((xdr) => Promise.resolve(xdr));
+      vi.mocked(freighter.signTransaction).mockImplementation((xdr) =>
+        Promise.resolve({ signedTxXdr: xdr, signerAddress: DUMMY_PUBLIC_KEY })
+      );
 
       const res = await executeContractWrite(
         "testnet",
@@ -331,7 +335,9 @@ describe("contract-client", () => {
         }),
       } as never);
 
-      vi.mocked(freighter.signTransaction).mockImplementation((xdr) => Promise.resolve(xdr));
+      vi.mocked(freighter.signTransaction).mockImplementation((xdr) =>
+        Promise.resolve({ signedTxXdr: xdr, signerAddress: DUMMY_PUBLIC_KEY })
+      );
 
       const writePromise = executeContractWrite(
         "testnet",
