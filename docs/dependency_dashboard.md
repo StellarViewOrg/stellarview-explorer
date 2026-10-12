@@ -54,7 +54,7 @@ Renovate monitors both monorepo root dependencies and the Next.js web applicatio
 
 ### 2. CI Workflows & GitHub Actions (`.github/workflows/`)
 
-- Actions runners: `actions/checkout`, `actions/setup-node`, `oven-sh/setup-bun`
+- Actions runners: `actions/checkout`, `oven-sh/setup-bun`
 
 ### Batching & Update Policies
 
