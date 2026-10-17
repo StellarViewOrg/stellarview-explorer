@@ -11,12 +11,6 @@ function isValidTransactionHash(hash: string): boolean {
   return hash.length === 64 && /^[a-f0-9]+$/i.test(hash);
 }
 
-// Render on first request, then serve the cached shell from the CDN. Data loads client-side,
-// so the HTML only depends on the URL params.
-export function generateStaticParams() {
-  return [];
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { hash } = await params;
   const shortHash = `${hash.slice(0, 8)}...${hash.slice(-8)}`;
