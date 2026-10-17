@@ -6,12 +6,6 @@ type Props = {
   params: Promise<{ id: string; network: string }>;
 };
 
-// Render on first request, then serve the cached shell from the CDN. Data loads client-side,
-// so the HTML only depends on the URL params.
-export function generateStaticParams() {
-  return [];
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const shortId = `${id.slice(0, 6)}...${id.slice(-6)}`;
