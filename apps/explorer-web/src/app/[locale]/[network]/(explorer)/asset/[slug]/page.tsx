@@ -7,6 +7,12 @@ type Props = {
   params: Promise<{ slug: string; network: string }>;
 };
 
+// Render on first request, then serve the cached shell from the CDN. Data loads client-side,
+// so the HTML only depends on the URL params.
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const parsed = parseAssetSlug(slug);
