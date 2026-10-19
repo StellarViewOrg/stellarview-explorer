@@ -37,14 +37,16 @@ export interface OpsPerLedgerChartData {
 export function useTPSChartData(): TPSChartData {
   const { network } = useNetwork();
   const { data: ledger, isLoading } = useLatestLedger();
-  const [tpsData, setTpsDataState] = useState<TPSDataPoint[]>([]);
+  const [tpsData, setTpsDataState] = useState<TPSDataPoint[]>(() => getTPSData(network));
+  const [loadedNetwork, setLoadedNetwork] = useState(network);
   const [currentTPS, setCurrentTPS] = useState(0);
   const prevLedgerRef = useRef<{ sequence: number; closedAt: string } | null>(null);
 
-  useEffect(() => {
-    // Load stored data on mount
+  // Reload stored data when the network changes (adjusting state during render)
+  if (loadedNetwork !== network) {
+    setLoadedNetwork(network);
     setTpsDataState(getTPSData(network));
-  }, [network]);
+  }
 
   useEffect(() => {
     if (!ledger) return;
@@ -91,13 +93,15 @@ export function useTPSChartData(): TPSChartData {
 export function useTxChartData(): TxChartData {
   const { network } = useNetwork();
   const { data: ledger, isLoading } = useLatestLedger();
-  const [txData, setTxDataState] = useState<TxHourlyDataPoint[]>([]);
+  const [txData, setTxDataState] = useState<TxHourlyDataPoint[]>(() => getTxHourlyData(network));
+  const [loadedNetwork, setLoadedNetwork] = useState(network);
   const prevLedgerSeqRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    // Load stored data on mount
+  // Reload stored data when the network changes (adjusting state during render)
+  if (loadedNetwork !== network) {
+    setLoadedNetwork(network);
     setTxDataState(getTxHourlyData(network));
-  }, [network]);
+  }
 
   useEffect(() => {
     if (!ledger || prevLedgerSeqRef.current === ledger.sequence) return;
@@ -141,29 +145,37 @@ export function useTxChartData(): TxChartData {
 export function useOpsPerLedgerChartData(): OpsPerLedgerChartData {
   const { network } = useNetwork();
   const { data: ledger, isLoading } = useLatestLedger();
-  const [ledgerData, setLedgerData] = useState<{ ledger: number; ops: number; txs: number }[]>([]);
+  const [ledgerData, setLedgerData] = useState<{ ledger: number; ops: number; txs: number }[]>(() =>
+    getOpsPerLedgerData(network)
+  );
+  const [loadedNetwork, setLoadedNetwork] = useState(network);
+  const [lastLedgerSeq, setLastLedgerSeq] = useState<number | null>(null);
 
+  // Reload stored data on network change and append each new ledger
+  // (adjusting state during render instead of in an effect)
+  const networkChanged = loadedNetwork !== network;
+  const ledgerChanged = !!ledger && ledger.sequence !== lastLedgerSeq;
+  if (networkChanged || ledgerChanged) {
+    let next = networkChanged ? getOpsPerLedgerData(network) : ledgerData;
+    if (networkChanged) setLoadedNetwork(network);
+    if (ledger && ledgerChanged) {
+      setLastLedgerSeq(ledger.sequence);
+      if (!next.some((d) => d.ledger === ledger.sequence)) {
+        const newPoint = {
+          ledger: ledger.sequence,
+          ops: ledger.operation_count,
+          txs: ledger.successful_transaction_count + ledger.failed_transaction_count,
+        };
+        next = [...next, newPoint].slice(-20);
+      }
+    }
+    if (next !== ledgerData) setLedgerData(next);
+  }
+
+  // Persist to storage (syncing an external system)
   useEffect(() => {
-    setLedgerData(getOpsPerLedgerData(network));
-  }, [network]);
-
-  useEffect(() => {
-    if (!ledger) return;
-
-    setLedgerData((prev) => {
-      if (prev.some((d) => d.ledger === ledger.sequence)) return prev;
-
-      const newPoint = {
-        ledger: ledger.sequence,
-        ops: ledger.operation_count,
-        txs: ledger.successful_transaction_count + ledger.failed_transaction_count,
-      };
-
-      const updated = [...prev, newPoint].slice(-20);
-      setOpsPerLedgerData(network, updated);
-      return updated;
-    });
-  }, [ledger, network]);
+    setOpsPerLedgerData(network, ledgerData);
+  }, [network, ledgerData]);
 
   const avgOps = useMemo(() => {
     if (ledgerData.length === 0) return 0;
