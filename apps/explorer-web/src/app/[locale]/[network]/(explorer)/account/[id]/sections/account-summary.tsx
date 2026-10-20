@@ -20,8 +20,7 @@ export function AccountSummary({
   const { data: profile } = useAccountProfile(id);
 
   const xlmBalance = account.balances.find((b) => b.asset_type === "native") as
-    | Horizon.HorizonApi.BalanceLineNative
-    | undefined;
+    Horizon.HorizonApi.BalanceLineNative | undefined;
 
   const otherAssets = account.balances.filter((b) => b.asset_type !== "native");
 
