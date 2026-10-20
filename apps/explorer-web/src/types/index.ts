@@ -12,13 +12,7 @@ export interface NetworkConfig {
 
 // Entity types for search
 export type EntityType =
-  | "transaction"
-  | "account"
-  | "contract"
-  | "asset"
-  | "ledger"
-  | "domain"
-  | "unknown";
+  "transaction" | "account" | "contract" | "asset" | "ledger" | "domain" | "unknown";
 
 // Transaction status
 export type TransactionStatus = "success" | "failed";

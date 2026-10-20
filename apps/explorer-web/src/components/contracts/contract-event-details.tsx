@@ -92,10 +92,7 @@ function EventRow({ event }: { event: DecodedEvent }) {
           {pattern !== "unknown"
             ? t(
                 `event${pattern.charAt(0).toUpperCase() + pattern.slice(1)}` as
-                  | "eventTransfer"
-                  | "eventMint"
-                  | "eventBurn"
-                  | "eventApprove"
+                  "eventTransfer" | "eventMint" | "eventBurn" | "eventApprove"
               )
             : t("contractEvent")}
         </Badge>

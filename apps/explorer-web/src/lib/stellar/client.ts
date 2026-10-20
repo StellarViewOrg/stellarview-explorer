@@ -3,8 +3,7 @@ import { NETWORKS } from "@/lib/constants";
 import type { NetworkKey } from "@/types";
 
 export type StellarExpertResult<T> =
-  | { available: true; data: T }
-  | { available: false; reason: "testnet" | "futurenet" | "error" };
+  { available: true; data: T } | { available: false; reason: "testnet" | "futurenet" | "error" };
 
 export interface StellarClients {
   horizon: Horizon.Server;
