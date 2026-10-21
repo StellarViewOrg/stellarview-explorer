@@ -143,7 +143,7 @@ export async function simulateContractRead(
 
     const retval = simRes.result.retval;
     const nativeResult = decodeResultNative(retval);
-    const resultXdr = retval.toXDR("base64");
+    const resultXdr = retval.toXdr("base64");
 
     return {
       success: true,
@@ -211,9 +211,9 @@ export async function simulateContractWrite(
               ).build()
             : (simRes.transactionData as unknown as xdr.SorobanTransactionData);
 
-        const resources = rawData.resources();
-        cpuInstructions = String(resources.instructions());
-        memoryBytes = String(resources.diskReadBytes());
+        const { resources } = rawData;
+        cpuInstructions = String(resources.instructions);
+        memoryBytes = String(resources.diskReadBytes);
       } catch {
         // ignore resource extraction error
       }
@@ -269,7 +269,7 @@ export async function executeContractWrite(
 
     const preparedTx = await rpc.prepareTransaction(tx);
 
-    const signedResult = await freighter.signTransaction(preparedTx.toXDR(), {
+    const signedResult = await freighter.signTransaction(preparedTx.toXdr(), {
       networkPassphrase: passphrase,
     });
 

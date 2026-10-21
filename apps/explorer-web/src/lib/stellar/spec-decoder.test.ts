@@ -6,6 +6,7 @@ import {
   parseScSpecEntries,
   encodeInputToScVal,
   decodeResultNative,
+  decodeXdrEntries,
 } from "./spec-decoder";
 import { buildSampleWasm, buildSampleSpecEntries } from "./__fixtures__/sample-contract-spec";
 
@@ -136,7 +137,7 @@ describe("spec-decoder", () => {
     const fnEntry = xdr.ScSpecEntry.scSpecEntryFunctionV0(
       new xdr.ScSpecFunctionV0({ doc: "", name: "ping", inputs: [], outputs: [] })
     );
-    const specData = fnEntry.toXDR();
+    const specData = fnEntry.toXdr();
 
     const magic = Buffer.from([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00]);
     const sectionName = Buffer.from("contractspecv0");
@@ -150,6 +151,49 @@ describe("spec-decoder", () => {
     const parsed = decodeContractSpec(wasm);
     expect(parsed.functions).toHaveLength(1);
     expect(parsed.functions[0].name).toBe("ping");
+  });
+
+  it("decodes a base64 stream of concatenated spec entries", () => {
+    const entries = [
+      xdr.ScSpecEntry.scSpecEntryFunctionV0(
+        new xdr.ScSpecFunctionV0({ doc: "", name: "ping", inputs: [], outputs: [] })
+      ),
+      xdr.ScSpecEntry.scSpecEntryFunctionV0(
+        new xdr.ScSpecFunctionV0({
+          doc: "",
+          name: "pong",
+          inputs: [],
+          outputs: [xdr.ScSpecTypeDef.scSpecTypeU32()],
+        })
+      ),
+    ];
+    const stream = new Uint8Array(entries.flatMap((e) => Array.from(e.toXdr())));
+
+    const parsed = decodeContractSpec(xdr.encodeBytes(stream, "base64"));
+    expect(parsed.functions.map((f) => f.name)).toEqual(["ping", "pong"]);
+    expect(parsed.functions[1].outputs).toEqual([{ kind: "u32" }]);
+  });
+
+  it("returns no entries for a truncated spec stream", () => {
+    const entry = xdr.ScSpecEntry.scSpecEntryFunctionV0(
+      new xdr.ScSpecFunctionV0({ doc: "", name: "ping", inputs: [], outputs: [] })
+    ).toXdr();
+
+    expect(decodeXdrEntries(entry.subarray(0, entry.length - 2))).toEqual([]);
+    expect(decodeXdrEntries(new Uint8Array(0))).toEqual([]);
+  });
+
+  it("encodes bytes inputs from hex strings and Uint8Array values", () => {
+    const udtRegistry = new Map();
+    const fromHex = encodeInputToScVal("0xdeadbeef", { kind: "bytes" }, udtRegistry);
+    const fromBytes = encodeInputToScVal(
+      new Uint8Array([0xde, 0xad, 0xbe, 0xef]),
+      { kind: "bytesN", size: 4 },
+      udtRegistry
+    );
+
+    expect(fromHex.type).toBe("scvBytes");
+    expect(fromHex.equals(fromBytes)).toBe(true);
   });
 
   it("encodes inputs to xdr.ScVal for primitives and UDTs", () => {
@@ -167,21 +211,21 @@ describe("spec-decoder", () => {
 
     const addr = "GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN7";
     const addrScVal = encodeInputToScVal(addr, { kind: "address" }, udtRegistry);
-    expect(addrScVal.switch().name).toBe("scvAddress");
+    expect(addrScVal.type).toBe("scvAddress");
 
     const structScVal = encodeInputToScVal(
       { name: "Alice", age: 30 },
       { kind: "udt", name: "UserProfile" },
       udtRegistry
     );
-    expect(structScVal.switch().name).toBe("scvMap");
+    expect(structScVal.type).toBe("scvMap");
 
     const vecScVal = encodeInputToScVal(
       [1, 2, 3],
       { kind: "vec", elementType: { kind: "u32" } },
       udtRegistry
     );
-    expect(vecScVal.switch().name).toBe("scvVec");
+    expect(vecScVal.type).toBe("scvVec");
   });
 
   it("decodes xdr.ScVal to native JS object", () => {
@@ -289,7 +333,7 @@ describe("spec-decoder", () => {
         { kind: "option", valueType: { kind: "string" } },
         udtRegistry
       );
-      expect(scVal.switch().name).toBe("scvVoid");
+      expect(scVal.type).toBe("scvVoid");
     });
 
     it("encodes option type with inner value", () => {
@@ -299,7 +343,7 @@ describe("spec-decoder", () => {
         { kind: "option", valueType: { kind: "string" } },
         udtRegistry
       );
-      expect(scVal.switch().name).toBe("scvString");
+      expect(scVal.type).toBe("scvString");
     });
 
     it("encodes map type with key-value pairs", () => {
@@ -309,7 +353,7 @@ describe("spec-decoder", () => {
         { kind: "map", keyType: { kind: "string" }, valueType: { kind: "u32" } },
         udtRegistry
       );
-      expect(scVal.switch().name).toBe("scvMap");
+      expect(scVal.type).toBe("scvMap");
     });
 
     it("encodes enum UDT as u32", () => {
@@ -325,7 +369,7 @@ describe("spec-decoder", () => {
         ],
       });
       const scVal = encodeInputToScVal(1, { kind: "udt", name: "Role" }, udtRegistry);
-      expect(scVal.switch().name).toBe("scvU32");
+      expect(scVal.type).toBe("scvU32");
     });
 
     it("encodes union UDT with void variant", () => {
@@ -345,7 +389,7 @@ describe("spec-decoder", () => {
         { kind: "udt", name: "Status" },
         udtRegistry
       );
-      expect(scVal.switch().name).toBe("scvVec");
+      expect(scVal.type).toBe("scvVec");
     });
   });
 });

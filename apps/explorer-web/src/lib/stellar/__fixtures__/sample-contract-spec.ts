@@ -48,7 +48,7 @@ function writeLeb128(value: number): number[] {
  */
 export function buildWasmWithSpec(entries: xdr.ScSpecEntry[]): Uint8Array {
   // Serialize all entries into one buffer
-  const entryBufs = entries.map((e) => e.toXDR());
+  const entryBufs = entries.map((e) => e.toXdr());
   const totalLen = entryBufs.reduce((s, b) => s + b.length, 0);
   const specPayload = new Uint8Array(totalLen);
   let off = 0;

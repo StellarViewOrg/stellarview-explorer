@@ -133,7 +133,7 @@ describe("contract-client", () => {
     it("returns parsed result on successful simulation", async () => {
       const mockAccount = new Account(DUMMY_PUBLIC_KEY, "1");
       const mockRetval = {
-        toXDR: () => "dummyScValBase64",
+        toXdr: () => "dummyScValBase64",
       };
 
       vi.mocked(getRpcClient).mockReturnValue({
@@ -180,11 +180,11 @@ describe("contract-client", () => {
     it("returns estimated resources on successful simulation", async () => {
       const mockAccount = new Account(DUMMY_PUBLIC_KEY, "1");
       const mockResources = {
-        instructions: () => 10000,
-        diskReadBytes: () => 2000,
+        instructions: 10000,
+        diskReadBytes: 2000,
       };
       const mockTransactionData = {
-        resources: () => mockResources,
+        resources: mockResources,
       };
 
       vi.mocked(getRpcClient).mockReturnValue({

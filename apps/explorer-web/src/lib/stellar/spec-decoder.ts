@@ -169,82 +169,24 @@ export function extractSpecCustomSection(wasmBuf: Uint8Array): Uint8Array {
   return combined;
 }
 
-interface XdrReaderInstance {
-  remainingBytes(): number;
-}
-
-type XdrReaderConstructor = new (buffer: Buffer) => XdrReaderInstance;
-
-let cachedXdrReaderClass: XdrReaderConstructor | null = null;
-
 /**
- * Obtain a reusable XDR reader class by monkey-patching xdr.ScSpecEntry.read
- * to capture the internal Reader constructor from the first argument.
- *
- * FRAGILE: This relies on an undocumented stellar-sdk internal (the XDR Reader
- * class passed as the first arg to .read()). A stellar-sdk upgrade could change
- * the reader implementation or call signature, which would silently break this
- * extraction. If decoding fails after an SDK upgrade, this function is the first
- * place to investigate.
- */
-function getXdrReaderClass(): XdrReaderConstructor {
-  if (cachedXdrReaderClass) return cachedXdrReaderClass;
-
-  const dummyFunc = xdr.ScSpecEntry.scSpecEntryFunctionV0(
-    new xdr.ScSpecFunctionV0({ doc: "", name: "dummy", inputs: [], outputs: [] })
-  );
-  const buf = dummyFunc.toXDR();
-
-  const origRead = xdr.ScSpecEntry.read;
-  let captured: XdrReaderConstructor | null = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (xdr.ScSpecEntry as any).read = function (
-    r: { constructor: XdrReaderConstructor },
-    ...args: unknown[]
-  ) {
-    captured = r.constructor;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (origRead as any).apply(this, [r, ...args]);
-  };
-
-  try {
-    xdr.ScSpecEntry.fromXDR(buf);
-  } finally {
-    xdr.ScSpecEntry.read = origRead;
-  }
-
-  cachedXdrReaderClass = captured!;
-  return cachedXdrReaderClass;
-}
-
-/**
- * Parse sequential XDR entries from binary buffer.
+ * Parse the back-to-back XDR `ScSpecEntry` values of a contract spec.
+ * Returns an empty list when the bytes do not form a complete entry stream.
  */
 export function decodeXdrEntries(buffer: Uint8Array): xdr.ScSpecEntry[] {
   if (!buffer || buffer.length === 0) return [];
-  const XdrReaderClass = getXdrReaderClass();
-  const reader = new XdrReaderClass(Buffer.from(buffer));
-  const entries: xdr.ScSpecEntry[] = [];
-
-  while (reader.remainingBytes() > 0) {
-    try {
-      entries.push(
-        xdr.ScSpecEntry.read(reader as unknown as Parameters<typeof xdr.ScSpecEntry.read>[0])
-      );
-    } catch {
-      break;
-    }
+  try {
+    return xdr.decodeStream(xdr.ScSpecEntry, buffer);
+  } catch {
+    return [];
   }
-  return entries;
 }
 
 /**
  * Map xdr.ScSpecTypeDef to SpecTypeDef.
  */
 export function parseTypeDef(typeDef: xdr.ScSpecTypeDef): SpecTypeDef {
-  const switchName = typeDef.switch().name;
-
-  switch (switchName) {
+  switch (typeDef.type) {
     case "scSpecTypeVal":
       return { kind: "val" };
     case "scSpecTypeBool":
@@ -281,45 +223,31 @@ export function parseTypeDef(typeDef: xdr.ScSpecTypeDef): SpecTypeDef {
       return { kind: "symbol" };
     case "scSpecTypeAddress":
       return { kind: "address" };
-    case "scSpecTypeOption": {
-      const opt = typeDef.option();
-      return { kind: "option", valueType: parseTypeDef(opt.valueType()) };
-    }
-    case "scSpecTypeResult": {
-      const res = typeDef.result();
+    case "scSpecTypeOption":
+      return { kind: "option", valueType: parseTypeDef(typeDef.option.valueType) };
+    case "scSpecTypeResult":
       return {
         kind: "result",
-        okType: parseTypeDef(res.okType()),
-        errorType: parseTypeDef(res.errorType()),
+        okType: parseTypeDef(typeDef.result.okType),
+        errorType: parseTypeDef(typeDef.result.errorType),
       };
-    }
-    case "scSpecTypeVec": {
-      const vec = typeDef.vec();
-      return { kind: "vec", elementType: parseTypeDef(vec.elementType()) };
-    }
-    case "scSpecTypeMap": {
-      const map = typeDef.map();
+    case "scSpecTypeVec":
+      return { kind: "vec", elementType: parseTypeDef(typeDef.vec.elementType) };
+    case "scSpecTypeMap":
       return {
         kind: "map",
-        keyType: parseTypeDef(map.keyType()),
-        valueType: parseTypeDef(map.valueType()),
+        keyType: parseTypeDef(typeDef.map.keyType),
+        valueType: parseTypeDef(typeDef.map.valueType),
       };
-    }
-    case "scSpecTypeTuple": {
-      const tuple = typeDef.tuple();
+    case "scSpecTypeTuple":
       return {
         kind: "tuple",
-        elementTypes: tuple.valueTypes().map(parseTypeDef),
+        elementTypes: typeDef.tuple.valueTypes.map(parseTypeDef),
       };
-    }
-    case "scSpecTypeBytesN": {
-      const bytesN = typeDef.bytesN();
-      return { kind: "bytesN", size: bytesN.n() };
-    }
-    case "scSpecTypeUdt": {
-      const udt = typeDef.udt();
-      return { kind: "udt", name: udt.name().toString() };
-    }
+    case "scSpecTypeBytesN":
+      return { kind: "bytesN", size: typeDef.bytesN.n };
+    case "scSpecTypeUdt":
+      return { kind: "udt", name: typeDef.udt.name.toString() };
     default:
       return { kind: "val" };
   }
@@ -337,98 +265,103 @@ export function parseScSpecEntries(entries: xdr.ScSpecEntry[]): ParsedSpec {
   const udtRegistry = new Map<string, SpecUdt>();
 
   for (const entry of entries) {
-    const kind = entry.switch().name;
-
-    if (kind === "scSpecEntryFunctionV0") {
-      const fn = entry.functionV0();
-      functions.push({
-        name: fn.name().toString(),
-        doc: fn.doc().toString(),
-        inputs: fn.inputs().map((input) => ({
-          name: input.name().toString(),
-          doc: input.doc().toString(),
-          type: parseTypeDef(input.type()),
-        })),
-        outputs: fn.outputs().map(parseTypeDef),
-      });
-    } else if (kind === "scSpecEntryUdtStructV0") {
-      const st = entry.udtStructV0();
-      const name = st.name().toString();
-      const structObj: SpecStruct = {
-        udtKind: "struct",
-        name,
-        lib: st.lib().toString(),
-        doc: st.doc().toString(),
-        fields: st.fields().map((f) => ({
-          name: f.name().toString(),
-          doc: f.doc().toString(),
-          type: parseTypeDef(f.type()),
-        })),
-      };
-      structs.set(name, structObj);
-      udtRegistry.set(name, structObj);
-    } else if (kind === "scSpecEntryUdtUnionV0") {
-      const un = entry.udtUnionV0();
-      const name = un.name().toString();
-      const unionObj: SpecUnion = {
-        udtKind: "union",
-        name,
-        lib: un.lib().toString(),
-        doc: un.doc().toString(),
-        cases: un.cases().map((c): SpecUnionCase => {
-          const caseKind = c.switch().name;
-          if (caseKind === "scSpecUdtUnionCaseVoidV0") {
-            const v = c.voidCase();
-            return {
-              kind: "void",
-              name: v.name().toString(),
-              doc: v.doc().toString(),
-            };
-          } else {
-            const t = c.tupleCase();
+    switch (entry.type) {
+      case "scSpecEntryFunctionV0": {
+        const fn = entry.functionV0;
+        functions.push({
+          name: fn.name.toString(),
+          doc: fn.doc.toString(),
+          inputs: fn.inputs.map((input) => ({
+            name: input.name.toString(),
+            doc: input.doc.toString(),
+            type: parseTypeDef(input.type),
+          })),
+          outputs: fn.outputs.map(parseTypeDef),
+        });
+        break;
+      }
+      case "scSpecEntryUdtStructV0": {
+        const st = entry.udtStructV0;
+        const name = st.name.toString();
+        const structObj: SpecStruct = {
+          udtKind: "struct",
+          name,
+          lib: st.lib.toString(),
+          doc: st.doc.toString(),
+          fields: st.fields.map((f) => ({
+            name: f.name.toString(),
+            doc: f.doc.toString(),
+            type: parseTypeDef(f.type),
+          })),
+        };
+        structs.set(name, structObj);
+        udtRegistry.set(name, structObj);
+        break;
+      }
+      case "scSpecEntryUdtUnionV0": {
+        const un = entry.udtUnionV0;
+        const name = un.name.toString();
+        const unionObj: SpecUnion = {
+          udtKind: "union",
+          name,
+          lib: un.lib.toString(),
+          doc: un.doc.toString(),
+          cases: un.cases.map((c): SpecUnionCase => {
+            if (c.type === "scSpecUdtUnionCaseVoidV0") {
+              return {
+                kind: "void",
+                name: c.voidCase.name.toString(),
+                doc: c.voidCase.doc.toString(),
+              };
+            }
             return {
               kind: "tuple",
-              name: t.name().toString(),
-              doc: t.doc().toString(),
-              types: t.type().map(parseTypeDef),
+              name: c.tupleCase.name.toString(),
+              doc: c.tupleCase.doc.toString(),
+              types: c.tupleCase.type.map(parseTypeDef),
             };
-          }
-        }),
-      };
-      unions.set(name, unionObj);
-      udtRegistry.set(name, unionObj);
-    } else if (kind === "scSpecEntryUdtEnumV0") {
-      const en = entry.udtEnumV0();
-      const name = en.name().toString();
-      const enumObj: SpecEnum = {
-        udtKind: "enum",
-        name,
-        lib: en.lib().toString(),
-        doc: en.doc().toString(),
-        cases: en.cases().map((c) => ({
-          name: c.name().toString(),
-          doc: c.doc().toString(),
-          value: c.value(),
-        })),
-      };
-      enums.set(name, enumObj);
-      udtRegistry.set(name, enumObj);
-    } else if (kind === "scSpecEntryUdtErrorEnumV0") {
-      const errEn = entry.udtErrorEnumV0();
-      const name = errEn.name().toString();
-      const errorEnumObj: SpecErrorEnum = {
-        udtKind: "errorEnum",
-        name,
-        lib: errEn.lib().toString(),
-        doc: errEn.doc().toString(),
-        cases: errEn.cases().map((c) => ({
-          name: c.name().toString(),
-          doc: c.doc().toString(),
-          value: c.value(),
-        })),
-      };
-      errorEnums.set(name, errorEnumObj);
-      udtRegistry.set(name, errorEnumObj);
+          }),
+        };
+        unions.set(name, unionObj);
+        udtRegistry.set(name, unionObj);
+        break;
+      }
+      case "scSpecEntryUdtEnumV0": {
+        const en = entry.udtEnumV0;
+        const name = en.name.toString();
+        const enumObj: SpecEnum = {
+          udtKind: "enum",
+          name,
+          lib: en.lib.toString(),
+          doc: en.doc.toString(),
+          cases: en.cases.map((c) => ({
+            name: c.name.toString(),
+            doc: c.doc.toString(),
+            value: c.value,
+          })),
+        };
+        enums.set(name, enumObj);
+        udtRegistry.set(name, enumObj);
+        break;
+      }
+      case "scSpecEntryUdtErrorEnumV0": {
+        const errEn = entry.udtErrorEnumV0;
+        const name = errEn.name.toString();
+        const errorEnumObj: SpecErrorEnum = {
+          udtKind: "errorEnum",
+          name,
+          lib: errEn.lib.toString(),
+          doc: errEn.doc.toString(),
+          cases: errEn.cases.map((c) => ({
+            name: c.name.toString(),
+            doc: c.doc.toString(),
+            value: c.value,
+          })),
+        };
+        errorEnums.set(name, errorEnumObj);
+        udtRegistry.set(name, errorEnumObj);
+        break;
+      }
     }
   }
 
@@ -448,7 +381,7 @@ export function parseScSpecEntries(entries: xdr.ScSpecEntry[]): ParsedSpec {
 export function decodeContractSpec(
   input: Uint8Array | string | string[] | xdr.ScSpecEntry[]
 ): ParsedSpec {
-  if (Array.isArray(input) && input.length > 0 && input[0] instanceof xdr.ScSpecEntry) {
+  if (Array.isArray(input) && input.length > 0 && xdr.ScSpecEntry.is(input[0])) {
     return parseScSpecEntries(input as xdr.ScSpecEntry[]);
   }
 
@@ -456,7 +389,7 @@ export function decodeContractSpec(
     const entries: xdr.ScSpecEntry[] = [];
     for (const xdrStr of input as string[]) {
       try {
-        const buf = Buffer.from(xdrStr, xdrStr.match(/^[0-9a-fA-F]+$/) ? "hex" : "base64");
+        const buf = xdr.decodeBytes(xdrStr, /^[0-9a-fA-F]+$/.test(xdrStr) ? "hex" : "base64");
         entries.push(...decodeXdrEntries(buf));
       } catch {
         // ignore invalid entries
@@ -466,7 +399,7 @@ export function decodeContractSpec(
   }
 
   if (typeof input === "string") {
-    const buf = Buffer.from(input, input.match(/^[0-9a-fA-F]+$/) ? "hex" : "base64");
+    const buf = xdr.decodeBytes(input, /^[0-9a-fA-F]+$/.test(input) ? "hex" : "base64");
     const extracted = extractSpecCustomSection(buf);
     const targetBuf = extracted.length > 0 ? extracted : buf;
     return parseScSpecEntries(decodeXdrEntries(targetBuf));
@@ -551,11 +484,10 @@ export function encodeInputToScVal(
     case "bytes":
     case "bytesN": {
       if (val instanceof Uint8Array) {
-        return xdr.ScVal.scvBytes(Buffer.from(val));
+        return xdr.ScVal.scvBytes(val);
       }
       const hex = String(val || "").replace(/^0x/, "");
-      const bytes = Buffer.from(hex, "hex");
-      return xdr.ScVal.scvBytes(bytes);
+      return xdr.ScVal.scvBytes(xdr.decodeBytes(hex, "hex"));
     }
 
     case "address": {

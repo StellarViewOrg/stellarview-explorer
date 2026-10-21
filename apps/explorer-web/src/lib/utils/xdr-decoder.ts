@@ -1,4 +1,4 @@
-import { TransactionBuilder } from "@stellar/stellar-sdk";
+import { TransactionBuilder, xdr } from "@stellar/stellar-sdk";
 import { NETWORKS } from "@/lib/constants/networks";
 import type { NetworkKey } from "@/types";
 
@@ -24,7 +24,7 @@ export function decodeTransactionEnvelope(
   if (!envelopeXdr) return null;
 
   try {
-    const tx = TransactionBuilder.fromXDR(envelopeXdr, NETWORKS[network].passphrase);
+    const tx = TransactionBuilder.fromXdr(envelopeXdr, NETWORKS[network].passphrase);
 
     const sourceAccount =
       "source" in tx
@@ -36,10 +36,10 @@ export function decodeTransactionEnvelope(
     let memoType = "none";
 
     if ("memo" in tx && tx.memo) {
-      const m = tx.memo as { type: string; value?: string | Buffer };
+      const m = tx.memo as { type: string; value?: string | Uint8Array | null };
       memoType = m.type ?? "none";
       if (m.value) {
-        memo = typeof m.value === "string" ? m.value : m.value.toString("hex");
+        memo = typeof m.value === "string" ? m.value : xdr.encodeBytes(m.value, "hex");
       }
     }
 
