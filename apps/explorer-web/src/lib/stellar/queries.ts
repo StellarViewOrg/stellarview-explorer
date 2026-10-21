@@ -698,15 +698,14 @@ export const stellarQueries = {
   contractEvents: (network: NetworkKey, contractId: string, startLedger?: number) => ({
     queryKey: stellarKeys.contractEvents(network, contractId),
     queryFn: async () => {
-      const { scValToNative } = await import("@stellar/stellar-sdk");
+      const { scValToNative, xdr } = await import("@stellar/stellar-sdk");
 
       // SDK already parses topic and value as xdr.ScVal objects
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const decodeScValSafe = (scVal: any): { type: string; value: unknown } => {
-        if (!scVal || typeof scVal.switch !== "function") {
+      const decodeScValSafe = (scVal: unknown): { type: string; value: unknown } => {
+        if (!xdr.ScVal.is(scVal)) {
           return { type: "unknown", value: String(scVal) };
         }
-        const type = scVal.switch().name;
+        const type = scVal.type;
         try {
           const native = scValToNative(scVal);
           if (typeof native === "bigint") {
@@ -714,7 +713,7 @@ export const stellarQueries = {
           }
           return { type, value: native };
         } catch {
-          return { type, value: scVal.toXDR("base64") };
+          return { type, value: scVal.toXdr("base64") };
         }
       };
 
@@ -801,7 +800,7 @@ export const stellarQueries = {
         new xdr.LedgerKeyContractData({
           contract: contract.address().toScAddress(),
           key: xdr.ScVal.scvLedgerKeyContractInstance(),
-          durability: xdr.ContractDataDurability.persistent(),
+          durability: xdr.ContractDataDurability.persistent,
         })
       );
 
@@ -813,11 +812,14 @@ export const stellarQueries = {
       }
 
       const instanceEntry = instanceResponse.entries[0];
-      const contractData = instanceEntry.val.contractData();
-      const contractInstance = contractData.val().instance();
-      const executable = contractInstance.executable();
+      const contractData = xdr.expectUnionVariant(instanceEntry.val, "contractData").contractData;
+      const contractInstance = xdr.expectUnionVariant(
+        contractData.val,
+        "scvContractInstance"
+      ).instance;
+      const executable = contractInstance.executable;
 
-      if (executable.switch().name !== "contractExecutableWasm") {
+      if (executable.type !== "contractExecutableWasm") {
         return {
           type: "sac" as const,
           wasmHash: null,
@@ -827,8 +829,8 @@ export const stellarQueries = {
         };
       }
 
-      const wasmHash = executable.wasmHash();
-      const wasmHashHex = wasmHash.toString("hex");
+      const wasmHash = executable.wasmHash;
+      const wasmHashHex = xdr.encodeBytes(wasmHash.toBytes(), "hex");
 
       const wasmCodeKey = xdr.LedgerKey.contractCode(
         new xdr.LedgerKeyContractCode({ hash: wasmHash })
@@ -841,9 +843,8 @@ export const stellarQueries = {
       }
 
       const codeEntry = codeResponse.entries[0];
-      const contractCode = codeEntry.val.contractCode();
-      const wasmCode = contractCode.code();
-      const wasmCodeHex = wasmCode.toString("hex");
+      const wasmCode = xdr.expectUnionVariant(codeEntry.val, "contractCode").contractCode.code;
+      const wasmCodeHex = xdr.encodeBytes(wasmCode, "hex");
 
       return {
         type: "wasm" as const,
@@ -1162,14 +1163,14 @@ export const stellarQueries = {
         new xdr.LedgerKeyContractData({
           contract: contract.address().toScAddress(),
           key: xdr.ScVal.scvLedgerKeyContractInstance(),
-          durability: xdr.ContractDataDurability.persistent(),
+          durability: xdr.ContractDataDurability.persistent,
         })
       );
 
       const decodeScVal = (val: xdr.ScVal): { type: string; value: unknown; raw: string } => {
-        const type = val.switch().name;
+        const type = val.type;
         let value: unknown;
-        const raw = val.toXDR("base64");
+        const raw = val.toXdr("base64");
         try {
           value = scValToNative(val);
         } catch {
@@ -1186,8 +1187,11 @@ export const stellarQueries = {
       }
 
       const instanceEntry = instanceResponse.entries[0];
-      const contractData = instanceEntry.val.contractData();
-      const contractInstance = contractData.val().instance();
+      const contractData = xdr.expectUnionVariant(instanceEntry.val, "contractData").contractData;
+      const contractInstance = xdr.expectUnionVariant(
+        contractData.val,
+        "scvContractInstance"
+      ).instance;
 
       const instanceStorage: Array<{
         key: { type: string; value: unknown; raw: string };
@@ -1195,12 +1199,12 @@ export const stellarQueries = {
         durability: "instance";
       }> = [];
 
-      const storage = contractInstance.storage();
+      const storage = contractInstance.storage;
       if (storage && storage.length > 0) {
         for (const entry of storage) {
           instanceStorage.push({
-            key: decodeScVal(entry.key()),
-            value: decodeScVal(entry.val()),
+            key: decodeScVal(entry.key),
+            value: decodeScVal(entry.val),
             durability: "instance",
           });
         }
