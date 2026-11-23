@@ -17,4 +17,4 @@ jobs:
 
     steps:
       - name: Submit repository SBOM
-        uses: SCF-Public-Goods-Maintenance/pg-atlas-sbom-action@f2f44ed8cec916dd412c86ebcab796655656329f
+        uses: SCF-Public-Goods-Maintenance/pg-atlas-sbom-action@20d2cff7ec9335c43e5e50451dc2576572ff7d49 # v1.0.1
